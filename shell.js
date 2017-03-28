@@ -1,7 +1,6 @@
 const ps = require('process')
 const fs = require('fs')
 const glob = require('glob')
-const stylus = require('stylus')
 const _ = require('lodash')
 const { format } = require('./index.js')
 
@@ -10,7 +9,10 @@ const files = _.chain(ps.argv.slice(2))
 	.map(path => glob.sync(path))
 	.flatten()
 	.forEach(path => {
-		format(fs.readFileSync(path, 'utf-8'))
+		const formattedContent = format(fs.readFileSync(path, 'utf-8'))
+		console.log('===')
+		console.log(formattedContent)
+		// TODO: write back
 	})
 	.value()
 
