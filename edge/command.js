@@ -5,54 +5,80 @@ const glob = require('glob')
 const _ = require('lodash')
 const { format } = require('./format.js')
 
-const isDebugging = _.chain(ps.argv.slice(2)).find(word => word === '--debug' || word === '-d').value()
+let inputFiles = []
+let optionFilePath = ''
+let replaceOriginal = false
+let outputDirectory = ''
+let isDebugging = false
 
-const optionPath = _.chain(ps.argv.slice(2)).map((word, rank, list) => { if (word === '--options' || word === '-p') return list[rank + 1] }).compact().first().value()
+let paramIndex = -1
+const paramArray = ps.argv.slice(2)
+while (++paramIndex < paramArray.length) {
+	const param = paramArray[paramIndex]
 
-const formattingOptions = optionPath && fs.existsSync(optionPath) ? require(optionPath) : null
+	if (param === '--options' || param === '-p') {
+		optionFilePath = paramArray[paramIndex + 1]
+		paramIndex++
 
-const files = _.chain(ps.argv.slice(2))
-	.reject(word => word.startsWith('-'))
-	.map(path => glob.sync(path))
-	.flatten()
-	.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf-8'), formattingOptions, !!isDebugging)))
-	.value()
+	} else if (param === '--replace' || param === '-r') {
+		replaceOriginal = true
 
-const replaceOriginal = _.chain(ps.argv.slice(2)).find(word => word === '--replace' || word === '-r').value()
+	} else if (param === '--outDir' || param === '-o') {
+		outputDirectory = paramArray[paramIndex + 1]
+		paramIndex++
 
-const outputDirectory = _.chain(ps.argv.slice(2)).map((word, rank, list) => { if (word === '--outDir' || word === '-o') return list[rank + 1] }).compact().first().value()
+	} else if (param === '--debug' || param === '-d') {
+		isDebugging = true
 
-if (outputDirectory) {
-	if (fs.existsSync(pt.resolve(outputDirectory)) === false) {
-		fs.mkdirSync(pt.resolve(outputDirectory))
+	} else {
+		inputFiles.push(param)
 	}
-	files.forEach(file => {
-		fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(file.path)), file.content)
-	})
-
-} else if (replaceOriginal) {
-	files.forEach(file => {
-		fs.writeFileSync(file.path, file.content)
-	})
-
-} else {
-	files.forEach(file => {
-		console.log(file.content)
-	})
 }
 
-if (files.some(file => file.warnings.length > 0)) {
-	files.forEach(file => {
-		file.warnings.forEach(warn => {
-			console.log(`WARN: ${warn.message} in ${file.path}`)
-			if (warn.data !== undefined) {
-				console.log(JSON.stringify(warn.data, null, '\t'))
-			}
-		})
-	})
-	const warningCount = _.sumBy(files, file => file.warnings.length)
-	console.log(`Done with ${warningCount} warning${warningCount === 1 ? '' : 's'}.`)
+if (inputFiles.length === 0) {
+	console.log('No files specified.')
 
 } else {
-	console.log('Done without warnings.')
+	const formattingOptions = optionFilePath && fs.existsSync(optionFilePath) ? require(optionFilePath) : null
+
+	const outputFiles = _.chain(inputFiles)
+		.map(path => glob.sync(path))
+		.flatten()
+		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf-8'), formattingOptions, !!isDebugging)))
+		.value()
+
+	if (outputDirectory) {
+		if (fs.existsSync(pt.resolve(outputDirectory)) === false) {
+			fs.mkdirSync(pt.resolve(outputDirectory))
+		}
+		outputFiles.forEach(file => {
+			fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(file.path)), file.content)
+		})
+
+	} else if (replaceOriginal) {
+		outputFiles.forEach(file => {
+			fs.writeFileSync(file.path, file.content)
+		})
+
+	} else {
+		outputFiles.forEach(file => {
+			console.log(file.content)
+		})
+	}
+
+	if (outputFiles.some(file => file.warnings.length > 0)) {
+		outputFiles.forEach(file => {
+			file.warnings.forEach(warn => {
+				console.log(`WARN: ${warn.message} in ${file.path}`)
+				if (warn.data !== undefined) {
+					console.log(JSON.stringify(warn.data, null, '\t'))
+				}
+			})
+		})
+		const warningCount = _.sumBy(outputFiles, file => file.warnings.length)
+		console.log(`Done with ${warningCount} warning${warningCount === 1 ? '' : 's'}.`)
+
+	} else {
+		console.log('Done without warnings.')
+	}
 }
