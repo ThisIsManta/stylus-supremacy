@@ -39,6 +39,7 @@ class StringBuffer {
 				this.buffer[this.buffer.length - 1] = _.last(this.buffer).substring(_.last(this.buffer).length - text.length)
 			}
 		}
+		return this
 	}
 
 	toString() {
@@ -83,13 +84,27 @@ function format(content, options) {
 				outputBuffer.append(_.repeat(options.newLineChar, options.insertNewLineBetweenGroups))
 			}
 
+			const commentsOnTop = []
+			let zeroBasedLineIndex = _.first(inputNode.nodes).lineno - 1
+			while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex].trim().startsWith('//')) {
+				commentsOnTop.unshift(indent + '// ' + lines[zeroBasedLineIndex].trim().substring(2).trim() + options.newLineChar)
+			}
+			outputBuffer.append(commentsOnTop)
+
 			const separator = ',' + (options.insertNewLineBetweenSelectors ? (options.newLineChar + indent) : ' ')
 
-			outputBuffer.append(indent + inputNode.nodes.map(node => travel(node, levelCount)).join(separator))
+			outputBuffer.append(indent + inputNode.nodes.map(node => travel(node, levelCount, true)).join(separator))
 
 			if (options.insertBraces) {
-				outputBuffer.append(' {').append(options.newLineChar)
+				outputBuffer.append(' {')
 			}
+
+			if (lines[_.last(inputNode.nodes).lineno - 1].trim().includes('//')) {
+				const line = lines[_.last(inputNode.nodes).lineno - 1]
+				outputBuffer.append(' // ' + line.substring(line.indexOf('//') + 2).trim())
+			}
+
+			outputBuffer.append(options.newLineChar)
 
 			let properties = inputNode.block.nodes.filter(node => node instanceof stylus.nodes.Property)
 
@@ -203,7 +218,7 @@ function format(content, options) {
 			outputBuffer.append(options.newLineChar)
 		}
 
-		return outputBuffer.toString()
+		return _.trimStart(outputBuffer.toString(), options.newLineChar)
 	}
 
 	return travel(rootNode, 0)
