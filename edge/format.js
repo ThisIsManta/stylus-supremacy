@@ -54,9 +54,9 @@ function format(content, options, isDebugging) {
 
 	const warnings = []
 
-	const rootNode = new stylus.Parser(content).parse()
-
 	const lines = content.split('\n')
+
+	const rootNode = new stylus.Parser(content).parse()
 
 	if (isDebugging) {
 		console.log(JSON.stringify(rootNode, null, '\t'))
@@ -268,17 +268,21 @@ function format(content, options, isDebugging) {
 			outputBuffer.append(options.newLineChar)
 		}
 
-		return _.trimStart(outputBuffer.toString(), options.newLineChar)
+		return outputBuffer.toString()
+	}
+
+	let output = travel(rootNode, 0)
+	if (output.startsWith(options.newLineChar)) {
+		output = output.substring(options.newLineChar.length)
+	}
+	if (output.endsWith(options.newLineChar) && content.includes('\n') && content.substring(content.lastIndexOf('\n') + 1).trim().length > 0) {
+		output = output.substring(0, output.length - options.newLineChar.length)
 	}
 
 	return {
-		content: travel(rootNode, 0),
+		content: output,
 		warnings,
 	}
-}
-
-function sortAttributes() {
-
 }
 
 module.exports.format = format
