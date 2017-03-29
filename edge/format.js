@@ -49,7 +49,7 @@ class StringBuffer {
 	}
 }
 
-function format(content, options, isDebugging) {
+function format(content, options, isDebugging = false) {
 	options = _.assign({}, defaultFormattingOptions, options)
 
 	const warnings = []
@@ -286,4 +286,3 @@ function format(content, options, isDebugging) {
 }
 
 module.exports.format = format
-module.exports.defaultFormattingOptions = defaultFormattingOptions

@@ -44,7 +44,7 @@ if (inputFiles.length === 0) {
 	const outputFiles = _.chain(inputFiles)
 		.map(path => glob.sync(path))
 		.flatten()
-		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf-8'), formattingOptions, !!isDebugging)))
+		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf8'), formattingOptions, !!isDebugging)))
 		.value()
 
 	if (outputDirectory) {

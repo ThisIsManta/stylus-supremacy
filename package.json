@@ -9,7 +9,7 @@
 	"bin": "./edge/command.js",
 	"main": "./edge/format.js",
 	"scripts": {
-		"test": "jasmine"
+		"test": "node ./test/runner.js"
 	},
 	"devDependencies": {
 		"jasmine": "^2.5.3"
