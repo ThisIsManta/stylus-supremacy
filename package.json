@@ -1,20 +1,23 @@
 {
-    "name": "stylus-supremacy",
-    "description": "Make your Stylus files look great again.",
-    "version": "0.0.1",
-    "author": {
-        "name": "Anantachai Saothong",
-        "email": "anantachai.s@taskworld.com"
-    },
-    "bin": "./shell.js",
-    "main": "./index.js",
-    "scripts": {
-        "test": ""
-    },
-    "devDependencies": {
-        "glob": "^7.1.1",
-        "lodash": "^4.17.4",
-        "stylint": "^1.5.9",
-        "stylus": "^0.54.5"
-    }
+	"name": "stylus-supremacy",
+	"description": "Make your Stylus files look great again.",
+	"version": "0.0.1",
+	"author": {
+		"name": "Anantachai Saothong",
+		"email": "anantachai.s@taskworld.com"
+	},
+	"bin": "./edge/command.js",
+	"main": "./edge/format.js",
+	"scripts": {
+		"test": "jasmine"
+	},
+	"devDependencies": {
+		"jasmine": "^2.5.3"
+	},
+	"dependencies": {
+		"glob": "^7.1.1",
+		"lodash": "^4.17.4",
+		"stylint": "^1.5.9",
+		"stylus": "^0.54.5"
+	}
 }

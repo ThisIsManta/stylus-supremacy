@@ -3,16 +3,18 @@ const stylus = require('stylus')
 const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
 
-const defaultOptions = {
+const defaultFormattingOptions = {
 	insertColons: true,
 	insertSemicolons: true,
 	insertBraces: true,
 	insertNewLineBetweenGroups: 1,
 	insertNewLineBetweenSelectors: false,
+	insertSpaceBeforeComments: true,
+	insertSpaceAfterComments: true,
 	indentChar: '\t',
 	newLineChar: os.EOL,
-	sortOrder: 'alphabetical',
-	useRequire: false,
+	sortProperties: 'alphabetical',
+	preferImport: false,
 }
 
 class StringBuffer {
@@ -47,14 +49,18 @@ class StringBuffer {
 	}
 }
 
-function format(content, options) {
-	options = _.assign({}, defaultOptions, options)
+function format(content, options, isDebugging) {
+	options = _.assign({}, defaultFormattingOptions, options)
+
+	const warnings = []
 
 	const rootNode = new stylus.Parser(content).parse()
 
 	const lines = content.split('\n')
 
-	console.log(JSON.stringify(rootNode, null, '  '))
+	if (isDebugging) {
+		console.log(JSON.stringify(rootNode, null, '\t'))
+	}
 
 	const outputBuffer = new StringBuffer(options)
 
@@ -63,16 +69,14 @@ function format(content, options) {
 		const indent = _.repeat(options.indentChar, levelCount)
 
 		if (inputNode.commentsOnTop) {
-			inputNode.commentsOnTop.forEach(comment => {
-				outputBuffer.append(comment.str.split('\n').map(line => indent + line.trim()).join(options.newLineChar)).append(options.newLineChar)
-			})
+			outputBuffer.append(inputNode.commentsOnTop.map(comment => travel(comment, levelCount)))
 		}
 
 		if (inputNode instanceof stylus.nodes.Root) {
 			outputBuffer.append(inputNode.nodes.map(node => travel(node, levelCount)))
 
 		} else if (inputNode instanceof stylus.nodes.Import) {
-			outputBuffer.append(indent + `@${inputNode.once ? 'require' : 'import'} '${inputNode.path.nodes[0].val}'`)
+			outputBuffer.append(indent + `@${options.preferImport || inputNode.once === false ? 'import' : 'require'} '${inputNode.path.nodes[0].val}'`)
 
 			if (options.insertSemicolons) {
 				outputBuffer.append(';')
@@ -87,13 +91,13 @@ function format(content, options) {
 			const commentsOnTop = []
 			let zeroBasedLineIndex = _.first(inputNode.nodes).lineno - 1
 			while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex].trim().startsWith('//')) {
-				commentsOnTop.unshift(indent + '// ' + lines[zeroBasedLineIndex].trim().substring(2).trim() + options.newLineChar)
+				commentsOnTop.unshift(indent + '//' + (options.insertSpaceAfterComments ? ' ' : '') + lines[zeroBasedLineIndex].trim().substring(2).trim() + options.newLineChar)
 			}
 			outputBuffer.append(commentsOnTop)
 
 			const separator = ',' + (options.insertNewLineBetweenSelectors ? (options.newLineChar + indent) : ' ')
 
-			outputBuffer.append(indent + inputNode.nodes.map(node => travel(node, levelCount, true)).join(separator))
+			outputBuffer.append(indent + inputNode.nodes.map(node => travel(node, levelCount, true)).join(separator).trim())
 
 			if (options.insertBraces) {
 				outputBuffer.append(' {')
@@ -101,17 +105,24 @@ function format(content, options) {
 
 			if (lines[_.last(inputNode.nodes).lineno - 1].trim().includes('//')) {
 				const line = lines[_.last(inputNode.nodes).lineno - 1]
-				outputBuffer.append(' // ' + line.substring(line.indexOf('//') + 2).trim())
+				if (options.insertSpaceBeforeComments) {
+					outputBuffer.append(' ')
+				}
+				outputBuffer.append('//')
+				if (options.insertSpaceAfterComments) {
+					outputBuffer.append(' ')
+				}
+				outputBuffer.append(line.substring(line.indexOf('//') + 2).trim())
 			}
 
 			outputBuffer.append(options.newLineChar)
 
 			let properties = inputNode.block.nodes.filter(node => node instanceof stylus.nodes.Property)
 
-			if (options.sortOrder === 'alphabetical') {
+			if (options.sortProperties === 'alphabetical') {
 				properties = _.sortBy(properties, node => node.segments.map(segment => segment.name).join(''))
 
-			} else if (options.sortOrder === 'grouped') {
+			} else if (options.sortProperties === 'grouped') {
 				properties = _.sortBy(properties, node => {
 					const propertyName = node.segments.map(segment => segment.name).join('')
 					const propertyRank = ordering.grouped.indexOf(propertyName)
@@ -180,7 +191,7 @@ function format(content, options) {
 			if (inputNode.expr instanceof stylus.nodes.Expression) {
 				outputBuffer.append(inputNode.expr.nodes.map(node => travel(node, levelCount, true)).join(' '))
 			} else {
-				console.warn('Unknown:', inputNode.expr)
+				warnings.push({ message: 'Found unknown object', data: inputNode })
 			}
 
 			if (options.insertSemicolons) {
@@ -201,15 +212,54 @@ function format(content, options) {
 			outputBuffer.append(inputNode.nodes.map(node => travel(node, levelCount)).join(' '))
 
 		} else if (inputNode instanceof stylus.nodes.Comment) {
-			if (insideExpression) {
-				outputBuffer.append(inputNode.str)
+			const spaceOrNothing = (options.insertSpaceAfterComments ? ' ' : '')
+
+			let commentLines = inputNode.str.split(/\r?\n/).map(line => line.trim())
+			if (commentLines.length === 1) {
+				commentLines[0] = '/*' + spaceOrNothing + commentLines[0].substring(2, commentLines[0].length - 2).trim() + spaceOrNothing + '*/'
 
 			} else {
-				outputBuffer.append(inputNode.str.split('\n').map(line => indent + line.trim()).join(options.newLineChar)).append(options.newLineChar)
+				const documenting = _.first(commentLines).startsWith('/**')
+
+				if (_.first(commentLines) !== '/*' && documenting === false) {
+					commentLines[0] = '/*' + spaceOrNothing + _.first(commentLines).substring(2).trim()
+				}
+
+				let zeroBasedLineIndex = 0
+				while (++zeroBasedLineIndex <= commentLines.length - 2) {
+					if (documenting) {
+						if (commentLines[zeroBasedLineIndex].startsWith('*')) {
+							if (commentLines[zeroBasedLineIndex].substring(1).charAt(0) === ' ') {
+								commentLines[zeroBasedLineIndex] = ' *' + commentLines[zeroBasedLineIndex].substring(1)
+							} else {
+								commentLines[zeroBasedLineIndex] = ' *' + spaceOrNothing + commentLines[zeroBasedLineIndex].substring(1)
+							}
+						} else {
+							commentLines[zeroBasedLineIndex] = ' *' + spaceOrNothing + commentLines[zeroBasedLineIndex]
+						}
+					} else {
+						commentLines[zeroBasedLineIndex] = '  ' + commentLines[zeroBasedLineIndex]
+					}
+				}
+
+				if (_.last(commentLines) === '*/') {
+					if (documenting) {
+						commentLines[commentLines.length - 1] = ' ' + _.last(commentLines)
+					}
+				} else {
+					commentLines[commentLines.length - 1] = '   ' + _.trimEnd(_.last(commentLines).substring(0, _.last(commentLines).length - 2)) + spaceOrNothing + '*/'
+				}
+			}
+
+			if (insideExpression) {
+				outputBuffer.append(commentLines.join(options.newLineChar))
+
+			} else {
+				outputBuffer.append(commentLines.map(line => indent + line).join(options.newLineChar)).append(options.newLineChar)
 			}
 
 		} else {
-			console.warn('Unknown:', inputNode)
+			warnings.push({ message: 'Found unknown object', data: inputNode })
 		}
 
 		if (inputNode.commentsOnRight) {
@@ -221,7 +271,10 @@ function format(content, options) {
 		return _.trimStart(outputBuffer.toString(), options.newLineChar)
 	}
 
-	return travel(rootNode, 0)
+	return {
+		content: travel(rootNode, 0),
+		warnings,
+	}
 }
 
 function sortAttributes() {
@@ -229,3 +282,4 @@ function sortAttributes() {
 }
 
 module.exports.format = format
+module.exports.defaultFormattingOptions = defaultFormattingOptions
