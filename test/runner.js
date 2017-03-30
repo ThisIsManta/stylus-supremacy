@@ -12,24 +12,33 @@ jasmine.configureDefaultReporter({
 })
 
 const glob = require('glob')
+const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
+const _ = require('lodash')
 const { format } = require('../edge/format.js')
 
-glob.sync('spec/*').filter(path => pt.extname(path) === '').forEach(directory => {
-	const input = fs.readFileSync(pt.join(directory, 'input.styl'), 'utf8')
-	const output = fs.readFileSync(pt.join(directory, 'output.styl'), 'utf8')
-	let formattingOptions = null
-	if (fs.existsSync(pt.join(directory, 'formattingOptions.json'))) {
-		formattingOptions = require('../' + pt.join(directory, 'formattingOptions.json'))
-	}
+const filteredSpecName = _.chain(ps.argv).map((param, index, array) => param === '--filter' ? _.trim(array[index + 1], '"') : null).compact().first().value()
 
-	describe(pt.basename(directory), () => {
-		it('returns formatted content', () => {
-			const result = format(input, formattingOptions)
-			expect(result.content).toBe(output)
+const isDebugging = !!ps.argv.find(param => param === '--debug' || param === '-d')
+
+glob.sync('spec/' + (filteredSpecName || '*'))
+	.filter(path => pt.extname(path) === '')
+	.forEach(directory => {
+		const input = fs.readFileSync(pt.join(directory, 'input.styl'), 'utf8')
+		const output = fs.readFileSync(pt.join(directory, 'output.styl'), 'utf8')
+		let formattingOptions = null
+		if (fs.existsSync(pt.join(directory, 'formattingOptions.json'))) {
+			formattingOptions = require('../' + pt.join(directory, 'formattingOptions.json'))
+		}
+
+		describe(pt.basename(directory), () => {
+			it('returns formatted content', () => {
+				const result = format(input, formattingOptions, isDebugging)
+				expect(result.content).toBe(output)
+				fs.writeFileSync(pt.join(directory, 'actual.styl'), result.content, 'utf8')
+			})
 		})
 	})
-})
 
 jasmine.execute()
