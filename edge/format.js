@@ -17,6 +17,7 @@ const defaultFormattingOptions = {
 	// TODO: sortImports: 'alphabetical',
 	sortProperties: 'alphabetical',
 	alwaysUseImport: false,
+	alwaysUseNot: false,
 }
 
 class StringBuffer {
@@ -297,9 +298,6 @@ function format(content, options, isDebugging = false) {
 				outputBuffer.append(options.newLineChar)
 			}
 
-		} else if (inputNode instanceof stylus.nodes.Unit) {
-			outputBuffer.append(inputNode.val).append(inputNode.type)
-
 		} else if (inputNode instanceof stylus.nodes.Call) {
 			outputBuffer.append(inputNode.name).append('(' + inputNode.args.nodes.map(node => travel(node, levelCount)).join(', ') + ')')
 
@@ -311,6 +309,15 @@ function format(content, options, isDebugging = false) {
 					return travel(node, levelCount, true)
 				}
 			}).join(' '))
+
+		} else if (inputNode instanceof stylus.nodes.Unit) {
+			outputBuffer.append(inputNode.val).append(inputNode.type)
+
+		} else if (inputNode instanceof stylus.nodes.UnaryOp) {
+			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op).append(travel(inputNode.expr, levelCount, true))
+
+		} else if (inputNode instanceof stylus.nodes.BinOp) {
+			outputBuffer.append(travel(inputNode.left, levelCount, true) + ' ' + inputNode.op + ' ' + travel(inputNode.right, levelCount, true))
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
 			if (insideExpression === false) {
