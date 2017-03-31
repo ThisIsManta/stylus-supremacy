@@ -1,0 +1,45 @@
+body {
+	display: none;
+}
+
+#id1 {
+	display: none;
+}
+
+.class1 {
+	display: none;
+
+	& #id1 {
+		display: none;
+	}
+
+	&_bem1 {
+		display: none;
+
+		^[0]:hover {
+			display: none;
+
+			&^[1..-1] {
+				display: none;
+			}
+		}
+
+		~/:hover & {
+			display: none;
+		}
+
+		/body {
+			display: none;
+		}
+	}
+
+	.class2 {
+		../input {
+			display: none;
+		}
+	}
+}
+
+body > a {
+	display: none;
+}

@@ -9,5 +9,5 @@
 	"indentChar": "\t",
 	"newLineChar": "\r\n",
 	"sortProperties": false,
-	"preferImport": false
+	"alwaysUseImport": false
 }

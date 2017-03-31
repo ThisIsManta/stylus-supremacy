@@ -18,7 +18,7 @@ const pt = require('path')
 const _ = require('lodash')
 const { format } = require('../edge/format.js')
 
-const filteredSpecName = _.chain(ps.argv).map((param, index, array) => param === '--filter' ? _.trim(array[index + 1], '"') : null).compact().first().value()
+const filteredSpecName = _.chain(ps.argv).map((param, index, array) => (param === '--filter' || param === '-f') ? _.trim(array[index + 1], '"') : null).compact().first().value()
 
 const isDebugging = !!ps.argv.find(param => param === '--debug' || param === '-d')
 
@@ -33,7 +33,7 @@ glob.sync('spec/' + (filteredSpecName || '*'))
 		}
 
 		describe(pt.basename(directory), () => {
-			it('returns formatted content', () => {
+			it('', () => {
 				const result = format(input, formattingOptions, isDebugging)
 				expect(result.content).toBe(output)
 				fs.writeFileSync(pt.join(directory, 'actual.styl'), result.content, 'utf8')
