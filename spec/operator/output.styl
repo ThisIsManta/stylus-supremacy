@@ -1,20 +1,26 @@
- {
-	body {
-		display: not 0;
-		visibility: not true == false;
-		left: -5px;
-		margin: 1 + 2px;
+body {
+	display: not 0;
+	visibility: not true == false;
+	left: -5px;
+	margin: 1 + 2px;
 
-		list = 1 2 3;
+	list = 1 2 3;
 
-		color: 1 in list;
-		padding: list[-1];
+	color: 1 in list;
+	padding: list[-1];
 
-		range = 1...5;
-		math = 1 + 2 - 3 * 4 / 5 % 6 ** 7;
-		color = color is defined ? color : white;
+	range = 1...5;
+	math = 1 + 2 - 3 * 4 / 5 % 6 ** 7;
+	color = color is defined ? unit(num, 'px') : white;
 
-		color ?= white;
-		color ?= white;
-	}
+	color ?= white;
+	color ?= white;
+
+	background-color: #fff is a 'rgba';
+
+	name = 'blue';
+
+	lookup('light-' + name);
+
+	font-size: num em;
 }

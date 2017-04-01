@@ -88,13 +88,15 @@ function format(content, options, isDebugging = false) {
 
 	const outputBuffer = new StringBuffer(options)
 
-	function travel(inputNode, levelCount, insideExpression = false, data = {}) {
+	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
+		inputNode.parent = parentNode
+
 		const outputBuffer = new StringBuffer()
-		const indent = _.repeat(options.indentChar, levelCount)
+		const indent = _.repeat(options.indentChar, indentLevel)
 
 		// Insert sticky comment(s) before the current node
 		if (inputNode.commentsOnTop) {
-			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(node, levelCount)))
+			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(inputNode.parent, node, indentLevel)))
 		}
 
 		if (inputNode instanceof stylus.nodes.Import) {
@@ -111,17 +113,19 @@ function format(content, options, isDebugging = false) {
 			// Insert single-line comment(s)
 			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
 			if (topCommentNodes.length > 0) {
-				outputBuffer.append(topCommentNodes.map(node => travel(node, levelCount)))
+				outputBuffer.append(topCommentNodes.map(node => travel(inputNode.parent, node, indentLevel)))
 			}
 
 			// Insert CSS selector(s)
 			const separator = ',' + (options.insertNewLineBetweenSelectors ? (options.newLineChar + indent) : ' ')
-			outputBuffer.append(indent + inputNode.nodes.map(node => travel(node, levelCount, true)).join(separator).trim())
+			outputBuffer.append(indent + inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(separator).trim())
 
-			outputBuffer.append(travel(inputNode.block, levelCount, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.nodes) }))
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.nodes) }))
 
 		} else if (inputNode instanceof stylus.nodes.Root || inputNode instanceof stylus.nodes.Block) {
-			if (options.insertBraces) {
+			const childIndentLevel = inputNode instanceof stylus.nodes.Root ? 0 : (indentLevel + 1)
+
+			if (inputNode instanceof stylus.nodes.Block && options.insertBraces) {
 				outputBuffer.append(' {')
 			}
 
@@ -131,7 +135,7 @@ function format(content, options, isDebugging = false) {
 				if (options.insertSpaceBeforeComments) {
 					outputBuffer.append(' ')
 				}
-				outputBuffer.append(travel(sideCommentNode, levelCount, true))
+				outputBuffer.append(travel(inputNode.parent, sideCommentNode, indentLevel, true))
 			}
 
 			outputBuffer.append(options.newLineChar)
@@ -141,9 +145,7 @@ function format(content, options, isDebugging = false) {
 
 			const groups = []
 			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
-				if (rank === 0) {
-					groups.push([node])
-				} else if (node.toJSON().__type === list[rank - 1].toJSON().__type) {
+				if (rank > 0 && node.toJSON().__type === list[rank - 1].toJSON().__type && (node instanceof stylus.nodes.Group) === false) {
 					_.last(groups).push(node)
 				} else {
 					groups.push([node])
@@ -173,7 +175,7 @@ function format(content, options, isDebugging = false) {
 			// Note that do not mutate this
 			const nonCommentNodes = _.flatten(groups)
 
-			// Put a single-line comment to the relevant node
+			// Put single-line comment(s) to the relevant node
 			nonCommentNodes.forEach(node => {
 				node.commentsOnTop = tryGetSingleLineCommentNodesOnTheTopOf(node)
 
@@ -216,29 +218,29 @@ function format(content, options, isDebugging = false) {
 				}
 			})
 
-			// Insert CSS body (all of the nodes above)
+			// Insert CSS body
 			outputBuffer.append(groups.map(group =>
 				group.map(node =>
-					travel(node, levelCount + 1)
+					travel(inputNode, node, childIndentLevel)
 				).join('')
 			).join(options.insertNewLineBetweenGroups ? options.newLineChar : ''))
 
 			// Insert the bottom comment(s)
 			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
 			if (bottomCommentNodes) {
-				outputBuffer.append(bottomCommentNodes.map(node => travel(node, levelCount + 1)))
+				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)))
 			}
 
-			if (options.insertBraces) {
+			if (inputNode instanceof stylus.nodes.Block && options.insertBraces) {
 				outputBuffer.append(indent + '}').append(options.newLineChar)
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Selector) {
-			outputBuffer.append(inputNode.segments.map(segment => travel(segment, levelCount, true)))
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)))
 
 		} else if (inputNode instanceof stylus.nodes.Property) {
 			// Insert the property name
-			outputBuffer.append(indent + inputNode.segments.map(segment => travel(segment, levelCount, true)).join(''))
+			outputBuffer.append(indent + inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
 
 			if (options.insertColons) {
 				outputBuffer.append(':')
@@ -254,7 +256,7 @@ function format(content, options, isDebugging = false) {
 				// Insert the property value(s) without the last portion of comments
 				// Hence it will be, for example,
 				// margin: 8px /* middle-comment */ 0; /* last-comment */
-				outputBuffer.append(nodesExcludingLastComments.map(node => travel(node, levelCount, true)).join(' '))
+				outputBuffer.append(nodesExcludingLastComments.map(node => travel(inputNode, node, indentLevel, true)).join(' '))
 
 				// Put the last portion of comments aside
 				if (lastComments.length > 0) {
@@ -276,7 +278,7 @@ function format(content, options, isDebugging = false) {
 				if (options.insertSpaceBeforeComments) {
 					outputBuffer.append(' ')
 				}
-				outputBuffer.append(travel(commentNode, levelCount, true))
+				outputBuffer.append(travel(commentNode, indentLevel, true))
 			}*/
 
 			outputBuffer.append(options.newLineChar)
@@ -295,15 +297,55 @@ function format(content, options, isDebugging = false) {
 			outputBuffer.append(inputNode.name)
 
 			if (_.isObject(inputNode.val)) {
+				inputNode.val.parent = inputNode
+
 				if (inputNode.val instanceof stylus.nodes.Function) {
-					outputBuffer.append('(' + inputNode.val.params.nodes.map(node => travel(node, levelCount, true)).join(', ') + ')')
-					outputBuffer.append(travel(inputNode.val.block, levelCount, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.val.params.nodes) }))
+					inputNode.val.params.parent = inputNode.val
+
+					outputBuffer.append('(' + inputNode.val.params.nodes.map(node => travel(inputNode.val.params, node, indentLevel, true)).join(', ') + ')')
+					outputBuffer.append(travel(inputNode.val, inputNode.val.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.val.params.nodes) }))
 					outputBuffer.remove(options.newLineChar)
 
 				} else if (inputNode.val instanceof stylus.nodes.Expression) {
 					outputBuffer.append(' = ')
-					outputBuffer.append(inputNode.val.nodes.map(node => travel(node, levelCount, true)).join(' '))
+					outputBuffer.append(inputNode.val.nodes.map(node => travel(inputNode.val, node, indentLevel, true)).join(' '))
 				}
+			}
+
+			if (insideExpression === false) {
+				if (options.insertSemicolons && !(inputNode.val instanceof stylus.nodes.Function)) {
+					outputBuffer.append(';')
+				}
+				outputBuffer.append(options.newLineChar)
+			}
+
+		} else if (inputNode instanceof stylus.nodes.Call) {
+			inputNode.args.parent = inputNode
+
+			outputBuffer.append(inputNode.name)
+			outputBuffer.append('(' + inputNode.args.nodes.map(node => travel(inputNode.args, node, indentLevel, true)).join(', ') + ')')
+
+		} else if (inputNode instanceof stylus.nodes.Expression) {
+			if (insideExpression === false) {
+				outputBuffer.append(indent)
+			}
+
+			const parentIsASelector = inputNode.parent instanceof stylus.nodes.Selector
+			if (parentIsASelector) {
+				outputBuffer.append('{')
+			}
+
+			const currentIsAPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
+			outputBuffer.append(inputNode.nodes.map(node => {
+				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || insideExpression === false)) {
+					return '{' + travel(inputNode, node, indentLevel, true) + '}'
+				} else {
+					return travel(inputNode, node, indentLevel, true)
+				}
+			}).join(' '))
+
+			if (parentIsASelector) {
+				outputBuffer.append('}')
 			}
 
 			if (insideExpression === false) {
@@ -313,36 +355,23 @@ function format(content, options, isDebugging = false) {
 				outputBuffer.append(options.newLineChar)
 			}
 
-		} else if (inputNode instanceof stylus.nodes.Call) {
-			outputBuffer.append(inputNode.name).append('(' + inputNode.args.nodes.map(node => travel(node, levelCount)).join(', ') + ')')
-
-		} else if (inputNode instanceof stylus.nodes.Expression) {
-			const wrapVariableName = !data.doNotWrapVariableName
-			outputBuffer.append(inputNode.nodes.map(node => {
-				if (node instanceof stylus.nodes.Ident && wrapVariableName) {
-					return '{' + travel(node, levelCount, true) + '}'
-				} else {
-					return travel(node, levelCount, true)
-				}
-			}).join(' '))
-
 		} else if (inputNode instanceof stylus.nodes.Unit) {
 			outputBuffer.append(inputNode.val).append(inputNode.type)
 
 		} else if (inputNode instanceof stylus.nodes.UnaryOp) {
-			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op).append(travel(inputNode.expr, levelCount, true))
+			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op).append(travel(inputNode, inputNode.expr, indentLevel, true))
 
 		} else if (inputNode instanceof stylus.nodes.BinOp) {
 			if (inputNode.op === '[]') {
-				outputBuffer.append(travel(inputNode.left, levelCount, true) + '[' + travel(inputNode.right, levelCount, true) + ']')
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '[' + travel(inputNode, inputNode.right, indentLevel, true) + ']')
 
 			} else if (inputNode.op === '...') {
-				outputBuffer.append(travel(inputNode.left, levelCount, true) + '...' + travel(inputNode.right, levelCount, true))
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '...' + travel(inputNode, inputNode.right, indentLevel, true))
 
 			} else {
-				outputBuffer.append(travel(inputNode.left, levelCount, true) + ' ' + inputNode.op)
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + ' ' + inputNode.op)
 				if (inputNode.right) {
-					outputBuffer.append(' ' + travel(inputNode.right, levelCount, true))
+					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
 				}
 			}
 
@@ -352,16 +381,18 @@ function format(content, options, isDebugging = false) {
 			}
 
 			if (insideExpression === false && inputNode.cond instanceof stylus.nodes.BinOp && inputNode.cond.op === 'is defined') {
+				inputNode.cond.parent = inputNode
+
 				outputBuffer.append(inputNode.cond.left.name)
 				outputBuffer.append(' ?= ')
-				outputBuffer.append(travel(inputNode.cond.left.val, levelCount, true, { doNotWrapVariableName: true }))
+				outputBuffer.append(travel(inputNode.cond, inputNode.cond.left.val, indentLevel, true))
 
 			} else {
-				outputBuffer.append(travel(inputNode.cond, levelCount, true, { doNotWrapVariableName: true }))
+				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
 				outputBuffer.append(' ? ')
-				outputBuffer.append(travel(inputNode.trueExpr, levelCount, true, { doNotWrapVariableName: true }))
+				outputBuffer.append(travel(inputNode, inputNode.trueExpr, indentLevel, true))
 				outputBuffer.append(' : ')
-				outputBuffer.append(travel(inputNode.falseExpr, levelCount, true, { doNotWrapVariableName: true }))
+				outputBuffer.append(travel(inputNode, inputNode.falseExpr, indentLevel, true))
 			}
 
 			if (insideExpression === false) {
@@ -373,6 +404,9 @@ function format(content, options, isDebugging = false) {
 
 		} else if (inputNode instanceof stylus.nodes.Boolean) {
 			outputBuffer.append(inputNode.val.toString())
+
+		} else if (inputNode instanceof stylus.nodes.RGBA) {
+			outputBuffer.append(inputNode.raw.trim())
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
 			if (insideExpression === false) {
@@ -450,7 +484,7 @@ function format(content, options, isDebugging = false) {
 			if (options.insertSpaceBeforeComments) {
 				outputBuffer.append(' ')
 			}
-			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(node, levelCount, true)))
+			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(inputNode.parent, node, indentLevel, true)))
 			outputBuffer.append(options.newLineChar)
 		}
 
@@ -458,6 +492,11 @@ function format(content, options, isDebugging = false) {
 	}
 
 	function tryGetSingleLineCommentNodesOnTheTopOf(inputNode) {
+		// Skip operation for `Group` type
+		if (inputNode instanceof stylus.nodes.Group) {
+			return []
+		}
+
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
 		while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex].trim().startsWith('//')) {
@@ -468,6 +507,11 @@ function format(content, options, isDebugging = false) {
 
 	function tryGetSingleLineCommentNodesOnTheBottomOf(inputNode) {
 		if (!inputNode) {
+			return null
+		}
+
+		// Skip operation for `Group` type
+		if (inputNode instanceof stylus.nodes.Group) {
 			return null
 		}
 
@@ -482,6 +526,11 @@ function format(content, options, isDebugging = false) {
 
 	function tryGetSingleLineCommentNodeOnTheRightOf(inputNode) {
 		if (!inputNode || lines[inputNode.lineno - 1].substring(inputNode.column - 1).includes('//') === false) {
+			return null
+		}
+
+		// Skip operation for `Group` type
+		if (inputNode instanceof stylus.nodes.Group) {
 			return null
 		}
 
@@ -515,7 +564,18 @@ function format(content, options, isDebugging = false) {
 		return new stylus.nodes.Comment(sideCommentText, false, false)
 	}
 
-	let output = travel(rootNode, 0)
+	function travelUpUntil(inputNode, condition) {
+		const workingNode = inputNode && inputNode.parent
+		if (!workingNode) {
+			return null
+		} else if (condition(workingNode)) {
+			return workingNode
+		} else {
+			return travelUpUntil(workingNode, condition)
+		}
+	}
+
+	let output = travel(null, rootNode, 0)
 	if (output.startsWith(options.newLineChar)) {
 		output = output.substring(options.newLineChar.length)
 	}
