@@ -55,7 +55,7 @@ class StringBuffer {
 	}
 }
 
-function format(content, options, isDebugging = false) {
+function format(content, options) {
 	options = _.assign({}, defaultFormattingOptions, options)
 
 	const newLineBetweenGroups = _.repeat(options.newLineChar, options.insertNewLineBetweenGroups)
@@ -81,10 +81,6 @@ function format(content, options, isDebugging = false) {
 	}
 
 	const rootNode = new stylus.Parser(content).parse()
-
-	if (isDebugging) {
-		console.log(JSON.stringify(rootNode, null, '\t'))
-	}
 
 	const outputBuffer = new StringBuffer(options)
 
@@ -584,7 +580,8 @@ function format(content, options, isDebugging = false) {
 	}
 
 	return {
-		content: output,
+		tree: rootNode,
+		text: output,
 		warnings,
 	}
 }

@@ -1,3 +1,4 @@
 node_modules
+spec/**/debugging.json
 spec/**/actual.styl
 *.log
