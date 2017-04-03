@@ -268,6 +268,7 @@ function format(content, options) {
 					}
 					inputNode.commentsOnRight = inputNode.commentsOnRight.concat(lastComments)
 				}
+
 			} else {
 				warnings.push({ message: 'Found unknown object', data: inputNode })
 			}
@@ -339,7 +340,14 @@ function format(content, options) {
 			}
 
 			outputBuffer.append(inputNode.name)
-			outputBuffer.append(travel(inputNode, inputNode.args, indentLevel, true))
+
+			if (inputNode.name === 'url' && inputNode.args.nodes.length === 1 && inputNode.args.nodes[0] instanceof stylus.nodes.Expression && inputNode.args.nodes[0].nodes.length > 1) { // In case of `url(non-string)`
+				const modifiedArgument = new stylus.nodes.Arguments()
+				modifiedArgument.nodes = [new stylus.nodes.String(inputNode.args.nodes[0].nodes.map(node => travel(inputNode.args, node, indentLevel, true)).join(''))]
+				outputBuffer.append(travel(inputNode, modifiedArgument, indentLevel, true))
+			} else {
+				outputBuffer.append(travel(inputNode, inputNode.args, indentLevel, true))
+			}
 
 			if (inputNode.block) {
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
@@ -379,7 +387,7 @@ function format(content, options) {
 
 			const currentIsAPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
 			outputBuffer.append(inputNode.nodes.map(node => {
-				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || insideExpression === false)) {
+				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || insideExpression === false) || node.mixin === true) {
 					return '{' + travel(inputNode, node, indentLevel, true) + '}'
 				} else {
 					return travel(inputNode, node, indentLevel, true)
@@ -566,6 +574,31 @@ function format(content, options) {
 				outputBuffer.append('for ' + _.compact([inputNode.val, inputNode.key]).join(', ') + ' in ' + travel(inputNode, inputNode.expr, indentLevel, true))
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
 			}
+
+		} else if (inputNode instanceof stylus.nodes.Media) {
+			outputBuffer.append('@media ' + travel(inputNode, inputNode.val, indentLevel))
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+
+		} else if (inputNode instanceof stylus.nodes.QueryList) {
+			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
+
+		} else if (inputNode instanceof stylus.nodes.Query) {
+			outputBuffer.append(inputNode.type.val)
+			if (inputNode.type.val && inputNode.nodes.length > 0) {
+				outputBuffer.append(' and ')
+			}
+			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(' and '))
+
+		} else if (inputNode instanceof stylus.nodes.Feature) {
+			outputBuffer.append('(')
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)))
+			outputBuffer.append(': ')
+			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
+			outputBuffer.append(')')
+
+		} else if (inputNode instanceof stylus.nodes.Atrule) {
+			outputBuffer.append('@' + inputNode.type)
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
 			if (insideExpression === false) {
