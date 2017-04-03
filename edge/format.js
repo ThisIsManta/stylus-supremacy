@@ -99,7 +99,11 @@ function format(content, options) {
 		}
 
 		if (inputNode instanceof stylus.nodes.Import) {
-			outputBuffer.append(indent + `@${options.alwaysUseImport || inputNode.once === false ? 'import' : 'require'} '${inputNode.path.nodes[0].val}'`)
+			const quote = options.stringQuoteChar || '\''
+
+			outputBuffer.append(indent)
+			outputBuffer.append(options.alwaysUseImport || inputNode.once === false ? 'import' : 'require')
+			outputBuffer.append(' ' + quote + inputNode.path.nodes[0].val + quote)
 
 			if (options.insertSemicolons) {
 				outputBuffer.append(';')
@@ -308,6 +312,9 @@ function format(content, options) {
 			} else if (inputNode.val instanceof stylus.nodes.Expression) {
 				outputBuffer.append(' = ')
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
+
+			} else if (inputNode.val instanceof stylus.nodes.BinOp && inputNode.val.left instanceof stylus.nodes.Ident && inputNode.val.left.name === inputNode.name && inputNode.val.right) {
+				outputBuffer.append(' ' + inputNode.val.op + '= ' + travel(inputNode.val, inputNode.val.right, indentLevel, true))
 			}
 
 			if (insideExpression === false) {
@@ -397,11 +404,15 @@ function format(content, options) {
 			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op).append(travel(inputNode, inputNode.expr, indentLevel, true))
 
 		} else if (inputNode instanceof stylus.nodes.BinOp) {
-			if (inputNode.op === '[]') {
+			if (inputNode.op === '[]') { // In case of array accessing
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '[' + travel(inputNode, inputNode.right, indentLevel, true) + ']')
 
-			} else if (inputNode.op === '...') {
+			} else if (inputNode.op === '...') { // In case of ranges
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '...' + travel(inputNode, inputNode.right, indentLevel, true))
+
+			} else if (inputNode.op === '[]=') { // In case of object-property assignment
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '[' + travel(inputNode, inputNode.right, indentLevel, true) + '] = ')
+				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + ' ' + inputNode.op)
@@ -443,6 +454,30 @@ function format(content, options) {
 		} else if (inputNode instanceof stylus.nodes.RGBA) {
 			outputBuffer.append(inputNode.raw.trim())
 
+		} else if (inputNode instanceof stylus.nodes.Object) {
+			const keyValuePairs = _.toPairs(inputNode.vals)
+			if (keyValuePairs.length === 0) {
+				outputBuffer.append('{}')
+
+			} else if (keyValuePairs.map(pair => pair[1]).every(node => node.lineno === inputNode.lineno)) {
+				outputBuffer.append('{ ')
+				outputBuffer.append(keyValuePairs.map(pair =>
+					getProperVariableName(pair[0]) + ': ' +
+					travel(inputNode, pair[1], indentLevel, true)
+				).join(', '))
+				outputBuffer.append(' }')
+
+			} else {
+				const childIndent = indent + options.indentChar
+				outputBuffer.append('{' + options.newLineChar)
+				outputBuffer.append(keyValuePairs.map(pair =>
+					childIndent +
+					getProperVariableName(pair[0]) + ': ' +
+					travel(inputNode, pair[1], indentLevel + 1, true)
+				).join(',' + options.newLineChar))
+				outputBuffer.append(options.newLineChar + indent + '}')
+			}
+
 		} else if (inputNode instanceof stylus.nodes.If) {
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
@@ -464,10 +499,12 @@ function format(content, options) {
 					outputBuffer.append(')')
 				}
 
-				if (options.insertSemicolons) {
-					outputBuffer.append(';')
+				if (insideExpression === false) {
+					if (options.insertSemicolons) {
+						outputBuffer.append(';')
+					}
+					outputBuffer.append(options.newLineChar)
 				}
-				outputBuffer.append(options.newLineChar)
 
 			} else {
 				if (insideExpression) {
@@ -507,6 +544,27 @@ function format(content, options) {
 						}
 					})
 				}
+			}
+
+		} else if (inputNode instanceof stylus.nodes.Each) {
+			if (insideExpression === false) {
+				outputBuffer.append(indent)
+			}
+
+			if (_.size(inputNode.block.nodes) === 1 && inputNode.lineno === inputNode.block.nodes[0].lineno && inputNode.block.nodes[0].column < inputNode.column) { // In case of postfix
+				outputBuffer.append(travel(inputNode, inputNode.block.nodes[0], indentLevel, true))
+				outputBuffer.append(' for ' + _.compact([inputNode.val, inputNode.key]).join(', ') + ' in ' + travel(inputNode, inputNode.expr, indentLevel, true))
+
+				if (insideExpression === false) {
+					if (options.insertSemicolons) {
+						outputBuffer.append(';')
+					}
+					outputBuffer.append(options.newLineChar)
+				}
+
+			} else {
+				outputBuffer.append('for ' + _.compact([inputNode.val, inputNode.key]).join(', ') + ' in ' + travel(inputNode, inputNode.expr, indentLevel, true))
+				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
@@ -673,6 +731,14 @@ function format(content, options) {
 			return workingNode
 		} else {
 			return travelUpUntil(workingNode, condition)
+		}
+	}
+
+	function getProperVariableName(name) {
+		if (/^\d/.test(name) || /\s/.test(name)) {
+			return (options.stringQuoteChar || '\'') + name + (options.stringQuoteChar || '\'')
+		} else {
+			return name
 		}
 	}
 

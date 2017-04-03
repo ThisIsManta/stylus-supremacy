@@ -1,0 +1,18 @@
+foo = { width: 10px, height: 20px };
+foo = {
+	'0': false,
+	a1: {
+		b1: true,
+		b2: false
+	},
+	a2: { c2: true },
+	a3: {}
+};
+
+foo['0'] = bar;
+
+body {
+	{foo};
+
+	display: a3 in foo;
+}
