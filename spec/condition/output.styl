@@ -2,6 +2,7 @@ body {
 	if (x == y) {
 		margin: 1;
 	}
+
 	if (x > y) {
 		padding: x;
 	} else if (x < y) {
@@ -9,6 +10,7 @@ body {
 	} else {
 		padding: 0;
 	}
+
 	unless (x == y) {
 		display: none;
 	}
@@ -16,6 +18,7 @@ body {
 
 negative(n) {
 	error('invalid number') unless (n is a 'unit');
+
 	return yes if (n < 0);
 
 	no;
