@@ -88,6 +88,17 @@ function format(content, options) {
 	const outputBuffer = new StringBuffer(options)
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
+		// Check argument type
+		if ([
+			_.isObject(parentNode) || parentNode === null && inputNode instanceof stylus.nodes.Root,
+			_.isObject(inputNode),
+			_.isInteger(indentLevel) && indentLevel >= 0,
+			_.isBoolean(insideExpression),
+			_.isPlainObject(data),
+		].some(constraint => !constraint)) {
+			throw 'Found one or many invalid arguments.'
+		}
+		
 		inputNode.parent = parentNode
 
 		const outputBuffer = new StringBuffer()
@@ -111,8 +122,6 @@ function format(content, options) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Group) {
-			// outputBuffer.append(newLineBetweenGroups)
-
 			// Insert single-line comment(s)
 			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
 			if (topCommentNodes.length > 0) {
@@ -400,8 +409,9 @@ function format(content, options) {
 			}
 
 			const currentIsAPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
+			const currentIsAPartOfKeyframes = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Keyframes && node.segments.includes(inputNode))
 			outputBuffer.append(inputNode.nodes.map(node => {
-				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || insideExpression === false) || node.mixin === true) {
+				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || currentIsAPartOfKeyframes || insideExpression === false) || node.mixin === true) {
 					return '{' + travel(inputNode, node, indentLevel, true) + '}'
 				} else {
 					return travel(inputNode, node, indentLevel, true)
@@ -591,6 +601,10 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Media) {
 			outputBuffer.append(indent + '@media ' + travel(inputNode, inputNode.val, indentLevel))
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+
+		} else if (inputNode instanceof stylus.nodes.Keyframes) {
+			outputBuffer.append('@keyframes ' + inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(', '))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.QueryList) {
