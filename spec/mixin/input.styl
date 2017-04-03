@@ -1,0 +1,17 @@
+mixin(n)
+  -webkit-border-radius n
+
+button
+  mixin(5px)
+  mixin 5px
+
+foo()
+  .bar
+    {block}
+
++foo()
+  width 10px
+
+nested-mixin(n)
+  inner-mixin(m)
+    margin n m

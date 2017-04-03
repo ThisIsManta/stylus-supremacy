@@ -1,0 +1,39 @@
+add(a, b) {
+	a = unit(a, px);
+	b = unit(b, px);
+
+	a + b;
+}
+
+body {
+	padding: add(10px, 5);
+}
+
+func(x, y = unit(a, px)) {
+	x ** y;
+}
+
+func(x: 10, y: 25);
+
+alias = func;
+multi-returned-value-func() {
+	10px 25px;
+}
+anonymous-func = @(a, b) {
+	a > b;
+}
+
+body {
+	color: mix(#000, #fff, 30%);
+}
+
++prefix-classes('foo-') {
+	.bar {
+		width: 10px;
+	}
+}
+
+box-shadow(a, args...) {
+	box-shadow: args;
+	border-radius: arguments;
+}
