@@ -93,6 +93,8 @@ glob.sync('spec/' + (filteredSpecName || '*'))
 						stack
 					})
 				}
+
+				expect(actual.warnings.length).toBe(0)
 			})
 		})
 	})

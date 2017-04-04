@@ -148,7 +148,7 @@ function format(content, options) {
 
 			const groups = []
 			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
-				if (rank > 0 && node.toJSON().__type === list[rank - 1].toJSON().__type && (node instanceof stylus.nodes.Group) === false) {
+				if (rank > 0 && node.toJSON().__type === list[rank - 1].toJSON().__type && node.block === undefined) {
 					_.last(groups).push(node)
 				} else {
 					groups.push([node])
@@ -240,6 +240,9 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Selector) {
 			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)))
+			if (inputNode.optional) {
+				outputBuffer.append('!optional')
+			}
 
 		} else if (inputNode instanceof stylus.nodes.Property) {
 			// Insert the property name
@@ -305,8 +308,6 @@ function format(content, options) {
 				outputBuffer.append('@')
 			}
 
-			const currentHasChildOfAnonymousFunc = inputNode.val instanceof stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof stylus.nodes.Ident && inputNode.val.nodes[0].val instanceof stylus.nodes.Function && inputNode.val.nodes[0].val.name === 'anonymous'
-
 			if (inputNode.val instanceof stylus.nodes.Function) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, false))
 
@@ -318,8 +319,12 @@ function format(content, options) {
 				outputBuffer.append(' ' + inputNode.val.op + '= ' + travel(inputNode.val, inputNode.val.right, indentLevel, true))
 			}
 
+			const currentHasChildOfAnonymousFunc = inputNode.val instanceof stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof stylus.nodes.Ident && inputNode.val.nodes[0].val instanceof stylus.nodes.Function && inputNode.val.nodes[0].val.name === 'anonymous'
+
+			const currentHasChildOfAtblock = inputNode.val instanceof stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof stylus.nodes.Atblock
+
 			if (insideExpression === false) {
-				if (options.insertSemicolons && !(inputNode.val instanceof stylus.nodes.Function) && currentHasChildOfAnonymousFunc === false) {
+				if (options.insertSemicolons && !(inputNode.val instanceof stylus.nodes.Function || currentHasChildOfAnonymousFunc || currentHasChildOfAtblock)) {
 					outputBuffer.append(';')
 				}
 				outputBuffer.append(options.newLineChar)
@@ -576,7 +581,7 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Media) {
-			outputBuffer.append('@media ' + travel(inputNode, inputNode.val, indentLevel))
+			outputBuffer.append(indent + '@media ' + travel(inputNode, inputNode.val, indentLevel))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.QueryList) {
@@ -596,9 +601,33 @@ function format(content, options) {
 			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 			outputBuffer.append(')')
 
+		} else if (inputNode instanceof stylus.nodes.Supports) {
+			outputBuffer.append(indent + '@supports ')
+			outputBuffer.append(travel(inputNode, inputNode.condition, indentLevel, true))
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
+
 		} else if (inputNode instanceof stylus.nodes.Atrule) {
-			outputBuffer.append('@' + inputNode.type)
+			outputBuffer.append(indent + '@' + inputNode.type)
+			if (_.some(inputNode.segments)) {
+				outputBuffer.append(' ' + inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+			}
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+
+		} else if (inputNode instanceof stylus.nodes.Extend) {
+			outputBuffer.append(indent + '@extends ' + inputNode.selectors.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
+			outputBuffer.append(options.newLineChar)
+
+		} else if (inputNode instanceof stylus.nodes.Atblock) {
+			if (options.insertBraces) {
+				outputBuffer.append('@block')
+			} else {
+				outputBuffer.remove(' ')
+			}
+
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+
+			// Remove the extra new-line because of `Ident` and `Block`
+			outputBuffer.remove(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
 			if (insideExpression === false) {
@@ -691,7 +720,7 @@ function format(content, options) {
 
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
-		while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex].trim().startsWith('//')) {
+		while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex] !== undefined && lines[zeroBasedLineIndex].trim().startsWith('//')) {
 			commentNodes.unshift(new stylus.nodes.Comment(lines[zeroBasedLineIndex].trim(), false, false))
 		}
 		return commentNodes
@@ -726,8 +755,11 @@ function format(content, options) {
 			return null
 		}
 
-		let zeroBasedLineIndex = inputNode.lineno - 1
-		let sideCommentText = lines[zeroBasedLineIndex]
+		let sideCommentText = lines[inputNode.lineno - 1]
+		if (sideCommentText === undefined) {
+			return null
+		}
+
 		sideCommentText = sideCommentText.substring(sideCommentText.indexOf('//', inputNode.column)).trim()
 		return new stylus.nodes.Comment(sideCommentText, false, false)
 	}
