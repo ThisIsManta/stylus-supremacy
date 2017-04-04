@@ -16,7 +16,7 @@ const defaultFormattingOptions = {
 	// TODO: insertLeadingZeroInFrontOfNumbers: true,
 	indentChar: '\t',
 	newLineChar: os.EOL,
-	stringQuoteChar: false, // Specify falsy for not chaning the original quote
+	stringQuoteChar: '\'',
 	// TODO: sortImports: 'alphabetical',
 	sortProperties: 'alphabetical',
 	alwaysUseImport: false,
@@ -31,25 +31,30 @@ class StringBuffer {
 	append(text = '') {
 		if (arguments.length > 1) {
 			throw new Error('Found exceed arguments')
-		}
-		if (_.isArray(text)) {
-			this.buffer = this.buffer.concat(text)
-		} else {
+
+		} else if (_.isObject(text)) {
+			throw new Error('Found a non-string argument')
+
+		} else if (text !== '') {
 			this.buffer.push(text)
 		}
+
 		return this
 	}
 
 	remove(text) {
 		if (text === undefined) {
 			this.buffer.pop()
+
 		} else if (this.buffer.length > 0) {
 			if (_.last(this.buffer) === text) {
 				this.buffer.pop()
+
 			} else if (_.last(this.buffer).endsWith(text)) {
 				this.buffer[this.buffer.length - 1] = _.last(this.buffer).substring(0, _.last(this.buffer).length - text.length)
 			}
 		}
+
 		return this
 	}
 
@@ -61,31 +66,11 @@ class StringBuffer {
 function format(content, options) {
 	options = _.assign({}, defaultFormattingOptions, options)
 
-	const newLineBetweenGroups = _.repeat(options.newLineChar, options.insertNewLineBetweenGroups)
-
 	const warnings = []
 
 	const lines = content.split('\n')
-	lines.between = function (startLineIndex, startColumnIndex, endLineIndex, endColumnIndex) {
-		if (startLineIndex === endLineIndex) {
-			return lines[startLineIndex].substring(startColumnIndex, endColumnIndex)
-
-		} else {
-			let buffer = [lines[startLineIndex].substring(startColumnIndex)]
-			if (endLineIndex >= this.length) {
-				endLineIndex = this.length - 1
-			}
-			while (++startLineIndex < this.length && startLineIndex < endLineIndex) {
-				buffer.push(lines[startLineIndex])
-			}
-			buffer.push(lines[endLineIndex].substring(0, endColumnIndex))
-			return buffer.join('\n')
-		}
-	}
 
 	const rootNode = new stylus.Parser(content).parse()
-
-	const outputBuffer = new StringBuffer(options)
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
@@ -96,25 +81,26 @@ function format(content, options) {
 			_.isBoolean(insideExpression),
 			_.isPlainObject(data),
 		].some(constraint => !constraint)) {
-			throw 'Found one or many invalid arguments.'
+			throw new Error('Found one or many invalid arguments.')
 		}
-		
+
 		inputNode.parent = parentNode
 
 		const outputBuffer = new StringBuffer()
+
 		const indent = _.repeat(options.indentChar, indentLevel)
 
 		// Insert sticky comment(s) before the current node
 		if (inputNode.commentsOnTop) {
-			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(inputNode.parent, node, indentLevel)))
+			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
 		}
 
 		if (inputNode instanceof stylus.nodes.Import) {
-			const quote = options.stringQuoteChar || '\''
-
 			outputBuffer.append(indent)
+			outputBuffer.append('@')
 			outputBuffer.append(options.alwaysUseImport || inputNode.once === false ? 'import' : 'require')
-			outputBuffer.append(' ' + quote + inputNode.path.nodes[0].val + quote)
+			outputBuffer.append(' ')
+			outputBuffer.append(travel(inputNode, inputNode.path, indentLevel, true))
 
 			if (options.insertSemicolons) {
 				outputBuffer.append(';')
@@ -125,7 +111,7 @@ function format(content, options) {
 			// Insert single-line comment(s)
 			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
 			if (topCommentNodes.length > 0) {
-				outputBuffer.append(topCommentNodes.map(node => travel(inputNode.parent, node, indentLevel)))
+				outputBuffer.append(topCommentNodes.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
 			}
 
 			// Insert CSS selector(s)
@@ -235,21 +221,22 @@ function format(content, options) {
 				group.map(node =>
 					travel(inputNode, node, childIndentLevel)
 				).join('')
-			).join(options.insertNewLineBetweenGroups ? options.newLineChar : ''))
+			).join(_.repeat(options.newLineChar, options.insertNewLineBetweenGroups)))
 
 			// Insert the bottom comment(s)
 			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
 			if (bottomCommentNodes) {
-				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)))
+				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)).join(''))
 			}
 
 			if (inputNode instanceof stylus.nodes.Block && options.insertBraces) {
-				outputBuffer.append(indent + '}').append(options.newLineChar)
+				outputBuffer.append(indent + '}')
+				outputBuffer.append(options.newLineChar)
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Selector) {
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)))
-			if (inputNode.optional) {
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+			if (inputNode.optional === true) {
 				outputBuffer.append('!optional')
 			}
 
@@ -288,15 +275,6 @@ function format(content, options) {
 			if (options.insertSemicolons) {
 				outputBuffer.append(';')
 			}
-
-			/*const commentNode = tryGetCommentNodeOnTheRightOf(inputNode)
-			if (commentNode) {
-				if (options.insertSpaceBeforeComments) {
-					outputBuffer.append(' ')
-				}
-				outputBuffer.append(travel(commentNode, indentLevel, true))
-			}*/
-
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Literal) {
@@ -312,28 +290,31 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.String) {
-			outputBuffer.append(options.stringQuoteChar || inputNode.quote).append(inputNode.val).append(options.stringQuoteChar || inputNode.quote)
+			outputBuffer.append(options.stringQuoteChar)
+			outputBuffer.append(inputNode.val)
+			outputBuffer.append(options.stringQuoteChar)
 
 		} else if (inputNode instanceof stylus.nodes.Ident) {
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
 			}
 
+			// Replace the identifier name with '@' for anonymous functions
 			const currentIsAnonymousFunc = inputNode.name === 'anonymous' && inputNode.val instanceof stylus.nodes.Function && inputNode.val.name === 'anonymous'
-			if (currentIsAnonymousFunc === false) {
-				outputBuffer.append(inputNode.name)
-			} else {
+			if (currentIsAnonymousFunc) {
 				outputBuffer.append('@')
+			} else {
+				outputBuffer.append(inputNode.name)
 			}
 
 			if (inputNode.val instanceof stylus.nodes.Function) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, false))
 
-			} else if (inputNode.val instanceof stylus.nodes.Expression) {
+			} else if (inputNode.val instanceof stylus.nodes.Expression) { // In case of assignments
 				outputBuffer.append(' = ')
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
-			} else if (inputNode.val instanceof stylus.nodes.BinOp && inputNode.val.left instanceof stylus.nodes.Ident && inputNode.val.left.name === inputNode.name && inputNode.val.right) {
+			} else if (inputNode.val instanceof stylus.nodes.BinOp && inputNode.val.left instanceof stylus.nodes.Ident && inputNode.val.left.name === inputNode.name && inputNode.val.right) { // In case of self-assignments
 				outputBuffer.append(' ' + inputNode.val.op + '= ' + travel(inputNode.val, inputNode.val.right, indentLevel, true))
 			}
 
@@ -349,16 +330,20 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Function) {
+			// Insert the parameter list
 			outputBuffer.append('(' + travel(inputNode, inputNode.params, indentLevel, true) + ')')
 
+			// Insert the function body
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.params.nodes) }))
+
+			// Trim a new-line generated by `Block` because it will cancel a new-line generated by `Ident`
 			outputBuffer.remove(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Params) {
 			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true) + (node.rest ? '...' : '')).join(', '))
 
 		} else if (inputNode instanceof stylus.nodes.Call) {
-			if (inputNode.block) {
+			if (inputNode.block) { // In case of block mixins
 				outputBuffer.append('+')
 			}
 
@@ -368,11 +353,12 @@ function format(content, options) {
 				const modifiedArgument = new stylus.nodes.Arguments()
 				modifiedArgument.nodes = [new stylus.nodes.String(inputNode.args.nodes[0].nodes.map(node => travel(inputNode.args, node, indentLevel, true)).join(''))]
 				outputBuffer.append(travel(inputNode, modifiedArgument, indentLevel, true))
+
 			} else {
 				outputBuffer.append(travel(inputNode, inputNode.args, indentLevel, true))
 			}
 
-			if (inputNode.block) {
+			if (inputNode.block) { // In case of block mixins
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 			}
 
@@ -388,13 +374,13 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Arguments) {
 			outputBuffer.append('(')
-			if (_.isEmpty(inputNode.map)) {
-				outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
-
-			} else {
+			if (_.some(inputNode.map)) { // In case of named-arguments
 				outputBuffer.append(_.toPairs(inputNode.map).map(pair =>
 					pair[0] + ': ' + travel(inputNode, pair[1], indentLevel, true)
 				).join(', '))
+
+			} else {
+				outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
 			}
 			outputBuffer.append(')')
 
@@ -403,22 +389,24 @@ function format(content, options) {
 				outputBuffer.append(indent)
 			}
 
-			const parentIsASelector = inputNode.parent instanceof stylus.nodes.Selector
-			if (parentIsASelector) {
+			const parentIsSelector = inputNode.parent instanceof stylus.nodes.Selector
+			if (parentIsSelector) {
 				outputBuffer.append('{')
 			}
 
-			const currentIsAPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
-			const currentIsAPartOfKeyframes = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Keyframes && node.segments.includes(inputNode))
+			const currentIsPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
+
+			const currentIsPartOfKeyframes = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Keyframes && node.segments.includes(inputNode))
+
 			outputBuffer.append(inputNode.nodes.map(node => {
-				if (node instanceof stylus.nodes.Ident && (currentIsAPartOfPropertyNames || currentIsAPartOfKeyframes || insideExpression === false) || node.mixin === true) {
+				if (node instanceof stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
 					return '{' + travel(inputNode, node, indentLevel, true) + '}'
 				} else {
 					return travel(inputNode, node, indentLevel, true)
 				}
 			}).join(' '))
 
-			if (parentIsASelector) {
+			if (parentIsSelector) {
 				outputBuffer.append('}')
 			}
 
@@ -437,17 +425,24 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.BinOp) {
 			if (inputNode.op === '[]') { // In case of array accessing
-				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '[' + travel(inputNode, inputNode.right, indentLevel, true) + ']')
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+				outputBuffer.append('[' + travel(inputNode, inputNode.right, indentLevel, true) + ']')
 
 			} else if (inputNode.op === '...') { // In case of ranges
-				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '...' + travel(inputNode, inputNode.right, indentLevel, true))
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+				outputBuffer.append('...')
+				outputBuffer.append(travel(inputNode, inputNode.right, indentLevel, true))
 
-			} else if (inputNode.op === '[]=') { // In case of object-property assignment
-				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + '[' + travel(inputNode, inputNode.right, indentLevel, true) + '] = ')
+			} else if (inputNode.op === '[]=') { // In case of object-property assignments
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+				outputBuffer.append('[')
+				outputBuffer.append(travel(inputNode, inputNode.right, indentLevel, true))
+				outputBuffer.append('] = ')
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
-				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true) + ' ' + inputNode.op)
+				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+				outputBuffer.append(' ' + inputNode.op)
 				if (inputNode.right) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
 				}
@@ -488,10 +483,10 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Object) {
 			const keyValuePairs = _.toPairs(inputNode.vals)
-			if (keyValuePairs.length === 0) {
+			if (keyValuePairs.length === 0) { // In case of an empty object
 				outputBuffer.append('{}')
 
-			} else if (keyValuePairs.map(pair => pair[1]).every(node => node.lineno === inputNode.lineno)) {
+			} else if (keyValuePairs.map(pair => pair[1]).every(node => node.lineno === inputNode.lineno)) { // In case of one-line object-property spreading
 				outputBuffer.append('{ ')
 				outputBuffer.append(keyValuePairs.map(pair =>
 					getProperVariableName(pair[0]) + ': ' +
@@ -499,7 +494,7 @@ function format(content, options) {
 				).join(', '))
 				outputBuffer.append(' }')
 
-			} else {
+			} else { // In case of multiple-line object-property spreading
 				const childIndent = indent + options.indentChar
 				outputBuffer.append('{' + options.newLineChar)
 				outputBuffer.append(keyValuePairs.map(pair =>
@@ -517,7 +512,7 @@ function format(content, options) {
 
 			const operation = inputNode.negate ? 'unless' : 'if'
 
-			if (inputNode.postfix) {
+			if (inputNode.postfix === true) {
 				// Insert the `if` body
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, true))
 				outputBuffer.append(' ' + operation + ' ')
@@ -569,9 +564,11 @@ function format(content, options) {
 							outputBuffer.append(' ')
 						}
 
-						outputBuffer.append('else' + travel(inputNode, node, indentLevel, true))
+						outputBuffer.append('else')
+						outputBuffer.append(travel(inputNode, node, indentLevel, true))
 
-						if (rank < list.length - 1 && options.insertNewLineBetweenElseIf === false) {
+						// Remove the extra new-line generated by `Block`
+						if (options.insertNewLineBetweenElseIf === false && rank < list.length - 1) {
 							outputBuffer.remove(options.newLineChar)
 						}
 					})
@@ -583,9 +580,14 @@ function format(content, options) {
 				outputBuffer.append(indent)
 			}
 
-			if (_.size(inputNode.block.nodes) === 1 && inputNode.lineno === inputNode.block.nodes[0].lineno && inputNode.block.nodes[0].column < inputNode.column) { // In case of postfix
+			const currentHasOnlyOneChild = _.size(inputNode.block.nodes) === 1
+			const currentIsOnTheSameLineAsBody = inputNode.lineno === inputNode.block.nodes[0].lineno && inputNode.block.nodes[0].column < inputNode.column
+			if (currentHasOnlyOneChild && currentIsOnTheSameLineAsBody) { // In case of postfix
 				outputBuffer.append(travel(inputNode, inputNode.block.nodes[0], indentLevel, true))
-				outputBuffer.append(' for ' + _.compact([inputNode.val, inputNode.key]).join(', ') + ' in ' + travel(inputNode, inputNode.expr, indentLevel, true))
+				outputBuffer.append(' for ')
+				outputBuffer.append(_.compact([inputNode.val, inputNode.key]).join(', '))
+				outputBuffer.append(' in ')
+				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 
 				if (insideExpression === false) {
 					if (options.insertSemicolons) {
@@ -595,16 +597,21 @@ function format(content, options) {
 				}
 
 			} else {
-				outputBuffer.append('for ' + _.compact([inputNode.val, inputNode.key]).join(', ') + ' in ' + travel(inputNode, inputNode.expr, indentLevel, true))
+				outputBuffer.append('for ')
+				outputBuffer.append(_.compact([inputNode.val, inputNode.key]).join(', '))
+				outputBuffer.append(' in ')
+				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Media) {
-			outputBuffer.append(indent + '@media ' + travel(inputNode, inputNode.val, indentLevel))
+			outputBuffer.append(indent + '@media ')
+			outputBuffer.append(travel(inputNode, inputNode.val, indentLevel))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.Keyframes) {
-			outputBuffer.append('@keyframes ' + inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(', '))
+			outputBuffer.append('@keyframes ')
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(', '))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.QueryList) {
@@ -619,7 +626,7 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Feature) {
 			outputBuffer.append('(')
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)))
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
 			outputBuffer.append(': ')
 			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 			outputBuffer.append(')')
@@ -632,12 +639,14 @@ function format(content, options) {
 		} else if (inputNode instanceof stylus.nodes.Atrule) {
 			outputBuffer.append(indent + '@' + inputNode.type)
 			if (_.some(inputNode.segments)) {
-				outputBuffer.append(' ' + inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+				outputBuffer.append(' ')
+				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
 			}
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.Extend) {
-			outputBuffer.append(indent + '@extends ' + inputNode.selectors.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
+			outputBuffer.append(indent + '@extends ')
+			outputBuffer.append(inputNode.selectors.map(node => travel(inputNode, node, indentLevel, true)).join(', '))
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Atblock) {
@@ -652,16 +661,17 @@ function format(content, options) {
 			// Remove the extra new-line because of `Ident` and `Block`
 			outputBuffer.remove(options.newLineChar)
 
-		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comment
+		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
 			}
-			outputBuffer.append('//' + (options.insertSpaceAfterComments ? ' ' : '') + inputNode.str.substring(2).trim())
+			outputBuffer.append('//' + (options.insertSpaceAfterComments ? ' ' : ''))
+			outputBuffer.append(inputNode.str.substring(2).trim())
 			if (insideExpression === false) {
 				outputBuffer.append(options.newLineChar)
 			}
 
-		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('/*')) { // In case of multi-line comment
+		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('/*')) { // In case of multi-line comments
 			const spaceAfterComment = (options.insertSpaceAfterComments ? ' ' : '')
 
 			// Split into an array of lines
@@ -728,7 +738,7 @@ function format(content, options) {
 			if (options.insertSpaceBeforeComments) {
 				outputBuffer.append(' ')
 			}
-			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(inputNode.parent, node, indentLevel, true)))
+			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(inputNode.parent, node, indentLevel, true)).join(''))
 			outputBuffer.append(options.newLineChar)
 		}
 
@@ -824,7 +834,7 @@ function format(content, options) {
 
 	function getProperVariableName(name) {
 		if (/^\d/.test(name) || /\s/.test(name)) {
-			return (options.stringQuoteChar || '\'') + name + (options.stringQuoteChar || '\'')
+			return options.stringQuoteChar + name + options.stringQuoteChar
 		} else {
 			return name
 		}
