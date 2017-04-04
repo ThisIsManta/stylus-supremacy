@@ -291,7 +291,16 @@ function format(content, options) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Literal) {
-			outputBuffer.append(inputNode.val)
+			if (_.isObject(inputNode.parent) && (inputNode.parent instanceof stylus.nodes.Root || inputNode.parent instanceof stylus.nodes.Block)) { // In case of @css
+				// Note that it must be wrapped inside a pair of braces
+				// TODO: make "\s\s..." to "\t"
+				outputBuffer.append('@css {' + options.newLineChar)
+				outputBuffer.append(_.trim(inputNode.val.replace(/\r?\n/g, options.newLineChar), options.newLineChar) + options.newLineChar)
+				outputBuffer.append('}' + options.newLineChar)
+
+			} else {
+				outputBuffer.append(inputNode.val)
+			}
 
 		} else if (inputNode instanceof stylus.nodes.String) {
 			outputBuffer.append(options.stringQuoteChar || inputNode.quote).append(inputNode.val).append(options.stringQuoteChar || inputNode.quote)
