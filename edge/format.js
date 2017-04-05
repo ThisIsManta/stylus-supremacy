@@ -286,6 +286,9 @@ function format(content, options) {
 				outputBuffer.append('}' + options.newLineChar)
 
 			} else {
+				if (_.get(lines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
+					outputBuffer.append('\\')
+				}
 				outputBuffer.append(inputNode.val)
 			}
 
@@ -441,10 +444,19 @@ function format(content, options) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
+				const escapeDivider = inputNode.op === '/'
+				if (escapeDivider) {
+					outputBuffer.append('(')
+				}
+
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
 				outputBuffer.append(' ' + inputNode.op)
 				if (inputNode.right) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
+				}
+
+				if (escapeDivider) {
+					outputBuffer.append(')')
 				}
 			}
 
