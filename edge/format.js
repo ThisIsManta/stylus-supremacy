@@ -397,9 +397,9 @@ function format(content, options) {
 				outputBuffer.append('{')
 			}
 
-			const currentIsPartOfPropertyNames = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
+			const currentIsPartOfPropertyNames = !!findParentNode(inputNode, node => node instanceof stylus.nodes.Property && node.segments.includes(inputNode))
 
-			const currentIsPartOfKeyframes = !!travelUpUntil(inputNode, node => node instanceof stylus.nodes.Keyframes && node.segments.includes(inputNode))
+			const currentIsPartOfKeyframes = !!findParentNode(inputNode, node => node instanceof stylus.nodes.Keyframes && node.segments.includes(inputNode))
 
 			outputBuffer.append(inputNode.nodes.map(node => {
 				if (node instanceof stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
@@ -679,8 +679,15 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Namespace) {
 			outputBuffer.append('@namespace ')
-			outputBuffer.append(inputNode.prefix ? (inputNode.prefix + ' ') : '')
-			outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
+			if (inputNode.prefix) {
+				outputBuffer.append(inputNode.prefix + ' ')
+			}
+			// Note that `inputNode.val.val` is not a typo
+			outputBuffer.append(travel(inputNode, inputNode.val.val, indentLevel, true))
+
+			if (options.insertSemicolons) {
+				outputBuffer.append(';')
+			}
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
 			if (insideExpression === false) {
@@ -809,13 +816,26 @@ function format(content, options) {
 			return null
 		}
 
-		let sideCommentText = lines[inputNode.lineno - 1]
-		if (sideCommentText === undefined) {
+		let currentLine = lines[inputNode.lineno - 1]
+		if (currentLine === undefined) {
 			return null
 		}
 
-		sideCommentText = sideCommentText.substring(sideCommentText.indexOf('//', inputNode.column)).trim()
-		return new stylus.nodes.Comment(sideCommentText, false, false)
+		let startingIndex = inputNode.column
+
+		const leftmostStringThatHasDoubleSlashes = _.chain(findChildNodes(inputNode, node => node instanceof stylus.nodes.String))
+			.filter(node => node.lineno === inputNode.lineno && node.val.includes('//'))
+			.maxBy('column')
+			.value()
+		if (leftmostStringThatHasDoubleSlashes) {
+			startingIndex = leftmostStringThatHasDoubleSlashes.column + leftmostStringThatHasDoubleSlashes.val.length + 1
+		}
+
+		if (currentLine.indexOf('//', startingIndex) === -1) {
+			return null
+		}
+
+		return new stylus.nodes.Comment(currentLine.substring(currentLine.indexOf('//', startingIndex)).trim(), false, false)
 	}
 
 	function tryGetMultiLineCommentNodeOnTheRightOf(inputNode) {
@@ -842,15 +862,40 @@ function format(content, options) {
 		return new stylus.nodes.Comment(sideCommentText, false, false)
 	}
 
-	function travelUpUntil(inputNode, condition) {
+	function findParentNode(inputNode, condition) {
 		const workingNode = inputNode && inputNode.parent
 		if (!workingNode) {
 			return null
+
 		} else if (condition(workingNode)) {
 			return workingNode
+
 		} else {
-			return travelUpUntil(workingNode, condition)
+			return findParentNode(workingNode, condition)
 		}
+	}
+
+	function findChildNodes(inputNode, condition, results = [] /* Internal */, visited = [] /* Internal */) {
+		if (inputNode && visited.includes(inputNode) === false) {
+			// Remember the visited nodes to prevent stack overflow
+			visited.push(inputNode)
+
+			if (condition(inputNode)) {
+				results.push(inputNode)
+			}
+
+			Object.getOwnPropertyNames(inputNode).forEach(name => {
+				const stub = inputNode[name]
+				if (_.isArray(stub)) {
+					_.forEach(stub, node => {
+						findChildNodes(node, condition, results, visited)
+					})
+				} else if (_.isObject(stub)) {
+					findChildNodes(stub, condition, results, visited)
+				}
+			})
+		}
+		return results
 	}
 
 	function getProperVariableName(name) {
