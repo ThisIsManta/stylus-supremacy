@@ -33,10 +33,26 @@ body {
 		}
 	}
 
-	.class2 {
+	.class2.class3 {
 		../input {
 			display: none;
 		}
+	}
+
+	.\\--class4 {
+		display: none;
+	}
+
+	&:hover:not(.--limited) {
+		display: none;
+	}
+
+	&[disabled] {
+		display: none;
+	}
+
+	input[type=number]::-webkit-outer-spin-button {
+		display: none;
 	}
 }
 

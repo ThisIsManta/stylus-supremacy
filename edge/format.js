@@ -673,6 +673,15 @@ function format(content, options) {
 			// Remove the extra new-line because of `Ident` and `Block`
 			outputBuffer.remove(options.newLineChar)
 
+		} else if (inputNode instanceof stylus.nodes.Charset) {
+			outputBuffer.append('@charset ')
+			outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
+
+		} else if (inputNode instanceof stylus.nodes.Namespace) {
+			outputBuffer.append('@namespace ')
+			outputBuffer.append(inputNode.prefix ? (inputNode.prefix + ' ') : '')
+			outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
+
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
