@@ -13,11 +13,9 @@ const defaultFormattingOptions = {
 	insertSpaceBeforeComments: true,
 	insertSpaceAfterComments: true,
 	insertParenthesisAroundConditions: true,
-	// TODO: insertLeadingZeroInFrontOfNumbers: true,
 	indentChar: '\t',
 	newLineChar: os.EOL,
 	stringQuoteChar: '\'',
-	// TODO: sortImports: 'alphabetical',
 	sortProperties: 'alphabetical',
 	alwaysUseImport: false,
 	alwaysUseNot: false,
@@ -821,8 +819,8 @@ function format(content, options) {
 			return null
 		}
 
+		// Skip operation if the only "//" is in the string
 		let startingIndex = inputNode.column
-
 		const leftmostStringThatHasDoubleSlashes = _.chain(findChildNodes(inputNode, node => node instanceof stylus.nodes.String))
 			.filter(node => node.lineno === inputNode.lineno && node.val.includes('//'))
 			.maxBy('column')
@@ -830,7 +828,6 @@ function format(content, options) {
 		if (leftmostStringThatHasDoubleSlashes) {
 			startingIndex = leftmostStringThatHasDoubleSlashes.column + leftmostStringThatHasDoubleSlashes.val.length + 1
 		}
-
 		if (currentLine.indexOf('//', startingIndex) === -1) {
 			return null
 		}
@@ -844,22 +841,22 @@ function format(content, options) {
 		}
 
 		let zeroBasedLineIndex = inputNode.lineno - 1
-		let sideCommentText = lines[zeroBasedLineIndex]
-		sideCommentText = sideCommentText.substring(sideCommentText.indexOf('/*', inputNode.column))
-		if (sideCommentText.includes('*/')) {
-			sideCommentText = sideCommentText.substring(0, sideCommentText.indexOf('*/') + 2)
+		let currentLine = lines[zeroBasedLineIndex]
+		currentLine = currentLine.substring(currentLine.indexOf('/*', inputNode.column))
+		if (currentLine.includes('*/')) {
+			currentLine = currentLine.substring(0, currentLine.indexOf('*/') + 2)
 		} else {
 			while (++zeroBasedLineIndex < lines.length) {
-				if (sideCommentText.includes('*/')) {
-					sideCommentText = sideCommentText.substring(0, sideCommentText.indexOf('*/') + 2)
+				if (currentLine.includes('*/')) {
+					currentLine = currentLine.substring(0, currentLine.indexOf('*/') + 2)
 					break
 				} else {
-					sideCommentText += options.newLineChar
-					sideCommentText += lines[zeroBasedLineIndex]
+					currentLine += options.newLineChar
+					currentLine += lines[zeroBasedLineIndex]
 				}
 			}
 		}
-		return new stylus.nodes.Comment(sideCommentText, false, false)
+		return new stylus.nodes.Comment(currentLine, false, false)
 	}
 
 	function findParentNode(inputNode, condition) {
@@ -885,13 +882,13 @@ function format(content, options) {
 			}
 
 			Object.getOwnPropertyNames(inputNode).forEach(name => {
-				const stub = inputNode[name]
-				if (_.isArray(stub)) {
-					_.forEach(stub, node => {
+				const prop = inputNode[name]
+				if (_.isArray(prop)) {
+					_.forEach(prop, node => {
 						findChildNodes(node, condition, results, visited)
 					})
-				} else if (_.isObject(stub)) {
-					findChildNodes(stub, condition, results, visited)
+				} else if (_.isObject(prop)) {
+					findChildNodes(prop, condition, results, visited)
 				}
 			})
 		}
