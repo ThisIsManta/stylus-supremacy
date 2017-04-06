@@ -16,7 +16,7 @@ const defaultFormattingOptions = {
 	indentChar: '\t',
 	newLineChar: os.EOL,
 	stringQuoteChar: '\'',
-	sortProperties: 'alphabetical',
+	sortProperties: 'alphabetical', // Either "alphabetical" or "grouped"
 	alwaysUseImport: false,
 	alwaysUseNot: false,
 }
@@ -141,10 +141,10 @@ function format(content, options) {
 
 			const groups = []
 			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
-				if (rank > 0 && node.toJSON().__type === list[rank - 1].toJSON().__type && node.block === undefined) {
-					_.last(groups).push(node)
-				} else {
+				if (rank === 0 || getType(node) !== getType(list[rank-1]) || getType(node) === 'Group') {
 					groups.push([node])
+				} else {
+					_.last(groups).push(node)
 				}
 			})
 
@@ -152,8 +152,16 @@ function format(content, options) {
 			groups.filter(group => group[0] instanceof stylus.nodes.Property).forEach(group => {
 				let newGroup = group
 				if (options.sortProperties === 'alphabetical') {
-					newGroup = _.sortBy(group, node => node.segments.map(segment => segment.name).join(''))
+					newGroup = _.sortBy(group, node => {
+						const propertyName = node.segments.map(segment => segment.name).join('')
+						if (propertyName.startsWith('-')) {
+							return '~' + propertyName.substring(1)
+						} else {
+							return propertyName
+						}
+					})
 				} else if (options.sortProperties === 'grouped') {
+					// See also https://github.com/SimenB/stylint/blob/master/src/data/ordering.json
 					newGroup = _.sortBy(group, node => {
 						const propertyName = node.segments.map(segment => segment.name).join('')
 						const propertyRank = ordering.grouped.indexOf(propertyName)
@@ -364,7 +372,12 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Return) {
-			outputBuffer.append('return ' + travel(inputNode, inputNode.expr, indentLevel, true))
+			if (insideExpression === false) {
+				outputBuffer.append(indent)
+			}
+
+			outputBuffer.append('return ')
+			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 
 			if (insideExpression === false) {
 				if (options.insertSemicolons) {
@@ -797,6 +810,10 @@ function format(content, options) {
 
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
+		if (lines[zeroBasedLineIndex] === undefined) {
+			return null
+		}
+
 		const sourceNodeIndent = lines[zeroBasedLineIndex].substring(0, lines[zeroBasedLineIndex].length - _.trimStart(lines[zeroBasedLineIndex]).length)
 		while (++zeroBasedLineIndex < lines.length && lines[zeroBasedLineIndex].trim().startsWith('//') && lines[zeroBasedLineIndex].startsWith(sourceNodeIndent)) {
 			commentNodes.push(new stylus.nodes.Comment(lines[zeroBasedLineIndex].trim(), false, false))
@@ -893,6 +910,16 @@ function format(content, options) {
 			})
 		}
 		return results
+	}
+
+	function getType (inputNode) {
+		if (inputNode.block !== undefined || (inputNode instanceof stylus.nodes.Ident && inputNode.val.block !== undefined)) {
+			return 'Group'
+		} else if (_.isFunction(inputNode.toJSON)) {
+			return inputNode.toJSON().__type
+		} else {
+			return null
+		}
 	}
 
 	function getProperVariableName(name) {
