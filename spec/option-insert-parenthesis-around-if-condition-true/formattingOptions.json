@@ -1,0 +1,4 @@
+{
+	"insertParenthesisAroundIfCondition": true,
+	"newLineChar": "\r\n"
+}
