@@ -8,8 +8,5 @@
 	"insertSpaceBeforeComments": true,
 	"insertSpaceAfterComments": true,
 	"insertParenthesisAroundConditions": true,
-	"indentChar": "\t",
-	"newLineChar": "\r\n",
-	"sortProperties": false,
-	"alwaysUseImport": false
+	"newLineChar": "\r\n"
 }

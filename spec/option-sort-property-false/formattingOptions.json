@@ -4,8 +4,8 @@
 	"insertBraces": true,
 	"insertNewLineBetweenGroups": 1,
 	"insertNewLineBetweenSelectors": false,
-	"insertNewLineBetweenElseIf": false,
 	"insertSpaceBeforeComments": true,
 	"insertSpaceAfterComments": true,
-	"newLineChar": "\r\n"
+	"newLineChar": "\r\n",
+	"sortProperties": false
 }

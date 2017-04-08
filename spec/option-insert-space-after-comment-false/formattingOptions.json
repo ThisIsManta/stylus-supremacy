@@ -6,9 +6,5 @@
 	"insertNewLineBetweenSelectors": false,
 	"insertSpaceBeforeComments": true,
 	"insertSpaceAfterComments": false,
-	"indentChar": "\t",
-	"newLineChar": "\r\n",
-	"sortProperties": false,
-	"alwaysUseImport": false,
-	"alwaysUseNot": true
+	"newLineChar": "\r\n"
 }

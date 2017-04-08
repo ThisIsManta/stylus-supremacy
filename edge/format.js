@@ -13,10 +13,10 @@ const defaultFormattingOptions = {
 	insertSpaceBeforeComments: true,
 	insertSpaceAfterComments: true,
 	insertParenthesisAroundConditions: true,
-	indentChar: '\t',
-	newLineChar: os.EOL,
-	stringQuoteChar: '\'',
-	sortProperties: 'alphabetical', // Either "alphabetical" or "grouped"
+	tabStopChar: '\t',
+	newLineChar: os.EOL || '\n',
+	quoteChar: '\'',
+	sortProperties: false, // Either "alphabetical" or "grouped"
 	alwaysUseImport: false,
 	alwaysUseNot: false,
 }
@@ -86,7 +86,7 @@ function format(content, options) {
 
 		const outputBuffer = new StringBuffer()
 
-		const indent = _.repeat(options.indentChar, indentLevel)
+		const indent = _.repeat(options.tabStopChar, indentLevel)
 
 		// Insert sticky comment(s) before the current node
 		if (inputNode.commentsOnTop) {
@@ -299,9 +299,9 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.String) {
-			outputBuffer.append(options.stringQuoteChar)
+			outputBuffer.append(options.quoteChar)
 			outputBuffer.append(inputNode.val)
-			outputBuffer.append(options.stringQuoteChar)
+			outputBuffer.append(options.quoteChar)
 
 		} else if (inputNode instanceof stylus.nodes.Ident) {
 			if (insideExpression === false) {
@@ -518,7 +518,7 @@ function format(content, options) {
 				outputBuffer.append(' }')
 
 			} else { // In case of multiple-line object-property spreading
-				const childIndent = indent + options.indentChar
+				const childIndent = indent + options.tabStopChar
 				outputBuffer.append('{' + options.newLineChar)
 				outputBuffer.append(keyValuePairs.map(pair =>
 					childIndent +
@@ -924,7 +924,7 @@ function format(content, options) {
 
 	function getProperVariableName(name) {
 		if (/^\d/.test(name) || /\s/.test(name)) {
-			return options.stringQuoteChar + name + options.stringQuoteChar
+			return options.quoteChar + name + options.quoteChar
 		} else {
 			return name
 		}
