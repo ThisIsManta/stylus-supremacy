@@ -14,10 +14,13 @@
     "beautify",
     "beautifier"
   ],
+  "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
   "bin": "./edge/command.js",
   "main": "./edge/format.js",
   "scripts": {
-    "test": "node ./test/runner.js"
+    "test": "node ./test/runner.js",
+    "preversion": "npm test",
+    "postversion": "git push --tags && npm publish"
   },
   "devDependencies": {
     "jasmine": "^2.5.3"
