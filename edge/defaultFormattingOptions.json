@@ -1,0 +1,17 @@
+{
+	"insertColons": true,
+	"insertSemicolons": true,
+	"insertBraces": true,
+	"insertNewLineBetweenGroups": 1,
+	"insertNewLineBetweenSelectors": false,
+	"insertNewLineBeforeElse": false,
+	"insertSpaceBeforeComment": true,
+	"insertSpaceAfterComment": true,
+	"insertParenthesisAroundIfCondition": true,
+	"tabStopChar": "\t",
+	"newLineChar": "\n",
+	"quoteChar": "'",
+	"sortProperties": false,
+	"alwaysUseImport": false,
+	"alwaysUseNot": false
+}

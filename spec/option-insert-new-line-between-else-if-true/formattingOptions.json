@@ -1,4 +1,4 @@
 {
-	"insertNewLineBetweenElseIf": true,
+	"insertNewLineBeforeElse": true,
 	"newLineChar": "\r\n"
 }

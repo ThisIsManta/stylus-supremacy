@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"author": {
 		"name": "Anantachai Saothong",
-		"email": "anantachai.s@taskworld.com"
+		"email": "thisismanta@outlook.com"
 	},
 	"bin": "./edge/command.js",
 	"main": "./edge/format.js",

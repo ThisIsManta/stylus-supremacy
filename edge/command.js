@@ -9,7 +9,6 @@ let inputFiles = []
 let optionFilePath = ''
 let replaceOriginal = false
 let outputDirectory = ''
-let isDebugging = false
 
 let paramIndex = -1
 const paramArray = ps.argv.slice(2)
@@ -27,9 +26,6 @@ while (++paramIndex < paramArray.length) {
 		outputDirectory = paramArray[paramIndex + 1]
 		paramIndex++
 
-	} else if (param === '--debug' || param === '-d') {
-		isDebugging = true
-
 	} else {
 		inputFiles.push(param)
 	}
@@ -44,7 +40,7 @@ if (inputFiles.length === 0) {
 	const outputFiles = _.chain(inputFiles)
 		.map(path => glob.sync(path))
 		.flatten()
-		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf8'), formattingOptions, !!isDebugging)))
+		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf8'), formattingOptions)))
 		.value()
 
 	if (outputDirectory) {
@@ -52,17 +48,17 @@ if (inputFiles.length === 0) {
 			fs.mkdirSync(pt.resolve(outputDirectory))
 		}
 		outputFiles.forEach(file => {
-			fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(file.path)), file.content)
+			fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(file.path)), file.text)
 		})
 
 	} else if (replaceOriginal) {
 		outputFiles.forEach(file => {
-			fs.writeFileSync(file.path, file.content)
+			fs.writeFileSync(file.path, file.text)
 		})
 
 	} else {
 		outputFiles.forEach(file => {
-			console.log(file.content)
+			console.log(file.text)
 		})
 	}
 
