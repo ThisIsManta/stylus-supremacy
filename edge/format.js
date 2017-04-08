@@ -66,7 +66,7 @@ function format(content, options) {
 
 	const warnings = []
 
-	const lines = content.split('\n')
+	const lines = content.split(/\r?\n/)
 
 	const rootNode = new stylus.Parser(content).parse()
 
@@ -286,9 +286,39 @@ function format(content, options) {
 		} else if (inputNode instanceof stylus.nodes.Literal) {
 			if (_.isObject(inputNode.parent) && (inputNode.parent instanceof stylus.nodes.Root || inputNode.parent instanceof stylus.nodes.Block)) { // In case of @css
 				// Note that it must be wrapped inside a pair of braces
-				// TODO: make "\s\s..." to "\t"
 				outputBuffer.append('@css {' + options.newLineChar)
-				outputBuffer.append(_.trim(inputNode.val.replace(/\r?\n/g, options.newLineChar), options.newLineChar) + options.newLineChar)
+
+				let innerLines = inputNode.val.split(/\r?\n/)
+				if (innerLines.length === 1) {
+					innerLines[0] = indent + innerLines[0].trim()
+
+				} else if (innerLines.length >= 2) {
+					const firstNonEmptyLineIndex = innerLines.findIndex(line => line.trim().length > 0)
+					if (firstNonEmptyLineIndex >= 0) {
+						innerLines = innerLines.slice(firstNonEmptyLineIndex)
+						const firstLineIndent = innerLines[0].match(/^(\s|\t)+/)
+						if (firstLineIndent) {
+							const indentPattern = new RegExp(firstLineIndent[0], 'g')
+							innerLines = innerLines.map(line => {
+								const text = _.trimStart(line)
+								const innerIndent = line.substring(0, line.length - text.length)
+								return innerIndent.replace(indentPattern, options.tabStopChar) + text
+							})
+						}
+					}
+					if (_.last(innerLines).trim().length === 0) {
+						innerLines = innerLines.slice(0, innerLines.length - 1)
+					}
+				}
+
+				let zeroBasedLineIndex = 0
+				const bound = innerLines.length - 1
+				while (++zeroBasedLineIndex <= bound) {
+					innerLines[zeroBasedLineIndex]
+				}
+				outputBuffer.append(innerLines.join(options.newLineChar))
+
+				outputBuffer.append(options.newLineChar)
 				outputBuffer.append('}' + options.newLineChar)
 
 			} else {
