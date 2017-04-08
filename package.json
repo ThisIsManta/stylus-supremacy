@@ -6,6 +6,14 @@
 		"name": "Anantachai Saothong",
 		"email": "thisismanta@outlook.com"
 	},
+	"keywords": [
+		"stylus",
+		"css",
+		"format",
+		"pretty",
+		"beautify",
+		"beautifier"
+	],
 	"bin": "./edge/command.js",
 	"main": "./edge/format.js",
 	"scripts": {

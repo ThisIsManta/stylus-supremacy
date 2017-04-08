@@ -6,19 +6,19 @@
 
 First thing first, you must install this script via **NPM** by calling `npm install stylus-supremacy -g`, then calling the below command.
 ```
-node stylus-supremacy ./path/to/your/file.styl
+stylus-supremacy ./path/to/your/file.styl
 ```
 
 In case you want to format multiple files at a time, you can specify a file path in *glob* pattern.
 ```
-node stylus-supremacy ./**/*.styl
+stylus-supremacy ./**/*.styl
 ```
 
 ## Formatting options
 
-The [default formatting options](edge/defaultFormattingOptions.json) will be used, unless you specify your own options explicitly. The parameter `--options` and `-p` can be used interchangably.
+The [default formatting options](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json) will be used, unless you specify your own options explicitly. The parameter `--options` and `-p` can be used interchangably.
 ```
-node stylus-supremacy ./path/to/your/file.styl --options ./path/to/your/options.json
+stylus-supremacy ./path/to/your/file.styl --options ./path/to/your/options.json
 ```
 
 |Options|Default value|Possible values|
@@ -48,7 +48,7 @@ node stylus-supremacy ./path/to/your/file.styl --outDir ./path/to/output/directo
 
 Alternatively, you may overwrite the original file with the formatted output by specifying `--replace` or `-r` parameter.
 ```
-node stylus-supremacy ./path/to/your/file.styl --replace
+stylus-supremacy ./path/to/your/file.styl --replace
 ```
 
 Note that `--outDir` and `--replace` will not work together. You have to choose just one.
