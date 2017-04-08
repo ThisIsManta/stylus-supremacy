@@ -10,9 +10,9 @@ const defaultFormattingOptions = {
 	insertNewLineBetweenGroups: 1,
 	insertNewLineBetweenSelectors: false,
 	insertNewLineBetweenElseIf: false,
-	insertSpaceBeforeComments: true,
-	insertSpaceAfterComments: true,
-	insertParenthesisAroundConditions: true,
+	insertSpaceBeforeComment: true,
+	insertSpaceAfterComment: true,
+	insertParenthesisAroundIfCondition: true,
 	tabStopChar: '\t',
 	newLineChar: os.EOL || '\n',
 	quoteChar: '\'',
@@ -128,7 +128,7 @@ function format(content, options) {
 			// Insert a comment on the right of the last selector
 			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock)
 			if (sideCommentNode) {
-				if (options.insertSpaceBeforeComments) {
+				if (options.insertSpaceBeforeComment) {
 					outputBuffer.append(' ')
 				}
 				outputBuffer.append(travel(inputNode.parent, sideCommentNode, indentLevel, true))
@@ -541,11 +541,11 @@ function format(content, options) {
 				outputBuffer.append(' ' + operation + ' ')
 
 				// Insert the `if` condition
-				if (options.insertParenthesisAroundConditions) {
+				if (options.insertParenthesisAroundIfCondition) {
 					outputBuffer.append('(')
 				}
 				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
-				if (options.insertParenthesisAroundConditions) {
+				if (options.insertParenthesisAroundIfCondition) {
 					outputBuffer.append(')')
 				}
 
@@ -563,11 +563,11 @@ function format(content, options) {
 
 				// Insert the `if` condition
 				outputBuffer.append(operation + ' ')
-				if (options.insertParenthesisAroundConditions) {
+				if (options.insertParenthesisAroundIfCondition) {
 					outputBuffer.append('(')
 				}
 				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
-				if (options.insertParenthesisAroundConditions) {
+				if (options.insertParenthesisAroundIfCondition) {
 					outputBuffer.append(')')
 				}
 
@@ -707,14 +707,14 @@ function format(content, options) {
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
 			}
-			outputBuffer.append('//' + (options.insertSpaceAfterComments ? ' ' : ''))
+			outputBuffer.append('//' + (options.insertSpaceAfterComment ? ' ' : ''))
 			outputBuffer.append(inputNode.str.substring(2).trim())
 			if (insideExpression === false) {
 				outputBuffer.append(options.newLineChar)
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Comment && inputNode.str.startsWith('/*')) { // In case of multi-line comments
-			const spaceAfterComment = (options.insertSpaceAfterComments ? ' ' : '')
+			const spaceAfterComment = (options.insertSpaceAfterComment ? ' ' : '')
 
 			// Split into an array of lines
 			let commentLines = inputNode.str.split(/\r?\n/).map(line => line.trim())
@@ -777,7 +777,7 @@ function format(content, options) {
 
 		if (inputNode.commentsOnRight) {
 			outputBuffer.remove(options.newLineChar)
-			if (options.insertSpaceBeforeComments) {
+			if (options.insertSpaceBeforeComment) {
 				outputBuffer.append(' ')
 			}
 			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(inputNode.parent, node, indentLevel, true)).join(''))

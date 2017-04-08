@@ -1,4 +1,4 @@
 {
-	"insertSpaceBeforeComments": true,
+	"insertSpaceBeforeComment": true,
 	"newLineChar": "\r\n"
 }
