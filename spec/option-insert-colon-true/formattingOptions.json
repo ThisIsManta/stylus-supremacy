@@ -1,4 +1,4 @@
 {
-	"insertColons": false,
+	"insertColons": true,
 	"newLineChar": "\r\n"
 }

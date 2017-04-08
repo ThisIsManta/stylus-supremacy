@@ -141,7 +141,7 @@ function format(content, options) {
 
 			const groups = []
 			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
-				if (rank === 0 || getType(node) !== getType(list[rank-1]) || getType(node) === 'Group') {
+				if (rank === 0 || getType(node) !== getType(list[rank - 1]) || getType(node) === 'Group') {
 					groups.push([node])
 				} else {
 					_.last(groups).push(node)
@@ -581,7 +581,10 @@ function format(content, options) {
 					}
 
 					inputNode.elses.forEach((node, rank, list) => {
-						if (options.insertNewLineBetweenElseIf === true) {
+						if (options.insertBraces === false) {
+							outputBuffer.append(options.newLineChar)
+							outputBuffer.append(indent)
+						} else if (options.insertNewLineBetweenElseIf === true) {
 							outputBuffer.append(indent)
 						} else {
 							outputBuffer.append(' ')
@@ -912,7 +915,7 @@ function format(content, options) {
 		return results
 	}
 
-	function getType (inputNode) {
+	function getType(inputNode) {
 		if (inputNode.block !== undefined || (inputNode instanceof stylus.nodes.Ident && inputNode.val.block !== undefined)) {
 			return 'Group'
 		} else if (_.isFunction(inputNode.toJSON)) {

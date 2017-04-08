@@ -1,8 +1,18 @@
 body {
+	display: none;
+}
+
+mixin() {
+	display: block;
+}
+
+func(a, b) {
+	a + b;
+}
+
+.class1 {
 	if (x == y) {
 		margin: 1;
-	} else {
-		margin: 0;
 	}
 
 	if (x > y) {
@@ -11,9 +21,5 @@ body {
 		padding: x;
 	} else {
 		padding: 0;
-	}
-
-	unless (x == y) {
-		display: block;
 	}
 }
