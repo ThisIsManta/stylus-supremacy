@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
