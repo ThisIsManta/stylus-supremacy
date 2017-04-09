@@ -7,11 +7,18 @@
 	"insertNewLineBeforeElse": false,
 	"insertSpaceBeforeComment": true,
 	"insertSpaceAfterComment": true,
+	"insertSpaceAfterComma": true,
+	"insertSpaceInsideParenthesis": false,
 	"insertParenthesisAroundIfCondition": true,
+	"insertLeadingZeroBeforeFraction": true,
 	"tabStopChar": "\t",
 	"newLineChar": "\n",
 	"quoteChar": "'",
 	"sortProperties": false,
 	"alwaysUseImport": false,
-	"alwaysUseNot": false
+	"alwaysUseNot": false,
+	"alwaysUseAtBlock": false,
+	"alwaysUseExtends": false,
+	"alwaysUseZeroWithoutUnit": false,
+	"reduceMarginAndPaddingValues": false
 }
