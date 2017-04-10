@@ -2,46 +2,29 @@
 
 **Stylus Supremacy** is a **Node.js** script for formatting *Stylus* files. You may say this is a beautifier of *Stylus*.
 
-## Basic usage
+## Command-line usage
 
-First thing first, you must install this script via **NPM** by calling `npm install stylus-supremacy -g`, then calling the below command.
+First thing first, you must install this script via **NPM**.
+```
+npm install stylus-supremacy -g
+```
+
+Aftherthat, specifying a source *Stylus* file follows the command.
 ```
 stylus-supremacy ./path/to/your/file.styl
 ```
 
-In case you want to format multiple files at a time, you can specify a file path in *glob* pattern.
+In case you want to format multiple files at a time, you can specify the path in *glob* pattern.
 ```
 stylus-supremacy ./**/*.styl
 ```
 
-## Formatting options
-
-The [default formatting options](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json) will be used, unless you specify your own options explicitly. The parameter `--options` and `-p` can be used interchangably.
+The default [formatting options](#formatting-options) will be used, unless you specify your own options explicitly. The parameter `--options` and `-p` can be used interchangably.
 ```
 stylus-supremacy ./path/to/your/file.styl --options ./path/to/your/options.json
 ```
 
-|Options|Default value|Possible values|
-|---|---|---|
-|`insertColons`|`true`|`true` for always inserting a colon after a property name, otherwise `false`.|
-|`insertSemicolons`|`true`|`true` for always inserting a semi-colon after a property value, a variable declaration, a variable assignment and a function call, otherwise `false`.|
-|`insertBraces`|`true`|`true` for always inserting a pair of curly braces between a selector body, a mixin body, a function body and any @-block bodies, otherwise `false`.|
-|`insertNewLineBetweenGroups`|`1`|This represents a number of new-line between different type of groups.|
-|`insertNewLineBetweenSelectors`|`false`|`true` for always inserting a new-line between selectors, otherwise `false`.|
-|`insertNewLineBeforeElse`|`false`|`true` for always inserting a new-line before *else* keyword, otherwise `false`.|
-|`insertSpaceBeforeComment`|`true`|`true` for always inserting a white-space before a comment, otherwise `false`.|
-|`insertSpaceAfterComment`|`true`|`true` for always inserting a white-space after a comment, otherwise `false`.|
-|`insertParenthesisAroundIfCondition`|`true`|`true` for always inserting a pair of parentheses between *if*-condition, otherwise `false`.|
-|`tabStopChar`|`\t`|This represents a tab-stop string. You may change this to 2-white-space sequence or anything.|
-|`newLineChar`|`\n`|This represents a new-line character. You may change this to `\r\n` if you are using *Microsoft Windows*.|
-|`quoteChar`|`'`|This represents a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.|
-|`sortProperties`|`false`|`false` for doing nothing about the CSS property order. `alphabetical` for sorting CSS properties from A to Z. `grouped` for sorting CSS properties according to *[Stylint](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json)*.|
-|`alwaysUseImport`|`false`|`true` for always using *@import* over *@require*. The difference between *@import* and *@require* is very subtle. Please refer to [the offical guide](http://stylus-lang.com/docs/import.html#require).|
-|`alwaysUseNot`|`false`|`true` for always using *not* keyword over *!* operator, otherwise `false`.|
-
-## Writing the formatted output to a file
-
-Normally, running the command will print out the formatted content to the output stream (console). However, you may write the formatted content to a file (or many files, if the pattern matches more than one files) by specifying `--outDir` or `-o`, and followed by the path to an output directory.
+Normally, running the command will print out the formatted content to the output stream (console/terminal). However, you may write the formatted content to a file (or many files, if the pattern matches more than one files) by specifying `--outDir` or `-o`, and followed by the path to an output directory.
 ```
 node stylus-supremacy ./path/to/your/file.styl --outDir ./path/to/output/directory
 ```
@@ -53,13 +36,13 @@ stylus-supremacy ./path/to/your/file.styl --replace
 
 Note that `--outDir` and `--replace` will not work together. You have to choose just one.
 
-## Using this as an NPM module
+## Programming usage
 
-Simply include *stylus-supremacy/edge/format* and call it with *Stylus* content as a string and formatting options as an object (see above topic).
+Once you have *stylus-supremacy* installed, you simply include *stylus-supremacy* and call its *format* function with a string of *Stylus* content and an object of [formatting options](#formatting-options) as arguments.
 ```
-const format = require('stylus-supremacy/edge/format')
+const stylusSupremacy = require('stylus-supremacy')
 
-const stylus = `
+const stylusContent = `
 body
   display none
 `
@@ -70,12 +53,48 @@ const options = {
   insertBraces: true
 }
 
-console.log(format(stylus, options))
+const result = stylusSupremacy.format(stylusContent, options)
 ```
 
-The stream output prints:
+The `result` object above contains 3 values: `text`, `tree` and `warnings`.
+
+The `result.text` is the string of formatted *Stylus* output.
 ```
 body {
   display: none;
 }
 ```
+
+The `result.tree` is an object generated by *Stylus* internal [parser](https://github.com/stylus/stylus/blob/dev/lib/parser.js), which represents the whole *Stylus* input in a tree structure. This is useful for debugging purposes.
+
+The `result.warnings` is an array of warning objects genereted by the `format` function. This array should be empty, unless some tokens could not be recognized, which may lead to a lost in translation.
+
+
+## Formatting options
+
+You can find a JSON file of the default formatting options [here](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json).
+
+|Options|Default value|Possible values|
+|---|---|---|
+|`insertColons`|`true`|`true` for always inserting a colon after a property name, otherwise `false`.|
+|`insertSemicolons`|`true`|`true` for always inserting a semi-colon after a property value, a variable declaration, a variable assignment and a function call, otherwise `false`.|
+|`insertBraces`|`true`|`true` for always inserting a pair of curly braces between a selector body, a mixin body, a function body and any @-block bodies, otherwise `false`.|
+|`insertNewLineBetweenGroups`|`1`|This represents a number of new-line between different type of groups.|
+|`insertNewLineBetweenSelectors`|`false`|`true` for always inserting a new-line between selectors, otherwise `false`.|
+|`insertNewLineBeforeElse`|`false`|`true` for always inserting a new-line before *else* keyword, otherwise `false`.|
+|`insertSpaceBeforeComment`|`true`|`true` for always inserting a white-space before a comment, otherwise `false`.|
+|`insertSpaceAfterComment`|`true`|`true` for always inserting a white-space after a comment, otherwise `false`.|
+|`insertSpaceAfterComma`|`true`|`true` for always inserting a white-space after a comma, otherwise `false`. Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.|
+|`insertSpaceInsideParenthesis`|`false`|`true` for always inserting a white-space after an open parenthesis, otherwise `false`. Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.|
+|`insertParenthesisAroundIfCondition`|`true`|`true` for always inserting a pair of parentheses between *if*-condition, otherwise `false`.|
+|`insertLeadingZeroBeforeFraction`|`true`|`true` for always inserting a zero before a number that between 1 and 0, otherwise `false`.|
+|`tabStopChar`|`"\t"`|This represents a tab-stop string. You may change this to 2-white-space sequence or anything.|
+|`newLineChar`|`"\n"`|This represents a new-line character. You may change this to `"\r\n"` if you are using *Microsoft Windows*.|
+|`quoteChar`|`"'"`|This represents a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.|
+|`sortProperties`|`false`|`false` for doing nothing about the CSS property order. `"alphabetical"` for sorting CSS properties from A to Z. `"grouped"` for sorting CSS properties according to *[Stylint](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json)*. Specifying an array of property names will sort the properties accordingly, for example, `["display", "margin", "padding"]`.|
+|`alwaysUseImport`|`false`|`true` for always using *@import* over *@require*. The difference between *@import* and *@require* is very subtle. Please refer to [the offical guide](http://stylus-lang.com/docs/import.html#require).|
+|`alwaysUseNot`|`false`|`true` for always using *not* keyword over *!* operator, otherwise `false`.|
+|`alwaysUseAtBlock`|`false`|`true` for always using *@block*, otherwise `false`.|
+|`alwaysUseExtends`|`false`|`true` for always using *@extends* over *@extend*, otherwise `false`.|
+|`alwaysUseZeroWithoutUnit`|`false`|`true` for always using *0* without unit, otherwise `false`.|
+|`reduceMarginAndPaddingValues`|`false`|`true` for always using *margin x* over *margin x x x x*, *margin x y* over *margin x y x y* where *x*, *y* is a property value, otherwise `false`.|
