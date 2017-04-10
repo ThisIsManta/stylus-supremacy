@@ -238,9 +238,10 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Selector) {
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join('').trim())
+
 			if (inputNode.optional === true) {
-				outputBuffer.append('!optional')
+				outputBuffer.append(' !optional')
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Property) {
