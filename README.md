@@ -39,7 +39,7 @@ Note that `--outDir` and `--replace` will not work together. You have to choose 
 ## Programming usage
 
 Once you have *stylus-supremacy* installed, you simply include *stylus-supremacy* and call its *format* function with a string of *Stylus* content and an object of [formatting options](#formatting-options) as arguments.
-```
+```js
 const stylusSupremacy = require('stylus-supremacy')
 
 const stylusContent = `
@@ -59,7 +59,7 @@ const result = stylusSupremacy.format(stylusContent, options)
 The `result` object above contains 3 values: `text`, `tree` and `warnings`.
 
 The `result.text` is the string of formatted *Stylus* output.
-```
+```css
 body {
   display: none;
 }
@@ -98,3 +98,17 @@ You can find a JSON file of the default formatting options [here](https://github
 |`alwaysUseExtends`|`false`|`true` for always using *@extends* over *@extend*, otherwise `false`.|
 |`alwaysUseZeroWithoutUnit`|`false`|`true` for always using *0* without unit, otherwise `false`.|
 |`reduceMarginAndPaddingValues`|`false`|`true` for always using *margin x* over *margin x x x x*, *margin x y* over *margin x y x y* where *x*, *y* is a property value, otherwise `false`.|
+
+## Limitations and known issues
+
+- Both single-line and multi-line comments may be dropped out because *Stylint* internal [parser](https://github.com/stylus/stylus/blob/dev/lib/parser.js) did not work with comments well as its purpose is to create an input for CSS transpilation. The below are the original *Stylus* file and its formatted *Stylus* output respectively. You can see that the `/* comment-1 */` is missing in the output.
+  ```css
+  .class1 /* comment-1 */, .class2 /* comment-2 */ {
+    display none
+  }
+  ```
+  ```css
+  .class1 , .class2 { /* comment-2 */
+    display: none;
+  }
+  ```
