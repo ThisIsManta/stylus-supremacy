@@ -47,13 +47,13 @@ body
   display none
 `
 
-const options = {
+const formattingOptions = {
   insertColons: true,
   insertSemicolons: true,
   insertBraces: true
 }
 
-const result = stylusSupremacy.format(stylusContent, options)
+const result = stylusSupremacy.format(stylusContent, formattingOptions)
 ```
 
 The `result` object above contains 3 values: `text`, `tree` and `warnings`.
@@ -72,7 +72,7 @@ The `result.warnings` is an array of warning objects genereted by the `format` f
 
 ## Formatting options
 
-You can find a JSON file of the default formatting options [here](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json).
+You can find a JSON file containing the default formatting options [here](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json).
 
 |Options|Default value|Possible values|
 |---|---|---|
@@ -101,14 +101,14 @@ You can find a JSON file of the default formatting options [here](https://github
 
 ## Limitations and known issues
 
-- Both single-line and multi-line comments may be dropped out because *Stylint* internal [parser](https://github.com/stylus/stylus/blob/dev/lib/parser.js) did not work with comments well as its purpose is to create an input for CSS transpilation. The below are the original *Stylus* file and its formatted *Stylus* output respectively. You can see that the `/* comment-1 */` is missing in the output.
+- Both single-line and multi-line comments may be dropped out because *Stylint* internal [parser](https://github.com/stylus/stylus/blob/dev/lib/parser.js) did not play well with comments as its purpose is to create an input for CSS transpilation. The below are the original *Stylus* file and its formatted *Stylus* output respectively. You can see that the `/* comment-1 */` is missing in the output.
   ```css
   .class1 /* comment-1 */, .class2 /* comment-2 */ {
     display none
   }
   ```
   ```css
-  .class1 , .class2 { /* comment-2 */
+  .class1, .class2 { /* comment-2 */
     display: none;
   }
   ```
