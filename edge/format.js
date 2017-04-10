@@ -1,61 +1,28 @@
 const stylus = require('stylus')
 const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
+const StringBuffer = require('./StringBuffer')
 
 const defaultFormattingOptions = require('./defaultFormattingOptions.json')
 
-class StringBuffer {
-	constructor() {
-		this.buffer = []
-	}
-
-	append(text = '') {
-		if (arguments.length > 1) {
-			throw new Error('Found exceed arguments')
-
-		} else if (_.isObject(text)) {
-			throw new Error('Found a non-string argument')
-
-		} else if (text !== '') {
-			this.buffer.push(text)
-		}
-
-		return this
-	}
-
-	remove(text) {
-		if (text === undefined) {
-			this.buffer.pop()
-
-		} else if (this.buffer.length > 0) {
-			if (_.last(this.buffer) === text) {
-				this.buffer.pop()
-
-			} else if (_.last(this.buffer).endsWith(text)) {
-				this.buffer[this.buffer.length - 1] = _.last(this.buffer).substring(0, _.last(this.buffer).length - text.length)
-			}
-		}
-
-		return this
-	}
-
-	toString() {
-		return this.buffer.join('')
-	}
-}
-
 function format(content, options) {
+	// Consolidate the formatting options
 	options = _.assign({}, defaultFormattingOptions, options)
 
-	const warnings = []
-
-	const lines = content.split(/\r?\n/)
-
-	const rootNode = new stylus.Parser(content).parse()
-
+	// Prepare the artifacts
 	const comma = options.insertSpaceAfterComma ? ', ' : ','
 	const openParen = options.insertSpaceInsideParenthesis ? '( ' : '('
 	const closeParen = options.insertSpaceInsideParenthesis ? ' )' : ')'
+
+	// Store warning messages (if any)
+	const warnings = []
+
+	// Store the Stylus parsed tree
+	const rootNode = new stylus.Parser(content).parse()
+
+	// Store the input content line-by-line
+	// This will be used to determine some information that `rootNode` does not offer
+	const lines = content.split(/\r?\n/)
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
@@ -69,11 +36,14 @@ function format(content, options) {
 			throw new Error('Found one or many invalid arguments.')
 		}
 
+		// Inject a parent node to the current working node
 		inputNode.parent = parentNode
 
-		const outputBuffer = new StringBuffer()
-
+		// Prepare the indentation from the current indent level
 		const indent = _.repeat(options.tabStopChar, indentLevel)
+
+		// Store an output string for the current node
+		const outputBuffer = new StringBuffer()
 
 		// Insert sticky comment(s) before the current node
 		if (inputNode.commentsOnTop) {
@@ -302,6 +272,8 @@ function format(content, options) {
 				outputBuffer.append('@css {' + options.newLineChar)
 
 				let innerLines = inputNode.val.split(/\r?\n/)
+
+				// Adjust the original indentation
 				if (innerLines.length === 1) {
 					innerLines[0] = indent + innerLines[0].trim()
 
@@ -324,11 +296,6 @@ function format(content, options) {
 					}
 				}
 
-				let zeroBasedLineIndex = 0
-				const bound = innerLines.length - 1
-				while (++zeroBasedLineIndex <= bound) {
-					innerLines[zeroBasedLineIndex]
-				}
 				outputBuffer.append(innerLines.join(options.newLineChar))
 
 				outputBuffer.append(options.newLineChar)
@@ -720,14 +687,6 @@ function format(content, options) {
 			outputBuffer.append(travel(inputNode, inputNode.condition, indentLevel, true))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
 
-		} else if (inputNode instanceof stylus.nodes.Atrule) {
-			outputBuffer.append(indent + '@' + inputNode.type)
-			if (_.some(inputNode.segments)) {
-				outputBuffer.append(' ')
-				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
-			}
-			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
-
 		} else if (inputNode instanceof stylus.nodes.Extend) {
 			outputBuffer.append(indent)
 			if (options.alwaysUseExtends) {
@@ -738,6 +697,14 @@ function format(content, options) {
 			outputBuffer.append(' ')
 			outputBuffer.append(inputNode.selectors.map(node => travel(inputNode, node, indentLevel, true)).join(comma))
 			outputBuffer.append(options.newLineChar)
+
+		} else if (inputNode instanceof stylus.nodes.Atrule) {
+			outputBuffer.append(indent + '@' + inputNode.type)
+			if (_.some(inputNode.segments)) {
+				outputBuffer.append(' ')
+				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+			}
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof stylus.nodes.Atblock) {
 			if (options.alwaysUseAtBlock) {
@@ -836,6 +803,7 @@ function format(content, options) {
 			warnings.push({ message: 'Found unknown object', data: inputNode })
 		}
 
+		// Insert sticky comment(s) on the right of the current node
 		if (inputNode.commentsOnRight) {
 			outputBuffer.remove(options.newLineChar)
 			if (options.insertSpaceBeforeComment) {
@@ -995,6 +963,8 @@ function format(content, options) {
 	}
 
 	let output = travel(null, rootNode, 0)
+
+	// Trim new-line characters
 	if (output.startsWith(options.newLineChar)) {
 		output = output.substring(options.newLineChar.length)
 	}
