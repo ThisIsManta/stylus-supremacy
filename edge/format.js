@@ -18,12 +18,50 @@ function format(content, options) {
 	// Store warning messages (if any)
 	const warnings = []
 
-	// Store the Stylus parsed tree
-	const rootNode = new stylus.Parser(content).parse()
-
 	// Store the input content line-by-line
-	// This will be used to determine some information that `rootNode` does not offer
-	const lines = content.split(/\r?\n/)
+	const originalLines = content.split(/\r?\n/)
+
+	// Wrap the input in `wrap{...}` so that it has a root node
+	let modifiedContent = content
+	let originalTabStopChar = null
+	let originalBaseIndent = null
+	if (options.wrapMode) {
+		if (originalLines.length === 1) {
+			modifiedContent = 'wrap\n' + content
+
+		} else {
+			// Determine an original tab stop character
+			const twoShortestIndent = _.chain(originalLines)
+				.filter(line => line.trim().length > 0)
+				.map(line => _.get(line.match(/^(\s|\t)*/g), '0', ''))
+				.uniq()
+				.sortBy(text => text.length)
+				.take(2)
+				.value()
+			if (twoShortestIndent.length === 2) {
+				originalTabStopChar = twoShortestIndent[1].substring(twoShortestIndent[0].length)
+			} else {
+				originalTabStopChar = twoShortestIndent[0] || '\t'
+			}
+			originalBaseIndent = twoShortestIndent[0]
+
+			// Normalize the original indentation
+			modifiedContent = 'wrap\n' + originalLines.map(line => {
+				if (line.trim().length > 0) {
+					return originalTabStopChar + line.substring(twoShortestIndent[0].length)
+				} else {
+					return ''
+				}
+			}).join('\n')
+		}
+	}
+
+	// Used to determine some information that `rootNode` does not offer
+	// For example, a single-line comment
+	const modifiedLines = modifiedContent.split(/\r?\n/)
+
+	// Store the Stylus parsed tree
+	const rootNode = new stylus.Parser(modifiedContent).parse()
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
@@ -305,7 +343,7 @@ function format(content, options) {
 				outputBuffer.append('}' + options.newLineChar)
 
 			} else {
-				if (_.get(lines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
+				if (_.get(modifiedLines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
 					outputBuffer.append('\\')
 				}
 
@@ -829,8 +867,8 @@ function format(content, options) {
 
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
-		while (--zeroBasedLineIndex >= 0 && lines[zeroBasedLineIndex] !== undefined && lines[zeroBasedLineIndex].trim().startsWith('//')) {
-			commentNodes.unshift(new stylus.nodes.Comment(lines[zeroBasedLineIndex].trim(), false, false))
+		while (--zeroBasedLineIndex >= 0 && modifiedLines[zeroBasedLineIndex] !== undefined && modifiedLines[zeroBasedLineIndex].trim().startsWith('//')) {
+			commentNodes.unshift(new stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
 		}
 		return commentNodes
 	}
@@ -847,19 +885,19 @@ function format(content, options) {
 
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
-		if (lines[zeroBasedLineIndex] === undefined) {
+		if (modifiedLines[zeroBasedLineIndex] === undefined) {
 			return null
 		}
 
-		const sourceNodeIndent = lines[zeroBasedLineIndex].substring(0, lines[zeroBasedLineIndex].length - _.trimStart(lines[zeroBasedLineIndex]).length)
-		while (++zeroBasedLineIndex < lines.length && lines[zeroBasedLineIndex].trim().startsWith('//') && lines[zeroBasedLineIndex].startsWith(sourceNodeIndent)) {
-			commentNodes.push(new stylus.nodes.Comment(lines[zeroBasedLineIndex].trim(), false, false))
+		const sourceNodeIndent = modifiedLines[zeroBasedLineIndex].substring(0, modifiedLines[zeroBasedLineIndex].length - _.trimStart(modifiedLines[zeroBasedLineIndex]).length)
+		while (++zeroBasedLineIndex < modifiedLines.length && modifiedLines[zeroBasedLineIndex].trim().startsWith('//') && modifiedLines[zeroBasedLineIndex].startsWith(sourceNodeIndent)) {
+			commentNodes.push(new stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
 		}
 		return commentNodes
 	}
 
 	function tryGetSingleLineCommentNodeOnTheRightOf(inputNode) {
-		if (!inputNode || lines[inputNode.lineno - 1] !== undefined && lines[inputNode.lineno - 1].substring(inputNode.column - 1).includes('//') === false) {
+		if (!inputNode || modifiedLines[inputNode.lineno - 1] !== undefined && modifiedLines[inputNode.lineno - 1].substring(inputNode.column - 1).includes('//') === false) {
 			return null
 		}
 
@@ -868,7 +906,7 @@ function format(content, options) {
 			return null
 		}
 
-		let currentLine = lines[inputNode.lineno - 1]
+		let currentLine = modifiedLines[inputNode.lineno - 1]
 		if (currentLine === undefined) {
 			return null
 		}
@@ -890,23 +928,23 @@ function format(content, options) {
 	}
 
 	function tryGetMultiLineCommentNodeOnTheRightOf(inputNode) {
-		if (!inputNode || lines[inputNode.lineno - 1].substring(inputNode.column - 1).includes('/*') === false) {
+		if (!inputNode || modifiedLines[inputNode.lineno - 1].substring(inputNode.column - 1).includes('/*') === false) {
 			return null
 		}
 
 		let zeroBasedLineIndex = inputNode.lineno - 1
-		let currentLine = lines[zeroBasedLineIndex]
+		let currentLine = modifiedLines[zeroBasedLineIndex]
 		currentLine = currentLine.substring(currentLine.indexOf('/*', inputNode.column))
 		if (currentLine.includes('*/')) {
 			currentLine = currentLine.substring(0, currentLine.indexOf('*/') + 2)
 		} else {
-			while (++zeroBasedLineIndex < lines.length) {
+			while (++zeroBasedLineIndex < modifiedLines.length) {
 				if (currentLine.includes('*/')) {
 					currentLine = currentLine.substring(0, currentLine.indexOf('*/') + 2)
 					break
 				} else {
 					currentLine += options.newLineChar
-					currentLine += lines[zeroBasedLineIndex]
+					currentLine += modifiedLines[zeroBasedLineIndex]
 				}
 			}
 		}
@@ -967,19 +1005,47 @@ function format(content, options) {
 		}
 	}
 
-	let output = travel(null, rootNode, 0)
+	const outputText = travel(null, rootNode, 0)
+	let outputLines = outputText.split(new RegExp(_.escapeRegExp(options.newLineChar)))
+	let outputNode = rootNode
 
-	// Trim new-line characters
-	if (output.startsWith(options.newLineChar)) {
-		output = output.substring(options.newLineChar.length)
+	// Trim a beginning new-line character
+	if (_.first(outputLines).trim().length === 0) {
+		outputLines.shift()
 	}
-	if (output.endsWith(options.newLineChar) && content.includes('\n') && content.substring(content.lastIndexOf('\n') + 1).trim().length > 0) {
-		output = output.substring(0, output.length - options.newLineChar.length)
+
+	// Trim all trailing new-line characters
+	while (_.last(outputLines).trim().length === 0) {
+		outputLines.pop()
+	}
+
+	if (options.wrapMode) {
+		// Trim the wrap node as it was a root node
+		outputNode = rootNode.nodes[0].block
+
+		// Remove the wrap node block
+		outputLines.shift()
+		outputLines.pop()
+
+		// Remove the wrap node indentation
+		outputLines = outputLines.map(line => line.startsWith(options.tabStopChar) ? line.substring(options.tabStopChar.length) : line)
+
+		// Add the original base indentation
+		if (originalBaseIndent) {
+			const outputBaseIndent = _.repeat(options.tabStopChar, originalBaseIndent.length / originalTabStopChar.length)
+			outputLines = outputLines.map(line => line.trim().length > 0 ? (outputBaseIndent + line) : '')
+		}
+	}
+
+	// Add a trailing new-line character if the original content has it
+	// Do not move this block
+	if (originalLines.length > 1 && content.substring(content.lastIndexOf('\n') + 1).trim().length === 0) {
+		outputLines.push('')
 	}
 
 	return {
-		tree: rootNode,
-		text: output,
+		tree: outputNode,
+		text: outputLines.join(options.newLineChar),
 		warnings,
 	}
 }
