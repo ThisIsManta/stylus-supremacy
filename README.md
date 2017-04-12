@@ -77,25 +77,25 @@ You can find a sample JSON file containing the default formatting options [here]
 |---|---|---|
 |`insertColons`|`true`|`true` for always inserting a colon after a property name, otherwise `false`.|
 |`insertSemicolons`|`true`|`true` for always inserting a semi-colon after a property value, a variable declaration, a variable assignment and a function call, otherwise `false`.|
-|`insertBraces`|`true`|`true` for always inserting a pair of curly braces between a selector body, a mixin body, a function body and any @-block bodies, otherwise `false`.|
+|`insertBraces`|`true`|`true` for always inserting a pair of curly braces between a selector body, a mixin body, a function body and any *@block* bodies, otherwise `false`.|
 |`insertNewLineBetweenGroups`|`1`|This represents a number of new-line between different type of groups.|
 |`insertNewLineBetweenSelectors`|`false`|`true` for always inserting a new-line between selectors, otherwise `false`.|
 |`insertNewLineBeforeElse`|`false`|`true` for always inserting a new-line before *else* keyword, otherwise `false`.|
 |`insertSpaceBeforeComment`|`true`|`true` for always inserting a white-space before a comment, otherwise `false`.|
 |`insertSpaceAfterComment`|`true`|`true` for always inserting a white-space after a comment, otherwise `false`.|
 |`insertSpaceAfterComma`|`true`|`true` for always inserting a white-space after a comma, otherwise `false`. Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.|
-|`insertSpaceInsideParenthesis`|`false`|`true` for always inserting a white-space after an open parenthesis, otherwise `false`. Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.|
+|`insertSpaceInsideParenthesis`|`false`|`true` for always inserting a white-space after an open parenthesis and before a close parenthesis, otherwise `false`.|
 |`insertParenthesisAroundIfCondition`|`true`|`true` for always inserting a pair of parentheses between *if*-condition, otherwise `false`.|
 |`insertLeadingZeroBeforeFraction`|`true`|`true` for always inserting a zero before a number that between 1 and 0, otherwise `false`.|
 |`tabStopChar`|`"\t"`|This represents a tab-stop string. You may change this to 2-white-space sequence or anything.|
 |`newLineChar`|`"\n"`|This represents a new-line character. You may change this to `"\r\n"` if you are using *Microsoft Windows*.|
 |`quoteChar`|`"'"`|This represents a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.|
-|`sortProperties`|`false`|`false` for doing nothing about the CSS property order. `"alphabetical"` for sorting CSS properties from A to Z. `"grouped"` for sorting CSS properties according to *[Stylint predefined order](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json)*. Specifying an array of property names will sort the properties accordingly, for example, `["display", "margin", "padding"]`.|
+|`sortProperties`|`false`|This can be either `false` for doing nothing about the CSS property order, `"alphabetical"` for sorting CSS properties from A to Z, `"grouped"` for sorting CSS properties according to *[Stylint predefined order](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json)*, or an array of property names will sort the properties accordingly (for example, `["display", "margin", "padding"]`).|
 |`alwaysUseImport`|`false`|`true` for always using *@import* over *@require*. The difference between *@import* and *@require* is very subtle. Please refer to [the offical guide](http://stylus-lang.com/docs/import.html#require).|
 |`alwaysUseNot`|`false`|`true` for always using *not* keyword over *!* operator, otherwise `false`.|
 |`alwaysUseAtBlock`|`false`|`true` for always using *@block*, otherwise `false`.|
 |`alwaysUseExtends`|`false`|`true` for always using *@extends* over *@extend*, otherwise `false`.|
-|`alwaysUseZeroWithoutUnit`|`false`|`true` for always using *0* without unit, otherwise `false`.|
+|`alwaysUseZeroWithoutUnit`|`false`|`true` for always using *0* without unit in property values, otherwise `false`.|
 |`reduceMarginAndPaddingValues`|`false`|`true` for always using `margin x` over `margin x x x x`, `margin x y` over `margin x y x y` where `x`, `y` is a property value, otherwise `false`.|
 
 ## Limitations and known issues
