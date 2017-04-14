@@ -1,9 +1,9 @@
 const StylintAdapter = require('../edge/StylintAdapter')
 
+const defaultStylintOptions = require('stylint/src/core/config')
+
 describe('StylintAdapter', () => {
 	it('represents the default formatting options', () => {
-		const stylintOptions = {}
-
 		const formattingOptions = {
 			insertBraces: false,
 			insertColons: true,
@@ -17,7 +17,7 @@ describe('StylintAdapter', () => {
 			alwaysUseZeroWithoutUnit: false,
 		}
 
-		expect(new StylintAdapter(stylintOptions).toJSON()).toEqual(formattingOptions)
+		expect(new StylintAdapter(defaultStylintOptions).toJSON()).toEqual(formattingOptions)
 	})
 
 	it('returns the correct value for for "always", "never" and false', () => {

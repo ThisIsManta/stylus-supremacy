@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const defaultStylintOptions = require('stylint/src/core/config')
-
 const createAdapterForAlwaysNeverFalse = name => value => (value === 'always' || value === 'never') ? [name, value === 'always'] : []
 
 const stylintOptionMap = {
@@ -22,8 +20,8 @@ const stylintOptionMap = {
 }
 
 class StylintAdapter {
-	constructor(stylintOptions) {
-		_.chain(_.assign({}, defaultStylintOptions, stylintOptions))
+	constructor(stylintOptions = {}) {
+		_.chain(stylintOptions)
 			.omitBy((item, name) => stylintOptionMap[name] === undefined)
 			.forEach((item, name) => {
 				const value = _.isObject(item) && item.expect !== undefined ? item.expect : item
@@ -38,6 +36,7 @@ class StylintAdapter {
 
 	toJSON() {
 		return _.chain(Object.getOwnPropertyNames(this))
+			.filter(name => this[name] !== undefined)
 			.map(name => [name, this[name]])
 			.fromPairs()
 			.value()

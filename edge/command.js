@@ -37,7 +37,10 @@ if (inputFiles.length === 0) {
 	console.log('No files specified.')
 
 } else {
-	const formattingOptions = optionFilePath && fs.existsSync(optionFilePath) ? require(optionFilePath) : null
+	let formattingOptions = null
+	if (optionFilePath && fs.existsSync(optionFilePath)) {
+		formattingOptions = require(optionFilePath)
+	}
 
 	const outputFiles = _.chain(inputFiles)
 		.map(path => glob.sync(path))
