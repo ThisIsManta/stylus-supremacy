@@ -100,7 +100,7 @@ You can find a sample JSON file containing the default formatting options [here]
 
 ## Stylint compatibility
 
-Note that `"always"` in *Stylint* is equivalent to `true`; `"never"` and `false` are treated like `false`.
+Note that `"always"` in *Stylint* is equivalent to `true`; `"never"` is equivalent to `false`, otherwise the default [formatting options](#formatting-options) will be used.
 
 |Stylint options|Equivalent options in Stylus Supremacy|
 |---|---|
@@ -130,12 +130,12 @@ Note that `"always"` in *Stylint* is equivalent to `true`; `"never"` and `false`
 |`parenSpace`|`insertSpaceInsideParenthesis`|
 |`placeholder`|Not applicable|
 |`prefixVarsWithDollar`|Not applicable|
-|`quotePref`|`quoteChar`; the value must be either `"'"` or `"\""`.|
+|`quotePref`|`quoteChar`; the values `"single"` and `"double"` will be converted to `"'"` and `"\""` respectively.|
 |`reporterOptions`|Not applicable|
 |`semicolons`|`insertSemicolons`|
 |`sortOrder`|`sortProperties`|
-|`stackedProperties`|Not available|
-|`trailingWhitespace`|Not available <br>*Visual Studio Code* can trim trailing whitespace for you. <br>Please find `"editor.trimAutoWhitespace"` in the settings.|
+|`stackedProperties`|Not applicable|
+|`trailingWhitespace`|Not applicable|
 |`universal`|Not applicable|
 |`valid`|Not applicable|
 |`zeroUnits`|`alwaysUseZeroWithoutUnit`|
