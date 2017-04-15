@@ -1033,8 +1033,12 @@ function format(content, options) {
 		outputNode = rootNode.nodes[0].block
 
 		// Remove the wrap node block
-		outputLines.shift()
-		outputLines.pop()
+		if (outputLines[0].startsWith('wrap')) {
+			outputLines.shift()
+		}
+		if (options.insertBraces && _.last(outputLines).trim() === '}') {
+			outputLines.pop()
+		}
 
 		// Remove the wrap node indentation
 		outputLines = outputLines.map(line => line.startsWith(options.tabStopChar) ? line.substring(options.tabStopChar.length) : line)
@@ -1046,6 +1050,12 @@ function format(content, options) {
 		} else if (originalBaseIndent) {
 			outputLines = outputLines.map(line => line.trim().length > 0 ? (originalBaseIndent + line) : '')
 		}
+	}
+
+	// Add a beginning new-line character
+	// Do not move this block
+	if (originalLines[0].length === 0) {
+		outputLines.unshift('')
 	}
 
 	// Add a trailing new-line character if the original content has it

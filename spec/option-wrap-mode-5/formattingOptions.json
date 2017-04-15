@@ -1,4 +1,7 @@
 {
 	"wrapMode": true,
+	"insertBraces": false,
+	"insertNewLineBetweenGroups": 1,
+	"sortProperties": "grouped",
 	"newLineChar": "\r\n"
 }
