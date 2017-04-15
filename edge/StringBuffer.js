@@ -5,10 +5,10 @@ class StringBuffer {
 
 	append(text) {
 		if (arguments.length > 1) {
-			throw new Error('Found exceed arguments')
+			throw new Error('Found too many arguments of', Array.prototype.slice.call(arguments))
 
 		} else if (typeof text === 'object' && text !== null) {
-			throw new Error('Found a non-string argument')
+			throw new Error('Found a non-string argument of', text)
 
 		} else if (text !== '') {
 			this.buffer.push(text)

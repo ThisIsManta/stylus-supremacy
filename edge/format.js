@@ -26,14 +26,16 @@ function format(content, options) {
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
-		if ([
-			_.isObject(parentNode) || parentNode === null && inputNode instanceof stylus.nodes.Root,
-			_.isObject(inputNode),
-			_.isInteger(indentLevel) && indentLevel >= 0,
-			_.isBoolean(insideExpression),
-			_.isPlainObject(data),
-		].some(constraint => !constraint)) {
-			throw new Error('Found one or many invalid arguments.')
+		if (!(_.isObject(parentNode) || parentNode === null && inputNode instanceof stylus.nodes.Root)) {
+			throw new Error(`Found a parent node of ${JSON.stringify(parentNode)}`)
+		} else if (!(_.isObject(inputNode))) {
+			throw new Error(`Found an input node of ${JSON.stringify(inputNode)}` + (parentNode ? `, which had a parent node of ${JSON.stringify(parentNode)}` : ''))
+		} else if (!(_.isInteger(indentLevel) && indentLevel >= 0)) {
+			throw new Error(`Found an indent level of ${JSON.stringify(indentLevel)}`)
+		} else if (!(_.isBoolean(insideExpression))) {
+			throw new Error(`Found an expression flag of ${JSON.stringify(insideExpression)}`)
+		} else if (!(_.isPlainObject(data))) {
+			throw new Error(`Found an additional data object of ${JSON.stringify(data)}`)
 		}
 
 		// Inject a parent node to the current working node
@@ -305,7 +307,12 @@ function format(content, options) {
 				if (_.get(lines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
 					outputBuffer.append('\\')
 				}
-				outputBuffer.append(inputNode.val)
+
+				if (_.isString(inputNode.val)) {
+					outputBuffer.append(inputNode.val)
+				} else {
+					outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
+				}
 			}
 
 		} else if (inputNode instanceof stylus.nodes.String) {
@@ -795,9 +802,6 @@ function format(content, options) {
 			} else {
 				outputBuffer.append(commentLines.map(line => indent + line).join(options.newLineChar)).append(options.newLineChar)
 			}
-
-		} else if (typeof inputNode === 'string') {
-			outputBuffer.append(inputNode)
 
 		} else {
 			warnings.push({ message: 'Found unknown object', data: inputNode })
