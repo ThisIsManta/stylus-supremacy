@@ -7,6 +7,15 @@ const StylintAdapter = require('./StylintAdapter')
 const defaultFormattingOptions = require('./defaultFormattingOptions.json')
 
 function format(content, options) {
+	// Stop processing if the input content is empty
+	if (content.trim().length === 0) {
+		return {
+			text: '',
+			tree: null,
+			warnings: [],
+		}
+	}
+
 	// Consolidate the formatting options
 	options = _.assign({}, defaultFormattingOptions, new StylintAdapter(options).toJSON(), options)
 
@@ -21,13 +30,14 @@ function format(content, options) {
 	// Store the input content line-by-line
 	const originalLines = content.split(/\r?\n/)
 
-	// Wrap the input in `wrap{...}` so that it has a root node
 	let modifiedContent = content
-	let originalTabStopChar = null
-	let originalBaseIndent = null
+	let originalTabStopChar = null // For example, "\t", "\s\s" and so on
+	let originalBaseIndent = null // This could be zero or many occurrences of `originalTabStopChar`
 	if (options.wrapMode) {
+		// Wrap the input content in `wrap{...}` so that it has a root node
+		// This is designed for https://github.com/ThisIsManta/vscode-stylus-supremacy
 		if (originalLines.length === 1) {
-			modifiedContent = 'wrap\n' + content
+			modifiedContent = 'wrap\n\t' + content.trim()
 
 		} else {
 			// Determine an original tab stop character

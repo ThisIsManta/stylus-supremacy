@@ -2,6 +2,10 @@
 
 **Stylus Supremacy** is a *Node.js* script for formatting *[Stylus](http://stylus-lang.com)* files. You may say this is a beautifier for *Stylus*.
 
+## New features
+### v0.2.0
+- Added [*Stylint* compatibility](#stylint-compatibility)
+
 ## Command-line usage
 
 First thing first, you must install this script via *NPM*.
