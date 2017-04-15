@@ -38,6 +38,7 @@ function format(content, options) {
 		// This is designed for https://github.com/ThisIsManta/vscode-stylus-supremacy
 		if (originalLines.length === 1) {
 			modifiedContent = 'wrap\n\t' + content.trim()
+			originalBaseIndent = _.get(content.match(/^(\s|\t)*/g), '0', null)
 
 		} else {
 			// Determine an original tab stop character
@@ -50,15 +51,13 @@ function format(content, options) {
 				.value()
 			if (twoShortestIndent.length === 2) {
 				originalTabStopChar = twoShortestIndent[1].substring(twoShortestIndent[0].length)
-			} else {
-				originalTabStopChar = twoShortestIndent[0] || '\t'
 			}
 			originalBaseIndent = twoShortestIndent[0]
 
 			// Normalize the original indentation
 			modifiedContent = 'wrap\n' + originalLines.map(line => {
 				if (line.trim().length > 0) {
-					return originalTabStopChar + line.substring(twoShortestIndent[0].length)
+					return (originalTabStopChar || '\t') + line.substring(twoShortestIndent[0].length)
 				} else {
 					return ''
 				}
@@ -1041,9 +1040,11 @@ function format(content, options) {
 		outputLines = outputLines.map(line => line.startsWith(options.tabStopChar) ? line.substring(options.tabStopChar.length) : line)
 
 		// Add the original base indentation
-		if (originalBaseIndent) {
+		if (originalBaseIndent && originalTabStopChar) {
 			const outputBaseIndent = _.repeat(options.tabStopChar, originalBaseIndent.length / originalTabStopChar.length)
 			outputLines = outputLines.map(line => line.trim().length > 0 ? (outputBaseIndent + line) : '')
+		} else if (originalBaseIndent) {
+			outputLines = outputLines.map(line => line.trim().length > 0 ? (originalBaseIndent + line) : '')
 		}
 	}
 
