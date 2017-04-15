@@ -16,7 +16,7 @@ const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
 const _ = require('lodash')
-const { format } = require('../edge/format.js')
+const format = require('../edge/format')
 
 const filteredSpecName = _.chain(ps.argv).map((param, index, array) => (param === '--filter' || param === '-f') ? _.trim(array[index + 1], '"') : null).compact().first().value()
 

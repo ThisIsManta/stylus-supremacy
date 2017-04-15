@@ -2,9 +2,9 @@ const stylus = require('stylus')
 const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
 const StringBuffer = require('./StringBuffer')
-const StylintAdapter = require('./StylintAdapter')
 
 const defaultFormattingOptions = require('./defaultFormattingOptions.json')
+const createFormattingOptionsFromStylintOptions = require('./createFormattingOptionsFromStylintOptions')
 
 function format(content, options) {
 	// Stop processing if the input content is empty
@@ -17,7 +17,7 @@ function format(content, options) {
 	}
 
 	// Consolidate the formatting options
-	options = _.assign({}, defaultFormattingOptions, new StylintAdapter(options).toJSON(), options)
+	options = _.assign({}, defaultFormattingOptions, createFormattingOptionsFromStylintOptions(options), options)
 
 	// Prepare the artifacts
 	const comma = options.insertSpaceAfterComma ? ', ' : ','
@@ -1060,4 +1060,4 @@ function format(content, options) {
 	}
 }
 
-module.exports.format = format
+module.exports = format

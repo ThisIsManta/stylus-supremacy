@@ -19,28 +19,22 @@ const stylintOptionMap = {
 	'zeroUnits': createAdapterForAlwaysNeverFalse('alwaysUseZeroWithoutUnit'),
 }
 
-class StylintAdapter {
-	constructor(stylintOptions = {}) {
-		_.chain(stylintOptions)
-			.omitBy((item, name) => stylintOptionMap[name] === undefined)
-			.forEach((item, name) => {
-				const value = _.isObject(item) && item.expect !== undefined ? item.expect : item
+function createFormattingOptionsFromStylintOptions(stylintOptions = {}) {
+	return _.chain(stylintOptions)
+		.omitBy((item, name) => stylintOptionMap[name] === undefined)
+		.reduce((temp, item, name) => {
+			const value = _.isObject(item) && item.expect !== undefined ? item.expect : item
 
-				const options = _.chunk(stylintOptionMap[name](value) || [], 2)
-				options.forEach(option => {
-					this[option[0]] = option[1]
-				})
+			const options = _.chunk(stylintOptionMap[name](value) || [], 2)
+			options.forEach(pair => {
+				if (pair[1] !== undefined) {
+					temp[pair[0]] = pair[1]
+				}
 			})
-			.value()
-	}
 
-	toJSON() {
-		return _.chain(Object.getOwnPropertyNames(this))
-			.filter(name => this[name] !== undefined)
-			.map(name => [name, this[name]])
-			.fromPairs()
-			.value()
-	}
+			return temp
+		}, {})
+		.value()
 }
 
-module.exports = StylintAdapter
+module.exports = createFormattingOptionsFromStylintOptions

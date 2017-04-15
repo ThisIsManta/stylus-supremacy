@@ -5,7 +5,7 @@ const fs = require('fs')
 const pt = require('path')
 const glob = require('glob')
 const _ = require('lodash')
-const { format } = require('./format.js')
+const format = require('./format')
 
 let inputFiles = []
 let optionFilePath = ''
