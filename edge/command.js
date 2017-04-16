@@ -11,6 +11,7 @@ let inputFiles = []
 let optionFilePath = ''
 let replaceOriginal = false
 let outputDirectory = ''
+let printVersion = false
 
 let paramIndex = -1
 const paramArray = ps.argv.slice(2)
@@ -28,12 +29,18 @@ while (++paramIndex < paramArray.length) {
 		outputDirectory = paramArray[paramIndex + 1]
 		paramIndex++
 
+	} else if (param === '--version' || param === '-v') {
+		printVersion = true
+
 	} else {
 		inputFiles.push(param)
 	}
 }
 
-if (inputFiles.length === 0) {
+if (printVersion) {
+	console.log('v' + require('../package.json').version)
+
+} else if (inputFiles.length === 0) {
 	console.log('No files specified.')
 
 } else {
