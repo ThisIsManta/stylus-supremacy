@@ -11,8 +11,7 @@
     "css",
     "format",
     "pretty",
-    "beautify",
-    "beautifier"
+    "beautify"
   ],
   "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
   "bin": "./edge/command.js",
