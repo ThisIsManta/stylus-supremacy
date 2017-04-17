@@ -41,12 +41,12 @@ if (printVersion) {
 	console.log('v' + require('../package.json').version)
 
 } else if (inputFiles.length === 0) {
-	console.log('No files specified.')
+	throw new Error('No files specified.')
 
 } else {
 	let formattingOptions = null
-	if (optionFilePath && fs.existsSync(optionFilePath)) {
-		formattingOptions = require(optionFilePath)
+	if (optionFilePath) {
+		formattingOptions = JSON.parse(fs.readFileSync(optionFilePath, 'utf8'))
 	}
 
 	const outputFiles = _.chain(inputFiles)
