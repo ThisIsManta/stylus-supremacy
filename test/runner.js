@@ -41,8 +41,9 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 		formattingOptions = require('../' + optionFilePath)
 	}
 
-	describe(pt.basename(directory), () => {
-		it('', () => {
+	const testSpecName = pt.basename(directory)
+	describe(testSpecName, () => {
+		it('can be formatted', () => {
 			if (fs.existsSync(actualFilePath)) fs.unlinkSync(actualFilePath)
 			if (fs.existsSync(debuggingFilePath)) fs.unlinkSync(debuggingFilePath)
 
@@ -55,7 +56,7 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 				fs.writeFileSync(actualFilePath, actualContent)
 
 				try {
-					const tree = new Stylus.Parser(modifiedContent).parse()
+					const tree = new Stylus.Parser(inputContent).parse()
 					fs.writeFileSync(debuggingFilePath, JSON.stringify(tree, null, '\t'))
 				} catch (ex) {
 					// Do nothing
@@ -102,6 +103,19 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 					message: 'It was not clear to show the difference. Please check out the files below.',
 					stack
 				})
+			}
+		})
+
+		// Skip output parsing for partial content
+		if (testSpecName.includes('option-wrap-mode')) {
+			return null
+		}
+
+		it('can be re-parsed', () => {
+			try {
+				new Stylus.Parser(outputContent).parse()
+			} catch (ex) {
+				fail(ex)
 			}
 		})
 	})
