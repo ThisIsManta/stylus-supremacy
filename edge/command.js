@@ -41,52 +41,49 @@ if (printVersion) {
 	console.log('v' + require('../package.json').version)
 
 } else if (inputFiles.length === 0) {
-	throw new Error('No files specified.')
+	throw new Error('No input files specified.')
 
 } else {
 	let formattingOptions = null
 	if (optionFilePath) {
-		formattingOptions = JSON.parse(fs.readFileSync(optionFilePath, 'utf8'))
+		if (fs.existsSync(optionFilePath)) {
+			formattingOptions = JSON.parse(fs.readFileSync(optionFilePath, 'utf8'))
+		} else {
+			throw new Error('Option file could not be found.')
+		}
 	}
 
-	const outputFiles = _.chain(inputFiles)
+	_.chain(inputFiles)
 		.map(path => glob.sync(path))
 		.flatten()
-		.map(path => Object.assign({ path }, format(fs.readFileSync(path, 'utf8'), formattingOptions)))
+		.forEach(path => {
+			console.log('Processing ', path)
+
+			try {
+				const inputContent = fs.readFileSync(path, 'utf8')
+				const outputContent = format(inputContent, formattingOptions)
+
+				if (outputDirectory) {
+					if (fs.existsSync(pt.resolve(outputDirectory)) === false) {
+						fs.mkdirSync(pt.resolve(outputDirectory))
+					}
+
+					fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(path)), outputContent)
+
+				} else if (replaceOriginal) {
+					if (inputContent !== outputContent) {
+						fs.writeFileSync(path, outputContent)
+					}
+
+				} else {
+					console.log(outputContent)
+				}
+
+			} catch (error) {
+				console.log(error)
+			}
+		})
 		.value()
 
-	if (outputDirectory) {
-		if (fs.existsSync(pt.resolve(outputDirectory)) === false) {
-			fs.mkdirSync(pt.resolve(outputDirectory))
-		}
-		outputFiles.forEach(file => {
-			fs.writeFileSync(pt.resolve(outputDirectory, pt.basename(file.path)), file.text)
-		})
-
-	} else if (replaceOriginal) {
-		outputFiles.forEach(file => {
-			fs.writeFileSync(file.path, file.text)
-		})
-
-	} else {
-		outputFiles.forEach(file => {
-			console.log(file.text)
-		})
-	}
-
-	if (outputFiles.some(file => file.warnings.length > 0)) {
-		outputFiles.forEach(file => {
-			file.warnings.forEach(warn => {
-				console.log(`WARN: ${warn.message} in ${file.path}`)
-				if (warn.data !== undefined) {
-					console.log(JSON.stringify(warn.data, null, '\t'))
-				}
-			})
-		})
-		const warningCount = _.sumBy(outputFiles, file => file.warnings.length)
-		console.log(`Done with ${warningCount} warning${warningCount === 1 ? '' : 's'}.`)
-
-	} else {
-		console.log('Done without warnings.')
-	}
+	console.log('Done.')
 }

@@ -9,11 +9,7 @@ const createFormattingOptionsFromStylintOptions = require('./createFormattingOpt
 function format(content, options) {
 	// Stop processing if the input content is empty
 	if (content.trim().length === 0) {
-		return {
-			text: '',
-			tree: null,
-			warnings: [],
-		}
+		return ''
 	}
 
 	// Consolidate the formatting options
@@ -23,9 +19,6 @@ function format(content, options) {
 	const comma = options.insertSpaceAfterComma ? ', ' : ','
 	const openParen = options.insertSpaceInsideParenthesis ? '( ' : '('
 	const closeParen = options.insertSpaceInsideParenthesis ? ' )' : ')'
-
-	// Store warning messages (if any)
-	const warnings = []
 
 	// Store the input content line-by-line
 	const originalLines = content.split(/\r?\n/)
@@ -312,7 +305,9 @@ function format(content, options) {
 				}
 
 			} else {
-				warnings.push({ message: 'Found unknown object', data: inputNode })
+				const error = new Error('Found unknown object')
+				error.data = inputNode
+				throw error
 			}
 
 			if (options.insertSemicolons) {
@@ -873,7 +868,9 @@ function format(content, options) {
 			}
 
 		} else {
-			warnings.push({ message: 'Found unknown object', data: inputNode })
+			const error = new Error('Found unknown object')
+			error.data = inputNode
+			throw error
 		}
 
 		// Insert sticky comment(s) on the right of the current node
@@ -1037,7 +1034,6 @@ function format(content, options) {
 
 	const outputText = travel(null, rootNode, 0)
 	let outputLines = outputText.split(new RegExp(_.escapeRegExp(options.newLineChar)))
-	let outputNode = rootNode
 
 	// Trim a beginning new-line character
 	if (_.first(outputLines).trim().length === 0) {
@@ -1050,9 +1046,6 @@ function format(content, options) {
 	}
 
 	if (options.wrapMode) {
-		// Trim the wrap node as it was a root node
-		outputNode = rootNode.nodes[0].block
-
 		// Remove the wrap node block
 		if (outputLines[0].startsWith('wrap')) {
 			outputLines.shift()
@@ -1085,11 +1078,7 @@ function format(content, options) {
 		outputLines.push('')
 	}
 
-	return {
-		tree: outputNode,
-		text: outputLines.join(options.newLineChar),
-		warnings,
-	}
+	return outputLines.join(options.newLineChar)
 }
 
 module.exports = format

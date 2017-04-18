@@ -16,6 +16,7 @@ const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
 const _ = require('lodash')
+const Stylus = require('stylus')
 const format = require('../edge/format')
 
 const filteredSpecName = _.chain(ps.argv).map((param, index, array) => (param === '--filter' || param === '-f') ? _.trim(array[index + 1], '"') : null).compact().first().value()
@@ -23,6 +24,7 @@ const filteredSpecName = _.chain(ps.argv).map((param, index, array) => (param ==
 const filesAndDirectories = glob.sync('spec/' + (filteredSpecName || '*'))
 const filesOnly = path => pt.extname(path) === '.js'
 const directoriesOnly = path => pt.extname(path) === ''
+const createComparableLines = text => text.replace(/\r/g, '¶').replace(/\t/g, '→').replace(/^\s+/gm, spaces => _.repeat('·', spaces.length)).split('\n')
 
 filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	const inputFilePath = pt.join(directory, 'input.styl')
@@ -44,14 +46,20 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 			if (fs.existsSync(actualFilePath)) fs.unlinkSync(actualFilePath)
 			if (fs.existsSync(debuggingFilePath)) fs.unlinkSync(debuggingFilePath)
 
-			const actual = format(inputContent, formattingOptions)
+			const actualContent = format(inputContent, formattingOptions)
 
-			if (actual.text === outputContent) { // In case of success
+			if (actualContent === outputContent) { // In case of success
 				expect(true).toBeTruthy()
 
 			} else { // In case of failure
-				fs.writeFileSync(actualFilePath, actual.text, 'utf8')
-				fs.writeFileSync(debuggingFilePath, JSON.stringify(actual.tree, null, '\t'), 'utf8')
+				fs.writeFileSync(actualFilePath, actualContent)
+
+				try {
+					const tree = new Stylus.Parser(modifiedContent).parse()
+					fs.writeFileSync(debuggingFilePath, JSON.stringify(tree, null, '\t'))
+				} catch (ex) {
+					// Do nothing
+				}
 
 				const stack = [
 					inputFilePath,
@@ -60,8 +68,8 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 					debuggingFilePath
 				].map(path => pt.resolve(path)).join('\n')
 
-				const resultLines = actual.text.replace(/\t/gm, '··').replace(/\r/gm, '¶').split('\n')
-				const expectLines = outputContent.replace(/\t/gm, '··').replace(/\r/gm, '¶').split('\n')
+				const resultLines = createComparableLines(actualContent)
+				const expectLines = createComparableLines(outputContent)
 
 				let lineIndex = -1
 				const lineLimit = Math.min(resultLines.length, expectLines.length)
@@ -95,8 +103,6 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 					stack
 				})
 			}
-
-			expect(actual.warnings.length).toBe(0)
 		})
 	})
 })
