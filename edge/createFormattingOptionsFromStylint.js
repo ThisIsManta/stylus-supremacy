@@ -13,6 +13,7 @@ const stylintOptionMap = {
 	indentPref: ['tabStopChar', value => value > 0 ? _.repeat(' ', value) : undefined],
 	leadingZero: ['insertLeadingZeroBeforeFraction', createAdapterForAlwaysNeverFalse],
 	parenSpace: ['insertSpaceInsideParenthesis', createAdapterForAlwaysNeverFalse],
+	prefixVarsWithDollar: ['insertDollarSignBeforeVariableName', createAdapterForAlwaysNeverFalse],
 	quotePref: ['quoteChar', value => (value === 'single' && '\'' || value === 'double' && '"' || undefined)],
 	semicolons: ['insertSemicolons', createAdapterForAlwaysNeverFalse],
 	sortOrder: ['sortProperties', value => value, 'insertNewLineAroundProperties', value => value === 'grouped' ? true : undefined],

@@ -64,6 +64,9 @@ function format(content, options = {}) {
 	// Store the Stylus parsed tree
 	const rootNode = new Stylus.Parser(modifiedContent).parse()
 
+	// Store variable names that should start with a dollar sign
+	const renamedVariables = new Map()
+
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
 		if (!(_.isObject(parentNode) || parentNode === null && inputNode instanceof Stylus.nodes.Root)) {
@@ -417,18 +420,22 @@ function format(content, options = {}) {
 				outputBuffer.append(indent)
 			}
 
-			// Replace the identifier name with '@' for anonymous functions
-			const currentIsAnonymousFunc = inputNode.name === 'anonymous' && inputNode.val instanceof Stylus.nodes.Function && inputNode.val.name === 'anonymous'
-			if (currentIsAnonymousFunc) {
-				outputBuffer.append('@')
-			} else {
-				outputBuffer.append(inputNode.name)
-			}
+			if (inputNode.val instanceof Stylus.nodes.Function) { // In case of function declarations
+				if (inputNode.name === 'anonymous' && inputNode.val.name === 'anonymous') { // In case of anonymous functions
+					outputBuffer.append('@')
+				} else {
+					outputBuffer.append(inputNode.name)
+				}
 
-			if (inputNode.val instanceof Stylus.nodes.Function) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, false))
 
-			} else if (inputNode.val instanceof Stylus.nodes.Expression) { // In case of assignments
+			} else if (inputNode.val instanceof Stylus.nodes.Expression) { // In case of variable declarations and assignments
+				// Add a dollar sign before a variable name
+				if (options.insertDollarSignBeforeVariableName && inputNode.name.startsWith('$') === false) {
+					renamedVariables.set(inputNode.name, '$' + inputNode.name)
+				}
+
+				outputBuffer.append(renamedVariables.get(inputNode.name) || inputNode.name)
 				outputBuffer.append(' = ')
 				const temp = travel(inputNode, inputNode.val, indentLevel, true)
 				if (temp.startsWith(' ') || temp.startsWith(options.newLineChar)) {
@@ -437,8 +444,12 @@ function format(content, options = {}) {
 				outputBuffer.append(temp)
 
 			} else if (inputNode.val instanceof Stylus.nodes.BinOp && inputNode.val.left instanceof Stylus.nodes.Ident && inputNode.val.left.name === inputNode.name && inputNode.val.right) { // In case of self-assignments
+				outputBuffer.append(renamedVariables.get(inputNode.name) || inputNode.name)
 				outputBuffer.append(' ' + inputNode.val.op + '= ')
 				outputBuffer.append(travel(inputNode.val, inputNode.val.right, indentLevel, true))
+
+			} else {
+				outputBuffer.append(renamedVariables.get(inputNode.name) || inputNode.name)
 			}
 
 			const currentHasChildOfAnonymousFunc = inputNode.val instanceof Stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof Stylus.nodes.Ident && inputNode.val.nodes[0].val instanceof Stylus.nodes.Function && inputNode.val.nodes[0].val.name === 'anonymous'

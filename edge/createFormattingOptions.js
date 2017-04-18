@@ -143,6 +143,19 @@ const schema = {
 			`
 		}
 	},
+	insertDollarSignBeforeVariableName: {
+		description: 'Insert a dollar sign <code>$</code> before a variable name, or do nothing.',
+		type: 'boolean',
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			roseRed = #C21E56
+			.class1
+				background roseRed
+			`
+		}
+	},
 	insertLeadingZeroBeforeFraction: {
 		description: 'Insert or remove a zero before a number that between 1 and 0.',
 		type: 'boolean',
