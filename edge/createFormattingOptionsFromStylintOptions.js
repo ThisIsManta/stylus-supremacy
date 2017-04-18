@@ -16,7 +16,7 @@ const stylintOptionMap = {
 	'quotePref': value => value === 'single' && ['quoteChar', '\''] || value === 'double' && ['quoteChar', '"'],
 	'semicolons': createAdapterForAlwaysNeverFalse('insertSemicolons'),
 	'sortOrder': value => ['sortProperties', value],
-	'zeroUnits': createAdapterForAlwaysNeverFalse('alwaysUseZeroWithoutUnit'),
+	'zeroUnits': value => value === false ? [] : ['alwaysUseZeroWithoutUnit', value === 'never'],
 }
 
 function createFormattingOptionsFromStylintOptions(stylintOptions = {}) {

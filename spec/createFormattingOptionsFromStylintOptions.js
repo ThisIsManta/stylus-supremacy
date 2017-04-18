@@ -14,7 +14,7 @@ describe('createFormattingOptionsFromStylintOptions', () => {
 			insertLeadingZeroBeforeFraction: false,
 			insertSemicolons: false,
 			sortProperties: 'alphabetical',
-			alwaysUseZeroWithoutUnit: false,
+			alwaysUseZeroWithoutUnit: true,
 		}
 
 		expect(createFormattingOptions(defaultStylintOptions)).toEqual(formattingOptions)
@@ -48,5 +48,10 @@ describe('createFormattingOptionsFromStylintOptions', () => {
 		expect(createFormattingOptions({ sortOrder: 'grouped' }).sortProperties).toBe('grouped')
 		expect(createFormattingOptions({ sortOrder: ['a', 'b', 'c'] }).sortProperties).toEqual(['a', 'b', 'c'])
 		expect(createFormattingOptions({ sortOrder: false }).sortProperties).toBe(false)
+	})
+
+	it('returns the correct value for `zeroUnits`', () => {
+		expect(createFormattingOptions({ zeroUnits: 'always' }).alwaysUseZeroWithoutUnit).toBe(false)
+		expect(createFormattingOptions({ zeroUnits: 'never' }).alwaysUseZeroWithoutUnit).toBe(true)
 	})
 })
