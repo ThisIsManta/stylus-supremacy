@@ -1,5 +1,5 @@
 {
 	"alwaysUseAtBlock": true,
-	"alwaysUseAtBlock": true,
+	"insertBraces": false,
 	"newLineChar": "\r\n"
 }

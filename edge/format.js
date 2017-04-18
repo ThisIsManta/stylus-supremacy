@@ -128,7 +128,7 @@ function format(content, options) {
 		} else if (inputNode instanceof stylus.nodes.Root || inputNode instanceof stylus.nodes.Block) {
 			const childIndentLevel = inputNode instanceof stylus.nodes.Root ? 0 : (indentLevel + 1)
 
-			if (inputNode instanceof stylus.nodes.Block && options.insertBraces) {
+			if (inputNode instanceof stylus.nodes.Block && (parentNode instanceof stylus.nodes.Atblock ? options.alwaysUseAtBlock : options.insertBraces)) {
 				outputBuffer.append(' {')
 			}
 
@@ -252,7 +252,7 @@ function format(content, options) {
 				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)).join(''))
 			}
 
-			if (inputNode instanceof stylus.nodes.Block && options.insertBraces) {
+			if (inputNode instanceof stylus.nodes.Block && (parentNode instanceof stylus.nodes.Atblock ? options.alwaysUseAtBlock : options.insertBraces)) {
 				outputBuffer.append(indent + '}')
 				outputBuffer.append(options.newLineChar)
 			}
