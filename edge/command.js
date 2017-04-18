@@ -41,7 +41,7 @@ if (printVersion) {
 	console.log('v' + require('../package.json').version)
 
 } else if (inputFiles.length === 0) {
-	throw new Error('No input files specified.')
+	console.log('No input files specified.')
 
 } else {
 	let formattingOptions = null
@@ -53,11 +53,12 @@ if (printVersion) {
 		}
 	}
 
-	_.chain(inputFiles)
+	const errorCount = _.chain(inputFiles)
 		.map(path => glob.sync(path))
 		.flatten()
-		.forEach(path => {
-			console.log('Processing ', path)
+		.map(path => {
+			console.log()
+			console.log('»', path)
 
 			try {
 				const inputContent = fs.readFileSync(path, 'utf8')
@@ -78,12 +79,26 @@ if (printVersion) {
 				} else {
 					console.log(outputContent)
 				}
+				return 0
 
 			} catch (error) {
-				console.log(error)
+				if (error.stack) {
+					console.error(error.stack)
+				} else {
+					console.error(error.name + ': ' + error.message)
+				}
+				return 1
 			}
 		})
+		.sum()
 		.value()
 
-	console.log('Done.')
+	console.log()
+
+	if (errorCount === 0) {
+		console.log('Done without errors.')
+	} else {
+		console.log(`Done with ${errorCount} error${errorCount === 1 ? '' : 's'}.`)
+		ps.exit(1)
+	}
 }
