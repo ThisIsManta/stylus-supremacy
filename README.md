@@ -80,18 +80,89 @@ Currently, there are no extensions for other editor.
 
 You can find a sample JSON file containing the default formatting options [here](https://github.com/ThisIsManta/stylus-supremacy/blob/master/edge/defaultFormattingOptions.json).
 
-|Options|Default value|Possible values|
-|---|---|---|
-|`insertColons`|`true`|`true` for always inserting a colon after a property name, otherwise `false`.|
-|`insertSemicolons`|`true`|`true` for always inserting a semi-colon after a property value, a variable declaration, a variable assignment and a function call, otherwise `false`.|
-|`insertBraces`|`true`|`true` for always inserting a pair of curly braces between a selector body, a mixin body, a function body and any *@block* bodies, otherwise `false`.|
-|`insertNewLineBetweenGroups`|`1`|This represents a number of new-line between different type of groups.|
-|`insertNewLineBetweenSelectors`|`false`|`true` for always inserting a new-line between selectors, otherwise `false`.|
-|`insertNewLineBeforeElse`|`false`|`true` for always inserting a new-line before *else* keyword, otherwise `false`.|
-|`insertSpaceBeforeComment`|`true`|`true` for always inserting a white-space before a comment, otherwise `false`.|
-|`insertSpaceAfterComment`|`true`|`true` for always inserting a white-space after a comment, otherwise `false`.|
-|`insertSpaceAfterComma`|`true`|`true` for always inserting a white-space after a comma, otherwise `false`. <br>Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.|
-|`insertSpaceInsideParenthesis`|`false`|`true` for always inserting a white-space after an open parenthesis and before a close parenthesis, otherwise `false`.|
+### **`insertColons`** (default = `true`)
+Insert or remove a colon after a property name.
+
+|Possible values|Example|
+|---|---|
+|`true`|`display: none`|
+|`false`|`display none`|
+
+### **`insertSemicolons`** (default = `true`)
+Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.
+
+|Possible values|Example|
+|---|---|
+|`true`|`display none;`|
+|`false`|`display none`|
+
+### **`insertBraces`** (default = `true`)
+Insert or remove a pair of curly braces between a selector body, a mixin body and a function body.
+|Possible values|Example|
+|---|---|
+|`true`|`body {`<br>`→ background red`<br>`}`|
+|`false`|`body`<br>`→ background red`|
+
+### **`insertNewLineBetweenGroups`** (default = `1`)
+Represent a number of new-line between different type of groups.
+|Possible values|Example|
+|---|---|
+|`0`|`val = 1`<br>`body {`<br>`→ background red`<br>`→  color white`<br>`→ mixin()`<br>`}`|
+|`1`|`val = 1`<br><br>`body {`<br>`→ background red`<br>`→  color white`<br><br>`→ mixin()`<br>`}`|
+|Integer||
+
+### **`insertNewLineBetweenGroups`** (default = `false`)
+Insert or remove a new-line between selectors.
+|Possible values|Example|
+|---|---|
+|`true`|`body {`<br>`→ background red`<br>`}`<br><br>`.class1 {`<br>`→ color white`<br>`}`|
+|`false`|`body {`<br>`→ background red`<br>`}`<br>`.class1 {`<br>`→ color white`<br>`}`|
+
+### **`insertNewLineBeforeElse`** (default = `false`)
+Insert or remove a new-line before *else* keyword.
+|Possible values|Example|
+|---|---|
+|`true`|`if (condition) {`<br>`→ background red`<br>`}`<br>`else {`<br>`→ background blue`<br>`}`|
+|`false`|`if (condition) {`<br>`→ background red`<br>`} else {`<br>`→ background blue`<br>`}`|
+
+### **`insertSpaceBeforeComment`** (default = `true`)
+Insert or remove a white-space before a comment.
+|Possible values|Example|
+|---|---|
+|`true`|`body {`<br>`→ background red // side comment`<br>`}`|
+|`false`|`body {`<br>`→ background red// side comment`<br>`}`|
+
+### **`insertSpaceAfterComment`** (default = `true`)
+Insert or remove a white-space after a comment.
+|Possible values|Example|
+|---|---|
+|`true`|`body {`<br>`→ background red // side comment`<br>`}`|
+|`false`|`body {`<br>`→ background red //side comment`<br>`}`|
+
+### **`insertSpaceAfterComma`** (default = `true`)
+Insert or remove a white-space after a comma.  
+Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.
+|Possible values|Example|
+|---|---|
+|`true`|`mixin(r, g, b, a) {`<br>`→ color rgba(r, g, b, a)`<br>`}`|
+|`false`|`mixin(r,g,b,a) {`<br>`→ color rgba(r,g,b,a)`<br>`}`|
+
+### **`insertSpaceInsideParenthesis`** (default = `false`)
+Insert or remove a white-space after an open parenthesis and before a close parenthesis.
+|Possible values|Example|
+|---|---|
+|`true`|`if ( condition ) {`<br>`→ background red`<br>`}`|
+|`false`|`if (condition) {`<br>`→ background red`<br>`}`|
+
+### **`insertParenthesisAroundIfCondition`** (default = `true`)
+Insert or remove a pair of parentheses between *if*-condition.
+|Possible values|Example|
+|---|---|
+|`true`|`if (condition) {`<br>`→ background red`<br>`}`|
+|`false`|`if condition {`<br>`→ background red`<br>`}`|
+
+
+
 |`insertParenthesisAroundIfCondition`|`true`|`true` for always inserting a pair of parentheses between *if*-condition, otherwise `false`.|
 |`insertLeadingZeroBeforeFraction`|`true`|`true` for always inserting a zero before a number that between 1 and 0, otherwise `false`.|
 |`tabStopChar`|`"\t"`|This represents a tab-stop string. You may change this to 2-white-space sequence or anything.|
