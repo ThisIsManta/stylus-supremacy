@@ -425,7 +425,7 @@ function format(content, options) {
 
 		} else if (inputNode instanceof stylus.nodes.Call) {
 			if (inputNode.block) { // In case of block mixins
-				outputBuffer.append('+')
+				outputBuffer.append(indent + '+')
 			}
 
 			outputBuffer.append(inputNode.name)

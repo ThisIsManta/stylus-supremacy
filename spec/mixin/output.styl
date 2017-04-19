@@ -18,6 +18,12 @@ foo() {
 	width: 10px;
 }
 
+.class1 {
+	+foo() {
+		height: 20px;
+	}
+}
+
 nested-mixin(n) {
 	inner-mixin(m) {
 		margin: n m;
