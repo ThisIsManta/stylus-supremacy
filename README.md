@@ -82,99 +82,372 @@ You can find a sample JSON file containing the default formatting options [here]
 
 ### **`insertColons`** (default = `true`)
 Insert or remove a colon after a property name.
-
-|Possible values|Example|
-|---|---|
-|`true`|`display: none`|
-|`false`|`display none`|
+- `true`
+  ```
+  .class1 {
+    background: red
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red
+  }
+  ```
 
 ### **`insertSemicolons`** (default = `true`)
 Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.
-
-|Possible values|Example|
-|---|---|
-|`true`|`display none;`|
-|`false`|`display none`|
+- `true`
+  ```
+  .class1 {
+    background red;
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red
+  }
+  ```
 
 ### **`insertBraces`** (default = `true`)
-Insert or remove a pair of curly braces between a selector body, a mixin body and a function body.
-|Possible values|Example|
-|---|---|
-|`true`|`body {`<br>`→ background red`<br>`}`|
-|`false`|`body`<br>`→ background red`|
+Insert or remove a pair of curly braces between a selector body, a mixin body and a function body. Note that this option does not affect *@block* construction, see **`alwaysUseAtBlock`**.
+- `true`
+  ```
+  .class1 {
+    background red
+  }
+  ```
+- `false`
+  ```
+  .class1
+    background red
+  ```
 
 ### **`insertNewLineBetweenGroups`** (default = `1`)
 Represent a number of new-line between different type of groups.
-|Possible values|Example|
-|---|---|
-|`0`|`val = 1`<br>`body {`<br>`→ background red`<br>`→  color white`<br>`→ mixin()`<br>`}`|
-|`1`|`val = 1`<br><br>`body {`<br>`→ background red`<br>`→  color white`<br><br>`→ mixin()`<br>`}`|
-|Integer||
+- `0`
+  ```
+  .class1 {
+    background red
+    color white
+    mixin()
+  }
+  .class2 {
+    background blue
+    color white
+    mixin()
+  }
+  ```
+- `1`
+  ```
+  .class1 {
+    background red
+    color white
 
-### **`insertNewLineBetweenGroups`** (default = `false`)
+    mixin()
+  }
+
+  .class2 {
+    background blue
+    color white
+
+    mixin()
+  }
+  ```
+- And so on
+
+### **`insertNewLineBetweenSelectors`** (default = `false`)
 Insert or remove a new-line between selectors.
-|Possible values|Example|
-|---|---|
-|`true`|`body {`<br>`→ background red`<br>`}`<br><br>`.class1 {`<br>`→ color white`<br>`}`|
-|`false`|`body {`<br>`→ background red`<br>`}`<br>`.class1 {`<br>`→ color white`<br>`}`|
+- `true`
+  ```
+  .class1 {
+    background red
+  }
 
-### **`insertNewLineBeforeElse`** (default = `false`)
-Insert or remove a new-line before *else* keyword.
-|Possible values|Example|
-|---|---|
-|`true`|`if (condition) {`<br>`→ background red`<br>`}`<br>`else {`<br>`→ background blue`<br>`}`|
-|`false`|`if (condition) {`<br>`→ background red`<br>`} else {`<br>`→ background blue`<br>`}`|
+  .class2 {
+    background blue
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red
+  }
+  .class2 {
+    background blue
+  }
+  ```
 
 ### **`insertSpaceBeforeComment`** (default = `true`)
 Insert or remove a white-space before a comment.
-|Possible values|Example|
-|---|---|
-|`true`|`body {`<br>`→ background red // side comment`<br>`}`|
-|`false`|`body {`<br>`→ background red// side comment`<br>`}`|
+- `true`
+  ```
+  .class1 {
+    background red // side comment
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red// side comment
+  }
+  ```
 
 ### **`insertSpaceAfterComment`** (default = `true`)
 Insert or remove a white-space after a comment.
-|Possible values|Example|
-|---|---|
-|`true`|`body {`<br>`→ background red // side comment`<br>`}`|
-|`false`|`body {`<br>`→ background red //side comment`<br>`}`|
+- `true`
+  ```
+  .class1 {
+    background red // side comment
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red //side comment
+  }
+  ```
 
 ### **`insertSpaceAfterComma`** (default = `true`)
 Insert or remove a white-space after a comma.  
 Commas appear in serveral places, for example, a function parameter list, a function call, object properties and so on.
-|Possible values|Example|
-|---|---|
-|`true`|`mixin(r, g, b, a) {`<br>`→ color rgba(r, g, b, a)`<br>`}`|
-|`false`|`mixin(r,g,b,a) {`<br>`→ color rgba(r,g,b,a)`<br>`}`|
+- `true`
+  ```
+  .class1 {
+    background rgba(r, g, b, a)
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background rgba(r,g,b,a)
+  }
+  ```
 
 ### **`insertSpaceInsideParenthesis`** (default = `false`)
 Insert or remove a white-space after an open parenthesis and before a close parenthesis.
-|Possible values|Example|
-|---|---|
-|`true`|`if ( condition ) {`<br>`→ background red`<br>`}`|
-|`false`|`if (condition) {`<br>`→ background red`<br>`}`|
-
+- `true`
+  ```
+  if ( condition ) {
+    background red
+  }
+  ```
+- `false`
+  ```
+  if (condition) {
+    background red
+  }
+  ```
 ### **`insertParenthesisAroundIfCondition`** (default = `true`)
 Insert or remove a pair of parentheses between *if*-condition.
-|Possible values|Example|
-|---|---|
-|`true`|`if (condition) {`<br>`→ background red`<br>`}`|
-|`false`|`if condition {`<br>`→ background red`<br>`}`|
+- `true`
+  ```
+  if (condition) {
+    background red
+  }
+  ```
+- `false`
+  ```
+  if condition {
+    background red
+  }
+  ```
 
+### **`insertNewLineBeforeElse`** (default = `false`)
+Insert or remove a new-line before *else* keyword.
+- `true`
+  ```
+  if (condition) {
+    background red
+  }
+  else {
+    background blue
+  }
+  ```
+- `false`
+  ```
+  if condition {
+    background red
+  } else {
+    background blue
+  }
+  ```
 
+### **`insertLeadingZeroBeforeFraction`** (default = `true`)
+Insert or remove a zero before a number that between 1 and 0.
+- `true`
+  ```
+  .class1 {
+    margin 0.5px
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    margin .5px
+  }
+  ```
 
-|`insertParenthesisAroundIfCondition`|`true`|`true` for always inserting a pair of parentheses between *if*-condition, otherwise `false`.|
-|`insertLeadingZeroBeforeFraction`|`true`|`true` for always inserting a zero before a number that between 1 and 0, otherwise `false`.|
-|`tabStopChar`|`"\t"`|This represents a tab-stop string. You may change this to 2-white-space sequence or anything.|
-|`newLineChar`|`"\n"`|This represents a new-line character. You may change this to `"\r\n"` if you are using *Microsoft Windows*.|
-|`quoteChar`|`"'"`|This represents a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.|
-|`sortProperties`|`false`|This can be either <br>`false` for doing nothing about the CSS property order, <br>`"alphabetical"` for sorting CSS properties from A to Z, <br>`"grouped"` for sorting CSS properties according to *[Stylint predefined order](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json)*, <br>or an array of property names will sort the properties accordingly (for example, `["display", "margin", "padding"]`).|
-|`alwaysUseImport`|`false`|`true` for always using *@import* over *@require*. The difference between *@import* and *@require* is very subtle. Please refer to [the offical guide](http://stylus-lang.com/docs/import.html#require).|
-|`alwaysUseNot`|`false`|`true` for always using *not* keyword over *!* operator, otherwise `false`.|
-|`alwaysUseAtBlock`|`false`|`true` for always using *@block*, otherwise `false`.|
-|`alwaysUseExtends`|`false`|`true` for always using *@extends* over *@extend*, otherwise `false`.|
-|`alwaysUseZeroWithoutUnit`|`false`|`true` for always using *0* without unit in property values, otherwise `false`.|
-|`reduceMarginAndPaddingValues`|`false`|`true` for always using `margin x` over `margin x x x x`, `margin x y` over `margin x y x y` where `x`, `y` is a property value, otherwise `false`.|
+### **`tabStopChar`** (default = `"\t"`)
+Represent a tab-stop character. You may change this to double white-space sequence or anything.  
+If you are using **Stylus Supremacy** extension for *Visual Studio Code*, this option will always be determined automatically from your current viewing file.
+- `"\t"`
+  ```
+  .class1 {
+  	margin 0.5px
+  }
+  ```
+- `"  "` (double white-space)
+  ```
+  .class1 {
+    margin .5px
+  }
+  ```
+
+### **`newLineChar`** (default = `"\n"`)
+Represent a new-line character. You may change this to `"\r\n"` for *Microsoft Windows*.  
+If you are using **Stylus Supremacy** extension for *Visual Studio Code*, this option will always be determined automatically from your current viewing file.
+
+### **`quoteChar`** (default = `"'"`)
+Represent a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.  
+- `"'"` (single quote)
+  ```
+  @import './file.styl'
+  ```
+- `"\""` (double quote)
+  ```
+  @import "./file.styl"
+  ```
+
+### **`sortProperties`** (default = `false`)
+- `false` for not sorting CSS properties.
+- `"alphabetical"` for sorting CSS properties from A to Z.
+  ```
+  .class1 {
+    background red
+    display block
+    color white
+  }
+  ```
+- `"grouped"` for sorting CSS properties according to [*Stylint* predefined order](https://github.com/SimenB/stylint/blob/master/src/data/ordering.json).
+  ```
+  .class1 {
+    display block
+    background red
+    color white
+  }
+  ```
+- An array of property names that defines the property order. For example, `["color", "background", "display"]`
+  ```
+  .class1 {
+    color white
+    background red
+    display block
+  }
+  ```
+
+### **`alwaysUseImport`** (default = `false`)
+Convert *@require* to *@import*.  
+The difference between *@import* and *@require* is very subtle. Please refer to [the offical guide](http://stylus-lang.com/docs/import.html#require).
+- `true`
+  ```
+  @import './file1.styl'
+  @import './file2.styl' // Formerly @require
+  ```
+- `false`
+  ```
+  @import './file1.styl'
+  @require './file2.styl'
+  ```
+
+### **`alwaysUseNot`** (default = `false`)
+Convert *!* operator to *not* keyword or vice versa.
+- `true`
+  ```
+  if (not condition) {
+    background red
+  }
+  ```
+- `false`
+  ```
+  if (!condition) {
+    background red
+  }
+  ```
+
+### **`alwaysUseAtBlock`** (default = `false`)
+Convert an increased-indent at-block construction to an explicit one with *@block* keyword or vice versa. Note that this option ignores **`insertBraces`** option.  
+Please refer to [the official guide](http://stylus-lang.com/docs/block.html).
+- `true`
+  ```
+  block =
+    background red
+  ```
+- `false`
+  ```
+  block = @block {
+    background red
+  }
+  ```
+
+### **`alwaysUseExtends`** (default = `false`)
+Convert *@extend* keyword to *@extends* keyword or vice versa.  
+Please refer to [the official guide](http://stylus-lang.com/docs/extend.html).
+- `true`
+  ```
+  .class1 {
+    background red
+  }
+
+  .class2 {
+    @extends .class1
+    color white
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    background red
+  }
+  
+  .class2 {
+    @extend .class1
+    color white
+  }
+  ```
+
+### **`alwaysUseZeroWithoutUnit`** (default = `false`)
+Convert `0px`, `0%`, `0em` and so on to `0` without units or vice versa.
+- `true`
+  ```
+  .class1 {
+    margin 0 // Formerly 0px
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    margin 0px
+  }
+  ```
+
+### **`reduceMarginAndPaddingValues`** (default = `false`)
+Reduce `margin` and `padding` duplicate values by converting `margin x` to `margin x x x x`, `margin x y` to `margin x y x y` where `x`, `y` is a property value.
+- `true`
+  ```
+  .class1 {
+    margin 0px // Formerly 0px 0px
+    padding 0px 5px // Formerly 0px 5px 0px 5px
+  }
+  ```
+- `false`
+  ```
+  .class1 {
+    margin 0px 0px
+    padding 0px 5px 0px 5px
+  }
+  ```
 
 ## Stylint compatibility
 
