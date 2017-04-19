@@ -19,7 +19,8 @@
   "scripts": {
     "test": "node ./test/runner.js",
     "preversion": "npm test",
-    "postversion": "git push --tags --quiet origin master:master && npm publish"
+    "version": "npm publish",
+    "postversion": "git push --tags --quiet origin master:master"
   },
   "devDependencies": {
     "jasmine": "^2.5.3"
