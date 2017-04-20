@@ -117,34 +117,34 @@ Insert or remove a pair of curly braces between a selector body, a mixin body an
   ```
 
 ### **`insertNewLineBetweenGroups`** (default = `1`)
-Represent a number of new-line between different type of groups.
+Represent a number of new-line between different types of group.
 - `0`
   ```
   .class1 {
+    $gray = #EEE
     background red
-    color white
-    mixin()
+    color $gray
+    mixin1()
+    mixin2()
   }
   .class2 {
     background blue
-    color white
-    mixin()
   }
   ```
 - `1`
   ```
   .class1 {
-    background red
-    color white
+    $gray = #EEE
 
-    mixin()
+    background red
+    color $gray
+
+    mixin1()
+    mixin2()
   }
 
   .class2 {
     background blue
-    color white
-
-    mixin()
   }
   ```
 - And so on
