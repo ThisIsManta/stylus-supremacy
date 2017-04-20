@@ -297,7 +297,11 @@ function format(content, options) {
 				// Insert the property value(s) without the last portion of comments
 				// For example,
 				// margin: 8px 0; /* right-comment */
-				outputBuffer.append(propertyValues.join(' '))
+				if (propertyName === 'font-family') {
+					outputBuffer.append(propertyValues.join(comma))
+				} else {
+					outputBuffer.append(propertyValues.join(' '))
+				}
 
 				// Put the last portion of comments aside
 				if (commentsOnTheRight.length > 0) {
