@@ -10,7 +10,7 @@ const stylintOptionMap = {
 	'commentSpace': createAdapterForAlwaysNeverFalse('insertSpaceAfterComment'),
 	'efficient': createAdapterForAlwaysNeverFalse('reduceMarginAndPaddingValues'),
 	'extendPref': value => ['alwaysUseExtends', value === '@extends'],
-	'indentPref': value => value > 0 && ['tabStopChar', _.repeat(' ', value)],
+	'indentPref': value => value > 0 ? ['tabStopChar', _.repeat(' ', value)] : [],
 	'leadingZero': createAdapterForAlwaysNeverFalse('insertLeadingZeroBeforeFraction'),
 	'parenSpace': createAdapterForAlwaysNeverFalse('insertSpaceInsideParenthesis'),
 	'quotePref': value => value === 'single' && ['quoteChar', '\''] || value === 'double' && ['quoteChar', '"'],
@@ -19,7 +19,7 @@ const stylintOptionMap = {
 	'zeroUnits': value => value === false ? [] : ['alwaysUseZeroWithoutUnit', value === 'never'],
 }
 
-function createFormattingOptionsFromStylintOptions(stylintOptions = {}) {
+function createFormattingOptionsFromStylint(stylintOptions = {}) {
 	return _.chain(stylintOptions)
 		.omitBy((item, name) => stylintOptionMap[name] === undefined)
 		.reduce((temp, item, name) => {
@@ -37,4 +37,4 @@ function createFormattingOptionsFromStylintOptions(stylintOptions = {}) {
 		.value()
 }
 
-module.exports = createFormattingOptionsFromStylintOptions
+module.exports = createFormattingOptionsFromStylint

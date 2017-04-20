@@ -6,6 +6,8 @@ const pt = require('path')
 const glob = require('glob')
 const _ = require('lodash')
 const format = require('./format')
+const createFormattingOptions = require('./createFormattingOptions')
+const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 
 let inputFiles = []
 let optionFilePath = ''
@@ -48,9 +50,18 @@ if (printVersion) {
 	if (optionFilePath) {
 		if (fs.existsSync(optionFilePath)) {
 			formattingOptions = JSON.parse(fs.readFileSync(optionFilePath, 'utf8'))
+			if (fp.basename(optionFilePath).startsWith('.stylintrc')) {
+				formattingOptions = createFormattingOptionsFromStylint(formattingOptions)
+			} else {
+				formattingOptions = createFormattingOptions(formattingOptions)
+			}
 		} else {
 			throw new Error('Option file could not be found.')
 		}
+	}
+
+	if (_.isEmpty(formattingOptions) === false) {
+		console.log(JSON.stringify(formattingOptions, null, '  '))
 	}
 
 	const errorCount = _.chain(inputFiles)

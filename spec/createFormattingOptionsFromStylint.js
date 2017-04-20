@@ -1,8 +1,8 @@
-const createFormattingOptions = require('../edge/createFormattingOptionsFromStylintOptions')
+const createFormattingOptions = require('../edge/createFormattingOptionsFromStylint')
 
 const defaultStylintOptions = require('stylint/src/core/config')
 
-describe('createFormattingOptionsFromStylintOptions', () => {
+describe('createFormattingOptionsFromStylint', () => {
 	it('represents the default formatting options', () => {
 		const formattingOptions = {
 			insertBraces: false,

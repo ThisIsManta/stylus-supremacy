@@ -3,8 +3,8 @@ const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
 const StringBuffer = require('./StringBuffer')
 
-const defaultFormattingOptions = require('./defaultFormattingOptions.json')
-const createFormattingOptionsFromStylintOptions = require('./createFormattingOptionsFromStylintOptions')
+const createFormattingOptions = require('./createFormattingOptions')
+const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 
 function format(content, options) {
 	// Stop processing if the input content is empty
@@ -13,7 +13,8 @@ function format(content, options) {
 	}
 
 	// Consolidate the formatting options
-	options = _.assign({}, defaultFormattingOptions, createFormattingOptionsFromStylintOptions(options), options)
+	options = _.assign({ wrapMode: !!options.wrapMode }, createFormattingOptions(options))
+	console.log('opt',options)
 
 	// Prepare the artifacts
 	const comma = options.insertSpaceAfterComma ? ', ' : ','
@@ -232,12 +233,14 @@ function format(content, options) {
 				}
 			})
 
+			const newLines = _.repeat(options.newLineChar, indentLevel === 0 || originalBaseIndent === '' ? options.insertNewLineBetweenOuterGroups : options.insertNewLineBetweenInnerGroups)
+
 			// Insert CSS body
 			outputBuffer.append(groups.map(group =>
 				group.map(node =>
 					travel(inputNode, node, childIndentLevel)
 				).join('')
-			).join(_.repeat(options.newLineChar, options.insertNewLineBetweenGroups)))
+			).join(newLines))
 
 			// Insert the bottom comment(s)
 			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
