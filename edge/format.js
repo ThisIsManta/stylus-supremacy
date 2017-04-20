@@ -504,8 +504,11 @@ function format(content, options) {
 			}
 
 		} else if (inputNode instanceof stylus.nodes.Unit) {
-			if (!options.insertLeadingZeroBeforeFraction && typeof inputNode.val === 'number' && inputNode.val < 1 && inputNode.val !== 0) {
-				outputBuffer.append(inputNode.val.toString().substring(1))
+			if (!options.insertLeadingZeroBeforeFraction && typeof inputNode.val === 'number' && Math.abs(inputNode.val) < 1 && inputNode.val !== 0) {
+				if (inputNode.val < 0) {
+					outputBuffer.append('-')
+				}
+				outputBuffer.append(Math.abs(inputNode.val).toString().substring(1))
 			} else {
 				outputBuffer.append(inputNode.val)
 			}
