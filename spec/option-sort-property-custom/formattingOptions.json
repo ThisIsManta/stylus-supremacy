@@ -1,0 +1,10 @@
+{
+	"sortProperties": [
+		"-webkit-appearance",
+		"display",
+		"background",
+		"animation",
+		"animation-name"
+	],
+	"newLineChar": "\r\n"
+}
