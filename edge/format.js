@@ -6,7 +6,7 @@ const StringBuffer = require('./StringBuffer')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 
-function format(content, options) {
+function format(content, options = {}) {
 	// Stop processing if the input content is empty
 	if (content.trim().length === 0) {
 		return ''
@@ -14,7 +14,6 @@ function format(content, options) {
 
 	// Consolidate the formatting options
 	options = _.assign({ wrapMode: !!options.wrapMode }, createFormattingOptions(options))
-	console.log('opt',options)
 
 	// Prepare the artifacts
 	const comma = options.insertSpaceAfterComma ? ', ' : ','

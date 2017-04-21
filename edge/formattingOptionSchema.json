@@ -2,7 +2,15 @@
 	"insertColons": {
 		"description": "Insert or remove a colon after a property name.",
 		"type": "boolean",
-		"default": true
+		"default": true,
+		"examples": [
+			"",
+			"```",
+			".class1 {",
+			"  background: red",
+			"}",
+			"```"
+		]
 	},
 	"insertSemicolons": {
 		"description": "Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.",

@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="index.css">
+
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+		<script src="demo--auto-generated.js" defer></script>
+
+		<title>Manta's Stylus Supremacy</title>
+	</head>
+	<body>
+		<nav>
+			<img id="logo" src="logo.png">
+			<a href="#">Home</a>
+			<a href="#try">Try it on your browser</a>
+			<a href="#command-line">Command-line usage</a>
+			<a href="#programming">Programming usage</a>
+			<a href="#options">Formatting options</a>
+			<a href="#stylint">Stylint compatibility</a>
+			<a href="#vscode">Visual Studio Code extension</a>
+			<a id="history" href="https://github.com/ThisIsManta/stylus-supremacy/releases">Release notes</a>
+			<a id="issues" href="https://github.com/ThisIsManta/stylus-supremacy/issues">Issues</a>
+			<a id="repository" href="https://github.com/ThisIsManta/stylus-supremacy" title="View source code on GitHub"><img src="octocat.png"></a>
+		</nav>
+		<main>
+			<article>
+				<p><b>Stylus Supremacy</b> is a JavaScript library for formatting <a href="http://stylus-lang.com" target="_blank">Stylus</a> files. You may say this is a beautifier for Stylus language.</p>
+
+				<p>Back in the days, there was <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a>, which it helped enforcing writing rules for Stylus language, but it did not provide auto-fix capabilities. Because of that, Stylus users needed to fix those linting errors manually, which it was a time-consuming process. And also, even Stylus language has been developed for years, it lacked of a decent formatter/beautifier tool. Hence, <b>Stylus Supremacy</b> was born.</p>
+
+				<p>This software was solely developed by <a href="mailto:thisismanta@outlook.com">Anantachai Saothong (Manta)</a>, who was working for <a href="https://www.taskworld.com" target="_blank">Taskworld</a>, as a part of software quality improvement process. Manta and the company are not responsible for any complications caused by this piece of software. You must use this software at your own risk under <a href="https://raw.githubusercontent.com/ThisIsManta/stylus-supremacy/master/LICENSE" target="_blank">MIT license</a>.</p>
+			</article>
+			<article id="try" name="try">
+				<h1>Try it on your browser</h1>
+				<p>Try <b>Stylus Supremacy</b> online</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Edit the input below</th>
+							<th>See the formatted output below</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><textarea id="try-input"></textarea></td>
+							<td><code id="try-output"></code></td>
+						</tr>
+					<tbody>
+				</table>
+			</article>
+			<article id="command-line">
+				<h1>Command-line usage</h1>
+
+				<p>First thing first, this script must be installed via NPM.</p>
+				<code>npm install stylus-supremacy -g</code>
+
+				<p>Now, you can run
+					<mark>stylus-supremacy</mark> command followed by a path to your Stylus file. Normally, the formatted Stylus content will be printed to the output stream (console/terminal).</p>
+				<code>stylus-supremacy ./path/to/your/file.styl</code>
+
+				<p>In case you want to format many files at a time, you can specify multiple paths, or pass the path in <a href="https://www.npmjs.com/package/glob" target="_blank">glob pattern</a>.</p>
+				<code>stylus-supremacy ./**/*.styl</code>
+
+				<p>The <a href="#options">default formatting options</a> will be used, unless you specify your own options explicitly using
+					<mark>--options</mark> or
+					<mark>-p</mark>.</p>
+				<code>stylus-supremacy ./path/to/your/file.styl --options ./path/to/your/options.json</code>
+
+				<p>You may redirect the formatted Stylus content to a directory by adding
+					<mark>--outDir</mark> or
+					<mark>-o</mark> followed by the path to a directory. This is useful when formatting multiple files.</p>
+				<code>node stylus-supremacy ./path/to/your/file.styl --outDir ./path/to/output/directory</code>
+
+				<p>Alternatively, you may overwrite the original files by specifying
+					<mark>--replace</mark> or
+					<mark>-r</mark> parameter.</p>
+				<code>stylus-supremacy ./path/to/your/file.styl --replace</code>
+
+				<p>Note that
+					<mark>--outDir</mark> and
+					<mark>--replace</mark> do not work together. You have to choose just one.</p>
+			</article>
+			<article id="programming">
+				<h1>Programming usage</h1>
+
+				<p>Once you have <b>Stylus Supremacy</b> installed via NPM, you simply include it to your JavaScript file by writing <code>require('stylus-supremacy')</code> and call its
+					<mark>format</mark> function with a string of Stylus content and an object containing <a href="#options">formatting options</a>.</p>
+				<code>
+					const stylusSupremacy = require('stylus-supremacy')<br>
+					<br>
+					const stylusContent = `<br>
+					body<br>
+					&nbsp;&nbsp;display none<br>
+					`<br>
+					<br>
+					const formattingOptions = {<br>
+					&nbsp;&nbsp;insertColons: true,<br>
+					&nbsp;&nbsp;insertSemicolons: true,<br>
+					&nbsp;&nbsp;insertBraces: true<br>
+					}<br>
+					<br>
+					const result = stylusSupremacy.format(<br>
+					&nbsp;&nbsp;stylusContent, formattingOptions<br>
+					)<br>
+					<br>
+					console.log(result)<br>
+				</code>
+				<samp>
+					body {<br>
+					&nbsp;&nbsp;display: none;<br>
+					}<br>
+				</samp>
+
+				<p>The
+					<mark>format</mark> function will always return a string of the formatted Stylus content. However, it could throw an exception if there is at least one error parsing the given Stylus content or generating the formatted output.</p>
+			</article>
+			<article id="options">
+				<h1>Formatting options</h1>
+
+				<!-- formatting option definition -->
+				<h2>
+					<mark>insertColons</mark><data>= false</data><code>: boolean | "alphabetic" | "grouped"</code>
+				</h2>
+				<p>Insert or remove a colon after a property name.</p>
+				<table>
+					<tr>
+						<th>x</th>
+						<th>x</th>
+					</tr>
+					<tr>
+						<td>y</td>
+						<td>y</td>
+					</tr>
+				</table>
+				<table>
+					<tr>
+						<th>x</th>
+						<th>x</th>
+					</tr>
+					<tr>
+						<td>y</td>
+						<td>y</td>
+					</tr>
+				</table>
+				<!-- formatting option definition -->
+				<p>a</p>
+			</article>
+			<article id="stylint">
+				<h1>Stylint compatibility</h1>
+				abc
+			</article>
+			<article id="vscode">
+				<h1>Visual Studio Code extension</h1>
+
+				<p>Currently, <b>Stylus Supremacy</b> is only available in <b>Visual Studio Code</b> as an extension. You can download and install it <a href="https://marketplace.visualstudio.com/items?itemName=thisismanta.stylus-supremacy">here</a>.</p>
+
+				<img src="vscode.gif">
+			</article>
+		</main>
+	</body>
+</html>

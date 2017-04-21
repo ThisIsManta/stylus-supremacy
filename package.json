@@ -18,12 +18,15 @@
   "main": "./edge/index.js",
   "scripts": {
     "test": "node ./test/runner.js",
+    "docs": "browserify docs/demo.js -o docs/demo--auto-generated.js",
     "preversion": "npm test",
     "version": "npm publish",
     "postversion": "git push --tags --quiet origin master:master"
   },
   "devDependencies": {
-    "jasmine": "^2.5.3"
+    "browserify": "^14.3.0",
+    "jasmine": "^2.5.3",
+    "uglifyjs": "^2.4.10"
   },
   "dependencies": {
     "glob": "^7.1.1",
