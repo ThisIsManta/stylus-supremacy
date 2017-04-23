@@ -277,6 +277,8 @@ function format(content, options) {
 			// Insert the property value(s)
 			if (inputNode.expr instanceof stylus.nodes.Expression) {
 				// Extract the last portion of comments
+				// For example,
+				// margin: 8px 0; /* right-comment */
 				const commentsOnTheRight = _.chain(inputNode.expr.nodes).clone().reverse().takeWhile(node => node instanceof stylus.nodes.Comment).reverse().value()
 				const nodesExcludingCommentsOnTheRight = inputNode.expr.nodes.slice(0, inputNode.expr.nodes.length - commentsOnTheRight.length)
 
@@ -295,9 +297,7 @@ function format(content, options) {
 				}
 
 				// Insert the property value(s) without the last portion of comments
-				// For example,
-				// margin: 8px 0; /* right-comment */
-				if (propertyName === 'font-family') {
+				if (nodesExcludingCommentsOnTheRight.every(node => node instanceof stylus.nodes.Expression)) {
 					outputBuffer.append(propertyValues.join(comma))
 				} else {
 					outputBuffer.append(propertyValues.join(' '))
