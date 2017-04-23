@@ -766,7 +766,11 @@ function format(content, options) {
 				outputBuffer.append(' ')
 				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
 			}
-			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+			if (inputNode.block) {
+				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
+			} else if (options.insertSemicolons) {
+				outputBuffer.append(';')
+			}
 
 		} else if (inputNode instanceof stylus.nodes.Atblock) {
 			if (options.alwaysUseAtBlock) {
