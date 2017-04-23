@@ -40,7 +40,7 @@ article > code, div > code, samp {
 }
 
 h1 {
-	margin: 0;
+	margin: 0 0 2rem 0;
 	font-size: 2rem;
 	line-height: normal;
 }
@@ -137,50 +137,122 @@ article > img {
 	width: 100%;
 }
 
-#try table {
+#demo table {
 	width: 100%;
 	border-spacing: 0;
 }
 
-#try th {
-	padding: 0.5rem 0;
+#demo th {
+	padding: 0 0 0.5rem 0;
 	font-weight: normal;
 	text-align: left;
 	background: none;
 }
 
-#try td {
+#demo td {
 	width: 50%;
 	padding: 0;
 }
 
-#try-input {
+#demo-input, #demo-output {
+	display: block;
+	height: 50vh;
+	min-height: 300px;
+	padding: 5px 10px;
 	font-family: 'Roboto Mono', monospace;
 	font-size: 1rem;
+}
+
+@media (min-height: 800px) {
+	#demo-input, #demo-output {
+		height: 60vh;
+	}
+}
+
+#demo-input {
 	width: 100%;
-	height: 60vh;
-	min-height: 300px;
 	border: none;
-	padding: 5px 10px;
 	background: #EEEEEE;
 	outline: none;
 }
 
-#try-output {
-	display: block;
-	height: 60vh;
-	min-height: 300px;
+#demo-output {
 	background: #212121;
 	color: #FAFAFA;
-	padding: 5px 10px;
 	transition: background-color 0.3s ease-in-out;
 	word-wrap: break-word;
 	box-sizing: border-box;
 	overflow: auto;
 }
 
-#try-output.error {
+#demo-output.error {
 	background: #D50000;
+}
+
+#demo-options {
+	font-family: 'Roboto Mono', monospace;
+	margin-top: 5px;
+	user-select: none;
+	position: relative;
+	width: calc(100vw - 240px);
+	left: calc(-50vw + 120px + 300px);
+	text-align: center;
+}
+
+@media (max-width: 800px) {
+	#demo-options {
+		width: calc(100vw - 40px);
+		left: calc(-50vw + 20px + 300px);
+	}
+}
+
+#demo-options label {
+	display: inline-block;
+	margin: 0 5px 5px 0;
+	background: #00BFA5;
+	color: white;
+}
+
+#demo-options input[type=checkbox] {
+	-webkit-appearance: none;
+	margin: 0;
+	padding: 0 3px;
+	height: 1.5rem;
+	background: white;
+	outline: none;
+}
+
+#demo-options input[type=checkbox]::before {
+	content: 'false';
+}
+
+#demo-options input[type=checkbox]:checked::before {
+	content: 'true';	
+}
+
+#demo-options input[type=checkbox], #demo-options input[type=text], #demo-options input[type=number], #demo-options select {
+	font-family: 'Roboto Mono', monospace;
+	border: 1px solid #00BFA5;
+	background: #A7FFEB;
+	font-size: 1rem;
+	outline: none;
+}
+
+#demo-options input[type=number] {
+	width: 50px;
+	text-align: right;
+}
+
+#demo-options label > * {
+	margin-left: 5px !important;
+}
+
+#demo-options label > span:last-child {
+	margin-right: 5px;
+}
+
+label, input[type=checkbox] {
+	cursor: pointer;
 }
 
 table + table {

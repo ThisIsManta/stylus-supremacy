@@ -259,7 +259,7 @@ const schema = {
 			code: `
 			.class1
 				margin 0px
-			`			
+			`
 		}
 	},
 	reduceMarginAndPaddingValues: {
@@ -272,7 +272,7 @@ const schema = {
 			.class1
 				margin 0px 0px
 				padding 0px 5px 0px 5px
-			`			
+			`
 		}
 	}
 }
@@ -286,11 +286,16 @@ function createFormattingOptions(options = {}) {
 
 	} else {
 		return _.reduce(schema, (hash, info, name) => {
-			if (options[name] === undefined) {
-				hash[name] = info.default
+			try {
+				if (options[name] === undefined) {
+					hash[name] = info.default
 
-			} else if (verify(options[name], info)) {
-				hash[name] = options[name]
+				} else if (verify(options[name], info)) {
+					hash[name] = options[name]
+				}
+			} catch (ex) {
+				ex.message += ` at "${name}".` 
+				throw ex
 			}
 			return hash
 		}, {})

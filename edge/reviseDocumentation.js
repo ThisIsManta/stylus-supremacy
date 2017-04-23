@@ -6,23 +6,76 @@ const format = require('./format')
 const stylintOptions = require('stylint/src/core/config')
 
 let document = fs.readFileSync('docs/index.html', 'utf-8')
-document = updateFormattingOptions(document)
-document = updateStylintCompatibility(document)
+document = updateDocument(document, '<!-- formatting toggler placeholder -->', createFormattingTogglersForDemo)
+document = updateDocument(document, '<!-- formatting option placeholder -->', createFormattingDescription)
+document = updateDocument(document, '<!-- stylint option placeholder -->', createStylintConversionTable)
+
 fs.writeFileSync('docs/index.html', document)
 
-function updateFormattingOptions(originalText) {
-	const placeholder = '<!-- formatting option placeholder -->'
-	const originalList = originalText.split(placeholder)
+function updateDocument(document, placeholder, worker) {
+	const chunks = document.split(placeholder)
+	const output = worker()
+	return _.first(chunks) + placeholder + output + placeholder + _.last(chunks)
+}
 
+function createFormattingTogglersForDemo() {
+	return _.chain(createFormattingOptions.schema)
+		.omitBy(item => item.example === undefined)
+		.map((item, name) => {
+			if (item.type === 'boolean') {
+				return (
+					`<label for="demo-${name}">` +
+					`<span>${name}</span>` +
+					`<input id="demo-${name}" type="checkbox" ${item.default === true ? 'checked' : ''}>` +
+					`</label>`
+				)
+
+			} else if (item.type === 'string') {
+				return (
+					`<label for="demo-${name}">` +
+					`<span>${name}</span>` +
+					`<input id="demo-${name}" type="text" value="${getType(item.default)}" required>` +
+					`</label>`
+				)
+
+			} else if (item.type === 'integer') {
+				return (
+					`<label for="demo-${name}">` +
+					`<span>${name}</span>` +
+					`<input id="demo-${name}" type="number" ${item.minimum !== undefined ? `min="${item.minimum}"` : ''} ${item.maximum !== undefined ? `max="${item.maximum}"` : ''} value="${item.default}">` +
+					`</label>`
+				)
+
+			} else if (_.some(item.oneOf)) {
+				return (
+					`<label for="demo-${name}">` +
+					`<span>${name}</span>` +
+					`<select id="demo-${name}" value="${getType(item.default)}">` +
+					item.oneOf.map(stub => `<option value="${getType(stub)}" ${_.isObject(stub) ? 'disabled' : ''}>${getType(stub)}</option>`) +
+					`</select>` +
+					`</label>`
+				)
+			}
+		})
+		.compact()
+		.join('')
+		.value()
+}
+
+function createFormattingDescription() {
 	const defaultOptionJSON = (
 		'<code>' +
 		getCodeForHTML(JSON.stringify(createFormattingOptions({}), null, '  ')) +
 		'</code>'
 	)
 
-	const optionDescriptionList = _.chain(createFormattingOptions.schema)
+	return _.chain(createFormattingOptions.schema)
 		.map((item, name) => [
-			`<h2 id="options-${_.kebabCase(name)}"><mark>${name}</mark><data>= ${JSON.stringify(item.default)}</data><code>: ${getType(item)}</code></h2>`,
+			`<h2 id="options-${_.kebabCase(name)}">`,
+			`<mark>${name}</mark>`,
+			`<data>= ${JSON.stringify(item.default)}</data>`,
+			`<code>: ${getType(item)}</code>`,
+			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
 			item.example && '<table>' + _.chunk(item.example.values, 2).map(values => {
 				const createDefaultValueClassOrNothing = value => (value === item.default ? ' class="default"' : '')
@@ -39,33 +92,30 @@ function updateFormattingOptions(originalText) {
 					'</td>'
 				).join('')
 
-				return `<thead><tr>${headList}</tr></thead><tbody><tr>${codeList}</tr></tbody>`
+				return (
+					`<thead><tr>${headList}</tr></thead>` +
+					`<tbody><tr>${codeList}</tr></tbody>`
+				)
 			}).join('') + '</table>'
 		])
 		.flatten()
 		.compact()
 		.join('')
 		.value()
-
-	return _.first(originalList) + placeholder + defaultOptionJSON + optionDescriptionList + placeholder + _.last(originalList)
 }
 
-function updateStylintCompatibility(originalText) {
-	const placeholder = '<!-- stylint option placeholder -->'
-	const originalList = originalText.split(placeholder)
-
-
+function createStylintConversionTable() {
 	const formattingOptions = Object.keys(createFormattingOptions.schema)
 
 	const stylintOptionText = fs.readFileSync('./edge/createFormattingOptionsFromStylint.js', 'utf-8').split(/\r?\n/)
-	const startIndexForMap = _.findIndex(stylintOptionText, line => line.startsWith('const stylintOptionMap'))
-	const endIndexForMap = _.findIndex(stylintOptionText, line => line.trim() === '}', startIndexForMap)
-	if (startIndexForMap === -1 || endIndexForMap === -1 || startIndexForMap >= endIndexForMap) {
-		throw new Error('Found an unexpected index of "stylintOptionMap": ' + startIndexForMap + ', ' + endIndexForMap)
+	const startIndex = _.findIndex(stylintOptionText, line => line.startsWith('const stylintOptionMap'))
+	const endIndex = _.findIndex(stylintOptionText, line => line.trim() === '}', startIndex)
+	if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+		throw new Error('Found an unexpected index of "stylintOptionMap": ' + startIndex + ', ' + endIndex)
 	}
 
 	const stylintOptionDict = stylintOptionText
-		.slice(startIndexForMap + 1, endIndexForMap)
+		.slice(startIndex + 1, endIndex)
 		.map(line => line.trim())
 		.reduce((temp, line) => {
 			const name = line.match(/'(\w+)\'/)[1]
@@ -81,9 +131,10 @@ function updateStylintCompatibility(originalText) {
 			return temp
 		}, {})
 
-	const optionConversionTable = _.map(stylintOptions, (item, name) => '<tr><td><mark>' + name + '</mark></td><td>' + _.get(stylintOptionDict, name, 'Not applicable') + '</td>').join('')
-
-	return _.first(originalList) + placeholder + optionConversionTable + placeholder + _.last(originalList)
+	return _.map(stylintOptions, (item, name) =>
+		'<tr><td><mark>' + name + '</mark></td><td>' +
+		_.get(stylintOptionDict, name, 'Not applicable') + '</td>'
+	).join('')
 }
 
 function getType(item) {
@@ -94,7 +145,7 @@ function getType(item) {
 			return item.oneOf.map(getType).join(' | ')
 		}
 	} else {
-		return JSON.stringify(item)
+		return _.escape(JSON.stringify(item))
 	}
 }
 
