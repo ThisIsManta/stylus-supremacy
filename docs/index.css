@@ -146,6 +146,7 @@ article > img {
 	padding: 0.5rem 0;
 	font-weight: normal;
 	text-align: left;
+	background: none;
 }
 
 #try td {
@@ -186,51 +187,44 @@ table + table {
 	margin-top: 1rem;
 }
 
-#options table {
+#options data {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: nowrap;
+}
+
+table {
 	width: 100%;
 	border-spacing: 0;
 	font-family: 'Roboto Mono', monospace;
 }
 
-#options th, #options td {
+th, td {
 	padding: 5px 10px;
 	text-align: left;
+	vertical-align: top;
 }
 
-#options th:nth-child(odd) {
+th:nth-child(odd) {
 	background: #BDBDBD;
 }
 
-#options th:nth-child(even) {
+th:nth-child(even) {
 	background: #9E9E9E;
 }
 
-#options td:nth-child(odd) {
+tr:nth-child(odd) td:nth-child(odd) {
 	background: #EEEEEE;
 }
 
-#options td:nth-child(even) {
+tr:nth-child(odd) td:nth-child(even) {
 	background: #E0E0E0;
 }
 
-/*
-#options table:nth-child(odd) th:nth-child(odd),
-#options table:nth-child(even) th:nth-child(even) {
-	background: #9E9E9E;
-}
-
-#options table:nth-child(odd) th:nth-child(even),
-#options table:nth-child(even) th:nth-child(odd) {
-	background: #BDBDBD;
-}
-
-#options table:nth-child(odd) td:nth-child(odd),
-#options table:nth-child(even) td:nth-child(even) {
-	background: #E0E0E0;
-}
-
-#options table:nth-child(odd) td:nth-child(even),
-#options table:nth-child(even) td:nth-child(odd) {
+tr:nth-child(even) td:nth-child(even) {
 	background: #EEEEEE;
 }
-*/
+
+tr:nth-child(even) td:nth-child(odd) {
+	background: #E0E0E0;
+}

@@ -1,10 +1,10 @@
 const Stylus = require('stylus')
 const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
-const StringBuffer = require('./StringBuffer')
 
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
+const createStringBuffer = require('./createStringBuffer')
 
 function format(content, options = {}) {
 	// Stop processing if the input content is empty
@@ -86,7 +86,7 @@ function format(content, options = {}) {
 		const indent = _.repeat(options.tabStopChar, indentLevel)
 
 		// Store an output string for the current node
-		const outputBuffer = new StringBuffer()
+		const outputBuffer = createStringBuffer()
 
 		// Insert sticky comment(s) before the current node
 		if (inputNode.commentsOnTop) {

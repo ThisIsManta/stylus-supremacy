@@ -2,70 +2,157 @@ const _ = require('lodash')
 
 const schema = {
 	insertColons: {
-		/**
-		 * .class1 {
-		 *   background: red
-		 * }
-		 */
 		description: 'Insert or remove a colon after a property name.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red
+			`
+		}
 	},
 	insertSemicolons: {
 		description: 'Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red
+			`
+		}
 	},
 	insertBraces: {
-		description: 'Insert or remove a pair of curly braces between a selector body, a mixin body and a function body. Note that this option does not affect *@block* construction, see alwaysUseAtBlock.',
+		description: 'Insert or remove a pair of curly braces between a selector body, a mixin body and a function body. Note that this option does not affect <code>@block</code> construction, see alwaysUseAtBlock.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red
+			`
+		}
 	},
 	insertNewLineBetweenGroups: {
 		description: 'Represent a number of new-line between different type of groups.',
 		type: 'integer',
 		minimum: 0,
-		default: 1
+		default: 1,
+		example: {
+			values: [0, 1],
+			code: `
+			.class1
+				$gray = #EEE
+				background red
+				color $gray
+				mixin1()
+				mixin2()
+			.class2
+				background blue
+			`
+		}
 	},
 	insertNewLineBetweenSelectors: {
 		description: 'Insert or remove a new-line between selectors.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1, .class2
+				background red
+			`
+		}
 	},
 	insertSpaceBeforeComment: {
 		description: 'Insert or remove a white-space before a comment.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red//comment
+			`
+		}
 	},
 	insertSpaceAfterComment: {
 		description: 'Insert or remove a white-space after a comment.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red//comment
+			`
+		}
 	},
 	insertSpaceAfterComma: {
 		description: 'Insert or remove a white-space after a comma.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			mixin(a,b)
+				margin a b
+			`
+		}
 	},
 	insertSpaceInsideParenthesis: {
 		description: 'Insert or remove a white-space after an open parenthesis and before a close parenthesis.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			mixin(a,b)
+				margin a b
+			`
+		}
 	},
 	insertParenthesisAroundIfCondition: {
 		description: 'Insert or remove a pair of parentheses between *if*-condition.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			if (a > b)
+				background red
+			`
+		}
 	},
 	insertNewLineBeforeElse: {
-		description: 'Insert or remove a new-line before *else* keyword.',
+		description: 'Insert or remove a new-line before <code>else</code> keyword.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			if (a > b)
+				background red
+			else
+				background blue
+			`
+		}
 	},
 	insertLeadingZeroBeforeFraction: {
 		description: 'Insert or remove a zero before a number that between 1 and 0.',
 		type: 'boolean',
-		default: true
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				margin 0.5px
+			`
+		}
 	},
 	tabStopChar: {
 		description: 'Represent a tab-stop character. You may change this to double white-space sequence or anything.',
@@ -74,65 +161,119 @@ const schema = {
 	},
 	newLineChar: {
 		description: 'Represent a new-line character. You may change this to `\"\\r\\n\"` for *Microsoft Windows*.',
-		oneOf: [
-			'\n',
-			'\r\n'
-		],
+		oneOf: ['\n', '\r\n'],
 		default: '\n'
 	},
 	quoteChar: {
-		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either single-quote or double-quote.',
-		oneOf: [
-			'\'',
-			'"'
-		],
-		default: '\''
+		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.',
+		oneOf: ['\'', '"'],
+		default: '\'',
+		example: {
+			values: ['\'', '"'],
+			code: `
+			.class1
+				font-family 'Open Sans'
+			`
+		}
 	},
 	sortProperties: {
-		description: 'Can be either \n`false` for doing nothing about the CSS property order, \n\"alphabetical\" for sorting CSS properties from A to Z, \n\"grouped\" for sorting CSS properties according to https://github.com/SimenB/stylint/blob/master/src/data/ordering.json, \nor an array of property names that defines the property order (for example, [\"display\", \"margin\", \"padding\"]).',
+		description: 'Can be either <code>false</code> for doing nothing about the CSS property order, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).',
 		oneOf: [
 			false,
 			'alphabetical',
 			'grouped',
 			{
 				type: 'array',
-				items: {
-					type: 'string'
-				},
+				items: { type: 'string' },
 				uniqueItems: true
 			}
 		],
-		default: false
+		default: false,
+		example: {
+			values: [false, 'alphabetical', 'grouped', ['color', 'background', 'display']],
+			code: `
+			.class1
+				background red
+				display block
+				color white
+			`
+		}
 	},
 	alwaysUseImport: {
-		description: 'Convert *@require* to *@import*.',
+		description: 'Replace <code>@require</code> with <code>@import</code>, or do nothing.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			@require './file.styl'
+			`
+		}
 	},
 	alwaysUseNot: {
-		description: 'Convert *!* operator to *not* keyword or vice versa.',
+		description: 'Replace <code>!</code> operator with <code>not</code> keyword or vice versa.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				if (!condition)
+					background red
+			`
+		}
 	},
 	alwaysUseAtBlock: {
-		description: 'Convert an increased-indent at-block construction to an explicit one with *@block* keyword or vice versa. Note that this option ignores **`insertBraces`** option.',
+		description: 'Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.\nNote that this option does not incorporate <mark>insertBraces</mark> option.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			block =
+				background red
+			`
+		}
 	},
 	alwaysUseExtends: {
-		description: 'Convert *@extend* keyword to *@extends* keyword or vice versa.',
+		description: 'Convert <code>@extend</code> keyword to <code>@extends</code> keyword or vice versa.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				background red
+			.class2
+				@extend .class1
+				color white
+			`
+		}
 	},
 	alwaysUseZeroWithoutUnit: {
-		description: 'Convert `0px`, `0%`, `0em` and so on to `0` without units or vice versa.',
+		description: 'Replace <code>0px</code>, <code>0%</code>, <code>0em</code> and so on with <code>0</code> without units or vice versa.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				margin 0px
+			`			
+		}
 	},
 	reduceMarginAndPaddingValues: {
-		description: 'Reduce `margin` and `padding` duplicate values by converting `margin x` to `margin x x x x`, `margin x y` to `margin x y x y` where `x`, `y` is a property value.',
+		description: 'Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x</code> to <code>margin x x x x</code>, <code>margin x y</code> to <code>margin x y x y</code> where <code>x</code>, <code>y</code> is a property value.',
 		type: 'boolean',
-		default: false
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				margin 0px 0px
+				padding 0px 5px 0px 5px
+			`			
+		}
 	}
 }
 
@@ -163,9 +304,9 @@ function verify(data, info) {
 	} else if (info.type === 'integer') {
 		if (_.isInteger(data) === false) {
 			throw new Error(`Expected ${data} to be an integer`)
-		} else if (info.minimum !== undefined && data <= info.minimum) {
+		} else if (info.minimum !== undefined && data < info.minimum) {
 			throw new Error(`Expected ${data} to be greater or equal than ${info.minimum}`)
-		} else if (info.maximum !== undefined && data >= info.maximum) {
+		} else if (info.maximum !== undefined && data > info.maximum) {
 			throw new Error(`Expected ${data} to be less or equal than ${info.maximum}`)
 		}
 
@@ -189,5 +330,7 @@ function verify(data, info) {
 
 	return true
 }
+
+createFormattingOptions.schema = schema
 
 module.exports = createFormattingOptions

@@ -3,7 +3,8 @@
 		<link rel="stylesheet" type="text/css" href="index.css">
 
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
-		<script src="demo--auto-generated.js" defer></script>
+		<script src="format.js" defer></script>
+		<script src="demo.js" defer></script>
 
 		<title>Manta's Stylus Supremacy</title>
 	</head>
@@ -63,12 +64,12 @@
 				<p>The <a href="#options">default formatting options</a> will be used, unless you specify your own options explicitly using
 					<mark>--options</mark> or
 					<mark>-p</mark>.</p>
-				<code>stylus-supremacy ./path/to/your/file.styl --options ./path/to/your/options.json</code>
+				<code>stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/options.json</code>
 
 				<p>You may redirect the formatted Stylus content to a directory by adding
 					<mark>--outDir</mark> or
 					<mark>-o</mark> followed by the path to a directory. This is useful when formatting multiple files.</p>
-				<code>node stylus-supremacy ./path/to/your/file.styl --outDir ./path/to/output/directory</code>
+				<code>node stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--outDir ./path/to/output/directory</code>
 
 				<p>Alternatively, you may overwrite the original files by specifying
 					<mark>--replace</mark> or
@@ -116,37 +117,55 @@
 			<article id="options">
 				<h1>Formatting options</h1>
 
-				<!-- formatting option definition -->
-				<h2>
-					<mark>insertColons</mark><data>= false</data><code>: boolean | "alphabetic" | "grouped"</code>
-				</h2>
-				<p>Insert or remove a colon after a property name.</p>
-				<table>
-					<tr>
-						<th>x</th>
-						<th>x</th>
-					</tr>
-					<tr>
-						<td>y</td>
-						<td>y</td>
-					</tr>
-				</table>
-				<table>
-					<tr>
-						<th>x</th>
-						<th>x</th>
-					</tr>
-					<tr>
-						<td>y</td>
-						<td>y</td>
-					</tr>
-				</table>
-				<!-- formatting option definition -->
-				<p>a</p>
+				<p>The below is an object containing default formatting options.</p>
+
+				<!-- formatting option placeholder --><code>{<br>&nbsp;&nbsp;"insertColons": true,<br>&nbsp;&nbsp;"insertSemicolons": true,<br>&nbsp;&nbsp;"insertBraces": true,<br>&nbsp;&nbsp;"insertNewLineBetweenGroups": 1,<br>&nbsp;&nbsp;"insertNewLineBetweenSelectors": false,<br>&nbsp;&nbsp;"insertSpaceBeforeComment": true,<br>&nbsp;&nbsp;"insertSpaceAfterComment": true,<br>&nbsp;&nbsp;"insertSpaceAfterComma": true,<br>&nbsp;&nbsp;"insertSpaceInsideParenthesis": false,<br>&nbsp;&nbsp;"insertParenthesisAroundIfCondition": true,<br>&nbsp;&nbsp;"insertNewLineBeforeElse": false,<br>&nbsp;&nbsp;"insertLeadingZeroBeforeFraction": true,<br>&nbsp;&nbsp;"tabStopChar": "\t",<br>&nbsp;&nbsp;"newLineChar": "\n",<br>&nbsp;&nbsp;"quoteChar": "'",<br>&nbsp;&nbsp;"sortProperties": false,<br>&nbsp;&nbsp;"alwaysUseImport": false,<br>&nbsp;&nbsp;"alwaysUseNot": false,<br>&nbsp;&nbsp;"alwaysUseAtBlock": false,<br>&nbsp;&nbsp;"alwaysUseExtends": false,<br>&nbsp;&nbsp;"alwaysUseZeroWithoutUnit": false,<br>&nbsp;&nbsp;"reduceMarginAndPaddingValues": false<br>}</code><h2 id="options-insert-colons"><mark>insertColons</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a colon after a property name.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background red;<br>}<br></td></tr></tbody></table><h2 id="options-insert-semicolons"><mark>insertSemicolons</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red<br>}<br></td></tr></tbody></table><h2 id="options-insert-braces"><mark>insertBraces</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a pair of curly braces between a selector body, a mixin body and a function body. Note that this option does not affect <code>@block</code> construction, see alwaysUseAtBlock.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1<br>&nbsp;&nbsp;background: red;<br></td></tr></tbody></table><h2 id="options-insert-new-line-between-groups"><mark>insertNewLineBetweenGroups</mark><data>= 1</data><code>: integer</code></h2><p>Represent a number of new-line between different type of groups.</p><table><thead><tr><th>0</th><th class="default">1</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;$gray = #EEE;<br><br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: $gray;<br><br>&nbsp;&nbsp;mixin1();<br>&nbsp;&nbsp;mixin2();<br>}<br><br>.class2 {<br>&nbsp;&nbsp;background: blue;<br>}<br></td><td class="default">.class1 {<br>&nbsp;&nbsp;$gray = #EEE;<br><br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: $gray;<br><br>&nbsp;&nbsp;mixin1();<br>&nbsp;&nbsp;mixin2();<br>}<br><br>.class2 {<br>&nbsp;&nbsp;background: blue;<br>}<br></td></tr></tbody></table><h2 id="options-insert-new-line-between-selectors"><mark>insertNewLineBetweenSelectors</mark><data>= false</data><code>: boolean</code></h2><p>Insert or remove a new-line between selectors.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>.class1,<br>.class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td class="default">.class1, .class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></td></tr></tbody></table><h2 id="options-insert-space-before-comment"><mark>insertSpaceBeforeComment</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a white-space before a comment.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red; // comment<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red;// comment<br>}<br></td></tr></tbody></table><h2 id="options-insert-space-after-comment"><mark>insertSpaceAfterComment</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a white-space after a comment.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red; // comment<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red; //comment<br>}<br></td></tr></tbody></table><h2 id="options-insert-space-after-comma"><mark>insertSpaceAfterComma</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a white-space after a comma.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td><td>mixin(a,b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td></tr></tbody></table><h2 id="options-insert-space-inside-parenthesis"><mark>insertSpaceInsideParenthesis</mark><data>= false</data><code>: boolean</code></h2><p>Insert or remove a white-space after an open parenthesis and before a close parenthesis.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>mixin( a, b ) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td><td class="default">mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td></tr></tbody></table><h2 id="options-insert-parenthesis-around-if-condition"><mark>insertParenthesisAroundIfCondition</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a pair of parentheses between *if*-condition.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">if (a > b) {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>if a > b {<br>&nbsp;&nbsp;background: red;<br>}<br></td></tr></tbody></table><h2 id="options-insert-new-line-before-else"><mark>insertNewLineBeforeElse</mark><data>= false</data><code>: boolean</code></h2><p>Insert or remove a new-line before <code>else</code> keyword.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>if (a > b) {<br>&nbsp;&nbsp;background: red;<br>}<br>else {<br>&nbsp;&nbsp;background: blue;<br>}<br></td><td class="default">if (a > b) {<br>&nbsp;&nbsp;background: red;<br>} else {<br>&nbsp;&nbsp;background: blue;<br>}<br></td></tr></tbody></table><h2 id="options-insert-leading-zero-before-fraction"><mark>insertLeadingZeroBeforeFraction</mark><data>= true</data><code>: boolean</code></h2><p>Insert or remove a zero before a number that between 1 and 0.</p><table><thead><tr><th class="default">true</th><th>false</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;margin: 0.5px;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;margin: .5px;<br>}<br></td></tr></tbody></table><h2 id="options-tab-stop-char"><mark>tabStopChar</mark><data>= "\t"</data><code>: string</code></h2><p>Represent a tab-stop character. You may change this to double white-space sequence or anything.</p><h2 id="options-new-line-char"><mark>newLineChar</mark><data>= "\n"</data><code>: "\n" | "\r\n"</code></h2><p>Represent a new-line character. You may change this to `"\r\n"` for *Microsoft Windows*.</p><h2 id="options-quote-char"><mark>quoteChar</mark><data>= "'"</data><code>: "'" | "\""</code></h2><p>Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.</p><table><thead><tr><th class="default">"'"</th><th>"\""</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;font-family: 'Open Sans';<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;font-family: "Open Sans";<br>}<br></td></tr></tbody></table><h2 id="options-sort-properties"><mark>sortProperties</mark><data>= false</data><code>: false | "alphabetical" | "grouped" | array&lt;string&gt;</code></h2><p>Can be either <code>false</code> for doing nothing about the CSS property order, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).</p><table><thead><tr><th class="default">false</th><th>"alphabetical"</th></tr></thead><tbody><tr><td class="default">.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;color: white;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;display: block;<br>}<br></td></tr></tbody><thead><tr><th>"grouped"</th><th>["color","background","display"]</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>}<br></td></tr></tbody></table><h2 id="options-always-use-import"><mark>alwaysUseImport</mark><data>= false</data><code>: boolean</code></h2><p>Replace <code>@require</code> with <code>@import</code>, or do nothing.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>@import './file.styl';<br></td><td class="default">@require './file.styl';<br></td></tr></tbody></table><h2 id="options-always-use-not"><mark>alwaysUseNot</mark><data>= false</data><code>: boolean</code></h2><p>Replace <code>!</code> operator with <code>not</code> keyword or vice versa.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;if (not condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></td><td class="default">.class1 {<br>&nbsp;&nbsp;if (!condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></td></tr></tbody></table><h2 id="options-always-use-at-block"><mark>alwaysUseAtBlock</mark><data>= false</data><code>: boolean</code></h2><p>Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.</p><p>Note that this option does not incorporate <mark>insertBraces</mark> option.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>block = @block {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td class="default">block =<br>&nbsp;&nbsp;background: red;<br></td></tr></tbody></table><h2 id="options-always-use-extends"><mark>alwaysUseExtends</mark><data>= false</data><code>: boolean</code></h2><p>Convert <code>@extend</code> keyword to <code>@extends</code> keyword or vice versa.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extends .class1<br><br>&nbsp;&nbsp;color: white;<br>}<br></td><td class="default">.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extend .class1<br><br>&nbsp;&nbsp;color: white;<br>}<br></td></tr></tbody></table><h2 id="options-always-use-zero-without-unit"><mark>alwaysUseZeroWithoutUnit</mark><data>= false</data><code>: boolean</code></h2><p>Replace <code>0px</code>, <code>0%</code>, <code>0em</code> and so on with <code>0</code> without units or vice versa.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;margin: 0;<br>}<br></td><td class="default">.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>}<br></td></tr></tbody></table><h2 id="options-reduce-margin-and-padding-values"><mark>reduceMarginAndPaddingValues</mark><data>= false</data><code>: boolean</code></h2><p>Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x</code> to <code>margin x x x x</code>, <code>margin x y</code> to <code>margin x y x y</code> where <code>x</code>, <code>y</code> is a property value.</p><table><thead><tr><th>true</th><th class="default">false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>&nbsp;&nbsp;padding: 0px 5px;<br>}<br></td><td class="default">.class1 {<br>&nbsp;&nbsp;margin: 0px 0px;<br>&nbsp;&nbsp;padding: 0px 5px 0px 5px;<br>}<br></td></tr></tbody></table><!-- formatting option placeholder -->
 			</article>
 			<article id="stylint">
 				<h1>Stylint compatibility</h1>
-				abc
+
+				<p>If you are using <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a> as a Stylus linter and wanting to use <mark>.stylintrc</mark> file as a formatting options, simply pass the <mark>.stylintrc</mark> file via <code>--options</code> parameter or pass a JSON of <a href="https://www.npmjs.com/package/stylint#options" target="_blank">Stylint options</a> as a second patameter of the <mark>format</mark> function. The Stylint options will be recognized by the command automatically.</p>
+				<code>stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/.stylintrc</code>
+
+				<p>Ultimately, you can pass a JSON containing both Stylint options and <b>Stylus Supremacy</b> formatting options at the same time, but keep in mind that the latter will always have a higher priority.</p>
+				<code>
+					const stylusSupremacy = require('stylus-supremacy')<br>
+					<br>
+					const stylusContent = `<br>
+					body<br>
+					&nbsp;&nbsp;display none<br>
+					`<br>
+					<br>
+					const formattingOptions = {<br>
+					&nbsp;&nbsp;colons: 'always', // From Stylint<br>
+					&nbsp;&nbsp;insertColons: false // From Stylus Supremacy<br>
+					}<br>
+					<br>
+					const result = stylusSupremacy.format(stylusContent, formattingOptions)<br>
+					<br>
+					console.log(result)<br>
+				</code>
+				<samp>
+					body {<br>
+					&nbsp;&nbsp;display none;<br>
+					}
+				</samp>
+
+				<p>Notice that there is no colons between <code>display</code> and <code>none</code> since <mark>insertColons</mark> is <code>false</code>, although <mark>colons</mark> says otherwise. This is because the values of <b>Stylus Supremacy</b> formatting options are more important than Stylint options.</p>
+
+				<p>Note that <code>"always"</code> in Stylint is equivalent to <code>true</code>; <code>"never"</code> is equivalent to <code>false</code>, otherwise the <a href="#options">default formatting options</a> will be used.</p>
+
+				<table>
+					<thead>
+						<tr>
+							<th>Stylint options</th>
+							<th>Equivalent formatting options</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- stylint option placeholder --><tr><td><mark>blocks</mark></td><td><mark>alwaysUseAtBlock</mark></td><tr><td><mark>brackets</mark></td><td><mark>insertBraces</mark></td><tr><td><mark>colons</mark></td><td><mark>insertColons</mark></td><tr><td><mark>colors</mark></td><td>Not applicable</td><tr><td><mark>commaSpace</mark></td><td><mark>insertSpaceAfterComma</mark></td><tr><td><mark>commentSpace</mark></td><td><mark>insertSpaceAfterComment</mark></td><tr><td><mark>cssLiteral</mark></td><td>Not applicable</td><tr><td><mark>depthLimit</mark></td><td>Not applicable</td><tr><td><mark>duplicates</mark></td><td>Not applicable</td><tr><td><mark>efficient</mark></td><td><mark>reduceMarginAndPaddingValues</mark></td><tr><td><mark>extendPref</mark></td><td><mark>alwaysUseExtends</mark></td><tr><td><mark>globalDupe</mark></td><td>Not applicable</td><tr><td><mark>groupOutputByFile</mark></td><td>Not applicable</td><tr><td><mark>reporterOptions</mark></td><td>Not applicable</td><tr><td><mark>indentPref</mark></td><td><mark>tabStopChar</mark></td><tr><td><mark>leadingZero</mark></td><td><mark>insertLeadingZeroBeforeFraction</mark></td><tr><td><mark>maxErrors</mark></td><td>Not applicable</td><tr><td><mark>maxWarnings</mark></td><td>Not applicable</td><tr><td><mark>mixed</mark></td><td>Not applicable</td><tr><td><mark>namingConvention</mark></td><td>Not applicable</td><tr><td><mark>namingConventionStrict</mark></td><td>Not applicable</td><tr><td><mark>none</mark></td><td>Not applicable</td><tr><td><mark>noImportant</mark></td><td>Not applicable</td><tr><td><mark>parenSpace</mark></td><td><mark>insertSpaceInsideParenthesis</mark></td><tr><td><mark>placeholders</mark></td><td>Not applicable</td><tr><td><mark>prefixVarsWithDollar</mark></td><td>Not applicable</td><tr><td><mark>quotePref</mark></td><td><mark>quoteChar</mark>; the values "single" and "double" will be converted to "'" and "\"" respectively.</td><tr><td><mark>reporter</mark></td><td>Not applicable</td><tr><td><mark>semicolons</mark></td><td><mark>insertSemicolons</mark></td><tr><td><mark>sortOrder</mark></td><td><mark>sortProperties</mark></td><tr><td><mark>stackedProperties</mark></td><td>Not applicable</td><tr><td><mark>trailingWhitespace</mark></td><td>Not applicable</td><tr><td><mark>universal</mark></td><td>Not applicable</td><tr><td><mark>valid</mark></td><td>Not applicable</td><tr><td><mark>zeroUnits</mark></td><td><mark>alwaysUseZeroWithoutUnit</mark>; unlike other options, the values "always" and "never" will be converted to false and true respectively.</td><tr><td><mark>zIndexNormalize</mark></td><td>Not applicable</td><!-- stylint option placeholder -->
+					</tbody>
+				</table>
 			</article>
 			<article id="vscode">
 				<h1>Visual Studio Code extension</h1>
