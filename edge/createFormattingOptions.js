@@ -263,7 +263,7 @@ const schema = {
 		}
 	},
 	reduceMarginAndPaddingValues: {
-		description: 'Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x</code> to <code>margin x x x x</code>, <code>margin x y</code> to <code>margin x y x y</code> where <code>x</code>, <code>y</code> is a property value.',
+		description: 'Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x x x x</code> to <code>margin x</code>, <code>margin x y x y</code> to <code>margin x y</code> where <code>x</code>, <code>y</code> is a property value.',
 		type: 'boolean',
 		default: false,
 		example: {

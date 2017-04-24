@@ -20,9 +20,8 @@ $(document).ready(function () {
 			'  block =',
 			'    display none',
 		].join('\n'))
-		setTimeout(function () {
-			$input.trigger('input')
-		})
+		
+		setTimeout(reformat)
 	}
 
 	$('#demo-options input, #demo-options select').on('change', reformat)
