@@ -18,14 +18,16 @@
   "main": "./edge/index.js",
   "scripts": {
     "test": "node ./test/runner.js",
-    "docs": "browserify --require ./edge/format.js:format > docs/format.js && node edge/reviseDocumentation.js",
+    "docs": "browserify --transform babelify --require ./edge/format.js:format | uglifyjs --compress > docs/format.js && node edge/reviseDocumentation.js",
     "preversion": "npm test",
     "version": "npm publish",
     "postversion": "git push --tags --quiet origin master:master"
   },
   "devDependencies": {
+    "babelify": "^7.3.0",
     "browserify": "^14.3.0",
-    "jasmine": "^2.5.3"
+    "jasmine": "^2.5.3",
+    "uglifyjs": "^2.4.10"
   },
   "dependencies": {
     "glob": "^7.1.1",
