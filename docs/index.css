@@ -248,7 +248,7 @@ article > img {
 }
 
 #demo-options input[type=checkbox]:checked {
-	background: #1DE9B6;
+	background: #FFEB3B;
 }
 
 #demo-options input[type=checkbox]:checked::before {
