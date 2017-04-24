@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const schema = {
 	insertColons: {
-		description: 'Insert or remove a colon after a property name.',
+		description: 'Insert or remove a colon between a property name and its value.',
 		type: 'boolean',
 		default: true,
 		example: {
@@ -14,7 +14,7 @@ const schema = {
 		}
 	},
 	insertSemicolons: {
-		description: 'Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a function call.',
+		description: 'Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a mixin/function call.',
 		type: 'boolean',
 		default: true,
 		example: {
@@ -26,7 +26,7 @@ const schema = {
 		}
 	},
 	insertBraces: {
-		description: 'Insert or remove a pair of curly braces between a selector body, a mixin body and a function body. Note that this option does not affect <code>@block</code> construction, see alwaysUseAtBlock.',
+		description: 'Insert or remove a pair of curly braces where they are supposed to be. Note that this option does not affect <code>@block</code> construction, see <a class="nada" href="#option-always-use-at-block"><mark>alwaysUseAtBlock</mark></a>.',
 		type: 'boolean',
 		default: true,
 		example: {
@@ -117,7 +117,7 @@ const schema = {
 		}
 	},
 	insertParenthesisAroundIfCondition: {
-		description: 'Insert or remove a pair of parentheses between *if*-condition.',
+		description: 'Insert or remove a pair of parentheses around <code>if</code>-condition.',
 		type: 'boolean',
 		default: true,
 		example: {
@@ -155,12 +155,12 @@ const schema = {
 		}
 	},
 	tabStopChar: {
-		description: 'Represent a tab-stop character. You may change this to double white-space sequence or anything.',
+		description: 'Represent an indentation. You may change this to any sequence of white-spaces.',
 		type: 'string',
 		default: '\t'
 	},
 	newLineChar: {
-		description: 'Represent a new-line character. You may change this to `\"\\r\\n\"` for *Microsoft Windows*.',
+		description: 'Represent a new-line character. You may want to change this to <code>"\\r\\n"</code> for Microsoft Windows.',
 		oneOf: ['\n', '\r\n'],
 		default: '\n'
 	},
@@ -224,7 +224,7 @@ const schema = {
 		}
 	},
 	alwaysUseAtBlock: {
-		description: 'Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.\nNote that this option does not incorporate <mark>insertBraces</mark> option.',
+		description: 'Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.\nNote that this option does not incorporate <a class="nada" href="#option-insert-braces"><mark>insertBraces</mark></a> option.',
 		type: 'boolean',
 		default: false,
 		example: {

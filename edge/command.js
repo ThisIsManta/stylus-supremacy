@@ -68,8 +68,10 @@ if (printVersion) {
 		.map(path => glob.sync(path))
 		.flatten()
 		.map(path => {
-			console.log()
-			console.log('»', path)
+			if (inputFiles.length > 1) {
+				console.log()
+				console.log('»', path)
+			}
 
 			try {
 				const inputContent = fs.readFileSync(path, 'utf8')
@@ -104,11 +106,8 @@ if (printVersion) {
 		.sum()
 		.value()
 
-	console.log()
-
-	if (errorCount === 0) {
-		console.log('Done without errors.')
-	} else {
+	if (errorCount > 0) {
+		console.log()
 		console.log(`Done with ${errorCount} error${errorCount === 1 ? '' : 's'}.`)
 		ps.exit(1)
 	}

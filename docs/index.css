@@ -21,6 +21,14 @@ mark {
 	color: white;
 }
 
+mark.alt {
+	background: #00BFA5;
+}
+
+a.nada {
+	text-decoration: none;
+}
+
 data {
 	background: #FFC400;
 }
@@ -58,6 +66,10 @@ p {
 
 h2 + p {
 	margin-top: 1rem;
+}
+
+span.nobr {
+	white-space: nowrap;
 }
 
 nav {
@@ -209,33 +221,38 @@ article > img {
 #demo-options label {
 	display: inline-block;
 	margin: 0 5px 5px 0;
-	background: #00BFA5;
+	background: #D50000;
 	color: white;
+}
+
+#demo-options input[type=checkbox], #demo-options input[type=text], #demo-options input[type=number], #demo-options select {
+	font-family: 'Roboto Mono', monospace;
+	font-weight: bold;
+	border: 1px solid #D50000;
+	padding: 0;
+	background: #FAFAFA;
+	font-size: 1rem;
+	line-height: 1.5rem;
+	outline: none;
 }
 
 #demo-options input[type=checkbox] {
 	-webkit-appearance: none;
 	margin: 0;
 	padding: 0 3px;
-	height: 1.5rem;
-	background: white;
-	outline: none;
+	background: #FAFAFA;
 }
 
 #demo-options input[type=checkbox]::before {
 	content: 'false';
 }
 
-#demo-options input[type=checkbox]:checked::before {
-	content: 'true';	
+#demo-options input[type=checkbox]:checked {
+	background: #1DE9B6;
 }
 
-#demo-options input[type=checkbox], #demo-options input[type=text], #demo-options input[type=number], #demo-options select {
-	font-family: 'Roboto Mono', monospace;
-	border: 1px solid #00BFA5;
-	background: #A7FFEB;
-	font-size: 1rem;
-	outline: none;
+#demo-options input[type=checkbox]:checked::before {
+	content: 'true';	
 }
 
 #demo-options input[type=number] {
@@ -262,7 +279,6 @@ table + table {
 #options data {
 	padding-left: 10px;
 	padding-right: 10px;
-	white-space: nowrap;
 }
 
 table {
@@ -275,6 +291,10 @@ th, td {
 	padding: 5px 10px;
 	text-align: left;
 	vertical-align: top;
+}
+
+#options th, #options td {
+	width: 50%;
 }
 
 th:nth-child(odd) {

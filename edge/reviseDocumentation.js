@@ -69,25 +69,25 @@ function createFormattingDescription() {
 		'</code>'
 	)
 
-	return _.chain(createFormattingOptions.schema)
+	const formattingOptionDescription = _.chain(createFormattingOptions.schema)
 		.map((item, name) => [
-			`<h2 id="options-${_.kebabCase(name)}">`,
+			`<h2 id="option-${_.kebabCase(name)}">`,
 			`<mark>${name}</mark>`,
-			`<data>= ${JSON.stringify(item.default)}</data>`,
-			`<code>: ${getType(item)}</code>`,
+			`<wbr>`,
+			`<data>${getNonBreakableForFirstWord('= ', JSON.stringify(item.default))}</data>`,
+			`<wbr>`,
+			`<code>${getNonBreakableForFirstWord(': ', getType(item))}</code>`,
 			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
 			item.example && '<table>' + _.chunk(item.example.values, 2).map(values => {
-				const createDefaultValueClassOrNothing = value => (value === item.default ? ' class="default"' : '')
-
 				const headList = values.map(value =>
-					'<th' + createDefaultValueClassOrNothing(value) + '>' +
+					'<th>' +
 					JSON.stringify(value) +
 					'</th>'
 				).join('')
 
 				const codeList = values.map(value =>
-					'<td' + createDefaultValueClassOrNothing(value) + '>' +
+					'<td>' +
 					getCodeForHTML(format(getCodeForFormatting(item.example.code), { [name]: value })) +
 					'</td>'
 				).join('')
@@ -102,6 +102,8 @@ function createFormattingDescription() {
 		.compact()
 		.join('')
 		.value()
+
+	return defaultOptionJSON + formattingOptionDescription
 }
 
 function createStylintConversionTable() {
@@ -132,7 +134,7 @@ function createStylintConversionTable() {
 		}, {})
 
 	return _.map(stylintOptions, (item, name) =>
-		'<tr><td><mark>' + name + '</mark></td><td>' +
+		'<tr><td><mark class="alt">' + name + '</mark></td><td>' +
 		_.get(stylintOptionDict, name, 'Not applicable') + '</td>'
 	).join('')
 }
@@ -147,6 +149,14 @@ function getType(item) {
 	} else {
 		return _.escape(JSON.stringify(item))
 	}
+}
+
+function getNonBreakableForFirstWord(prefix, text) {
+	let pivot = text.indexOf(' ')
+	if (pivot === -1) {
+		pivot = text.length
+	}
+	return '<span class="nobr">' + prefix + text.substring(0, pivot) + '</span>' + text.substring(pivot)
 }
 
 function getCodeForFormatting(code) {
