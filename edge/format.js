@@ -869,9 +869,6 @@ function format(content, options) {
 				outputBuffer.append(commentLines.map(line => indent + line).join(options.newLineChar)).append(options.newLineChar)
 			}
 
-		} else if (inputNode instanceof stylus.nodes.Null) {
-			return ''
-
 		} else {
 			warnings.push({ message: 'Found unknown object', data: inputNode })
 		}
