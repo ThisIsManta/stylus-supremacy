@@ -19,9 +19,7 @@ const _ = require('lodash')
 const Stylus = require('stylus')
 const format = require('../edge/format')
 
-const filteredSpecName = _.chain(ps.argv).map((param, index, array) => (param === '--filter' || param === '-f') ? _.trim(array[index + 1], '"') : null).compact().first().value()
-
-const filesAndDirectories = glob.sync('spec/' + (filteredSpecName || '*'))
+const filesAndDirectories = _.chain(ps.argv.length > 2 ? ps.argv.slice(2) : ['*']).map(para => glob.sync('spec/' + para)).flatten().value()
 const filesOnly = path => pt.extname(path) === '.js'
 const directoriesOnly = path => pt.extname(path) === ''
 const createComparableLines = text => text.replace(/\r/g, '¶').replace(/\t/g, '→').replace(/^\s+/gm, spaces => _.repeat('·', spaces.length)).split('\n')
