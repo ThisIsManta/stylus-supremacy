@@ -3,7 +3,6 @@ const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
 
 const createFormattingOptions = require('./createFormattingOptions')
-const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const createStringBuffer = require('./createStringBuffer')
 
 function format(content, options = {}) {

@@ -177,7 +177,7 @@ const schema = {
 		}
 	},
 	sortProperties: {
-		description: 'Can be either <code>false</code> for doing nothing about the CSS property order, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).',
+		description: 'Can be either <code>false</code> for doing nothing, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).',
 		oneOf: [
 			false,
 			'alphabetical',
@@ -211,7 +211,7 @@ const schema = {
 		}
 	},
 	alwaysUseNot: {
-		description: 'Replace <code>!</code> operator with <code>not</code> keyword or vice versa.',
+		description: 'Replace <code>!</code> operator with <code>not</code> keyword, or vice versa.',
 		type: 'boolean',
 		default: false,
 		example: {
@@ -236,7 +236,7 @@ const schema = {
 		}
 	},
 	alwaysUseExtends: {
-		description: 'Convert <code>@extend</code> keyword to <code>@extends</code> keyword or vice versa.',
+		description: 'Convert <code>@extend</code> keyword to <code>@extends</code> keyword, or vice versa.',
 		type: 'boolean',
 		default: false,
 		example: {
@@ -251,7 +251,7 @@ const schema = {
 		}
 	},
 	alwaysUseZeroWithoutUnit: {
-		description: 'Replace <code>0px</code>, <code>0%</code>, <code>0em</code> and so on with <code>0</code> without units or vice versa.',
+		description: 'Replace <code>0px</code>, <code>0%</code>, <code>0em</code> and so on with <code>0</code> without units, or do nothing.',
 		type: 'boolean',
 		default: false,
 		example: {
