@@ -765,6 +765,9 @@ function format(content, options) {
 			}
 			outputBuffer.append(' ')
 			outputBuffer.append(inputNode.selectors.map(node => travel(inputNode, node, indentLevel, true)).join(comma))
+			if (options.insertSemicolons) {
+				outputBuffer.append(';')
+			}
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof stylus.nodes.Atrule) {
