@@ -731,11 +731,18 @@ function format(content, options) {
 			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(comma))
 
 		} else if (inputNode instanceof stylus.nodes.Query) {
-			outputBuffer.append(inputNode.type.val)
-			if (inputNode.type.val && inputNode.nodes.length > 0) {
-				outputBuffer.append(' and ')
+			if (inputNode.predicate) {
+				outputBuffer.append(inputNode.predicate + ' ')
 			}
-			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(' and '))
+			if (inputNode.type) {
+				outputBuffer.append(travel(inputNode, inputNode.type, indentLevel, true))
+			}
+			if (inputNode.nodes.length > 0) {
+				if (inputNode.type) {
+					outputBuffer.append(' and ')
+				}
+				outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(' and '))
+			}
 
 		} else if (inputNode instanceof stylus.nodes.Feature) {
 			outputBuffer.append(openParen)
@@ -861,6 +868,9 @@ function format(content, options) {
 			} else {
 				outputBuffer.append(commentLines.map(line => indent + line).join(options.newLineChar)).append(options.newLineChar)
 			}
+
+		} else if (inputNode instanceof stylus.nodes.Null) {
+			return ''
 
 		} else {
 			warnings.push({ message: 'Found unknown object', data: inputNode })
