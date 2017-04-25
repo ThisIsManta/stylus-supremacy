@@ -45,7 +45,13 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	describe(testSpecName, () => {
 		it('can be formatted', () => {
 			if (fs.existsSync(actualFilePath)) fs.unlinkSync(actualFilePath)
-			if (fs.existsSync(debuggingFilePath)) fs.unlinkSync(debuggingFilePath)
+
+			try {
+				const tree = new Stylus.Parser(inputContent).parse()
+				fs.writeFileSync(debuggingFilePath, JSON.stringify(tree, null, '\t'))
+			} catch (ex) {
+				// Do nothing
+			}
 
 			const actualContent = format(inputContent, formattingOptions)
 
@@ -54,13 +60,6 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 
 			} else { // In case of failure
 				fs.writeFileSync(actualFilePath, actualContent)
-
-				try {
-					const tree = new Stylus.Parser(inputContent).parse()
-					fs.writeFileSync(debuggingFilePath, JSON.stringify(tree, null, '\t'))
-				} catch (ex) {
-					// Do nothing
-				}
 
 				const stack = [
 					inputFilePath,

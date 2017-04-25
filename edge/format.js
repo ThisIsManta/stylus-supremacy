@@ -140,7 +140,7 @@ function format(content, options = {}) {
 
 			const groups = []
 			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
-				if (rank === 0 || getType(node) !== getType(list[rank - 1]) || getType(node) === 'Group') {
+				if (rank === 0 || getType(node) !== getType(list[rank - 1]) || getType(node) === 'Block') {
 					groups.push([node])
 				} else {
 					_.last(groups).push(node)
@@ -231,14 +231,33 @@ function format(content, options = {}) {
 				}
 			})
 
-			const newLines = _.repeat(options.newLineChar, indentLevel === 0 || originalBaseIndent === '' ? options.insertNewLineBetweenOuterGroups : options.insertNewLineBetweenInnerGroups)
-
 			// Insert CSS body
-			outputBuffer.append(groups.map(group =>
-				group.map(node =>
-					travel(inputNode, node, childIndentLevel)
-				).join('')
-			).join(newLines))
+			outputBuffer.append(_.chain(groups)
+				.map(group => {
+					const nodeType = getType(group[0])
+
+					let newLineAround = ''
+					if (
+						nodeType === 'Block' && options.insertNewLineAroundBlock ||
+						nodeType === 'Property' && options.insertNewLineAroundProperties ||
+						nodeType === 'Other' && options.insertNewLineAroundOthers
+					) {
+						newLineAround = options.newLineChar
+					}
+
+					return _.compact([newLineAround, group.map(node => travel(inputNode, node, childIndentLevel)), newLineAround])
+				})
+				.flatten()
+				.reject((text, rank, list) => text === options.newLineChar && (
+					rank === 0 ||
+					rank > 1 && list[rank - 1] === options.newLineChar ||
+					rank === list.length - 1
+				))
+				.join('')
+				.value()
+			)
+
+			// _.repeat(options.newLineChar, indentLevel === 0 || originalBaseIndent === '' ? options.insertNewLineBetweenOuterGroups : options.insertNewLineBetweenInnerGroups)
 
 			// Insert the bottom comment(s)
 			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
@@ -1016,18 +1035,21 @@ function format(content, options = {}) {
 	}
 
 	function getType(inputNode) {
-		if (inputNode.block !== undefined || (inputNode instanceof Stylus.nodes.Ident && inputNode.val.block !== undefined)) {
-			return 'Group'
-		} else if (_.isFunction(inputNode.toJSON)) {
-			return inputNode.toJSON().__type
+		if (inputNode instanceof Stylus.nodes.Property) {
+			return 'Property'
+
+		} else if (inputNode.block !== undefined || (inputNode instanceof Stylus.nodes.Ident && inputNode.val.block !== undefined)) {
+			return 'Block'
+
 		} else {
-			return null
+			return 'Other'
 		}
 	}
 
 	function getProperVariableName(name) {
 		if (/^\d/.test(name) || /\s/.test(name)) {
 			return options.quoteChar + name + options.quoteChar
+
 		} else {
 			return name
 		}

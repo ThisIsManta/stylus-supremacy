@@ -37,24 +37,20 @@ const schema = {
 			`
 		}
 	},
-	insertNewLineBetweenGroups: {
-		description: 'Represent a number of new-line between different type of groups.',
-		type: 'integer',
-		minimum: 0,
-		default: 1,
-		example: {
-			values: [0, 1],
-			code: `
-			.class1
-				$gray = #EEE
-				background red
-				color $gray
-				mixin1()
-				mixin2()
-			.class2
-				background blue
-			`
-		}
+	insertNewLineAroundBlock: {
+		description: '',
+		type: 'boolean',
+		default: true,
+	},
+	insertNewLineAroundProperties: {
+		description: '',
+		type: 'boolean',
+		default: true,
+	},
+	insertNewLineAroundOthers: {
+		description: '',
+		type: 'boolean',
+		default: true,
 	},
 	insertNewLineBetweenSelectors: {
 		description: 'Insert or remove a new-line between selectors.',
