@@ -2,7 +2,7 @@
 	"wrapMode": true,
 	"insertBraces": false,
 	"insertNewLineAroundProperties": false,
-	"insertNewLineAroundOthers": "nested",
+	"insertNewLineAroundOthers": "root",
 	"sortProperties": "grouped",
 	"newLineChar": "\r\n"
 }

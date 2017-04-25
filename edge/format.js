@@ -231,6 +231,20 @@ function format(content, options = {}) {
 				}
 			})
 
+			const checkIf = (value) => {
+				if (value === true) {
+					return true
+				}
+
+				if (options.wrapMode) {
+					return _.some(originalBaseIndent) ? value === 'nested' : value === 'root'
+				} else {
+					return inputNode instanceof Stylus.nodes.Root ? value === 'root' : value === 'nested'
+				}
+
+				return false
+			}
+
 			// Insert CSS body
 			outputBuffer.append(_.chain(groups)
 				.map(group => {
@@ -238,14 +252,18 @@ function format(content, options = {}) {
 
 					let newLineAround = ''
 					if (
-						nodeType === 'Block' && options.insertNewLineAroundBlock ||
-						nodeType === 'Property' && options.insertNewLineAroundProperties ||
-						nodeType === 'Other' && options.insertNewLineAroundOthers
+						nodeType === 'Block' && checkIf(options.insertNewLineAroundBlock) ||
+						nodeType === 'Property' && checkIf(options.insertNewLineAroundProperties) ||
+						nodeType === 'Other' && checkIf(options.insertNewLineAroundOthers)
 					) {
 						newLineAround = options.newLineChar
 					}
 
-					return _.compact([newLineAround, group.map(node => travel(inputNode, node, childIndentLevel)), newLineAround])
+					return _.compact([
+						newLineAround,
+						group.map(node => travel(inputNode, node, childIndentLevel)).join(''),
+						newLineAround
+					])
 				})
 				.flatten()
 				.reject((text, rank, list) => text === options.newLineChar && (
@@ -256,8 +274,6 @@ function format(content, options = {}) {
 				.join('')
 				.value()
 			)
-
-			// _.repeat(options.newLineChar, indentLevel === 0 || originalBaseIndent === '' ? options.insertNewLineBetweenOuterGroups : options.insertNewLineBetweenInnerGroups)
 
 			// Insert the bottom comment(s)
 			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
@@ -754,9 +770,9 @@ function format(content, options = {}) {
 			}
 			if (inputNode.nodes.length > 0) {
 				if (inputNode.type) {
-				outputBuffer.append(' and ')
-			}
-			outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(' and '))
+					outputBuffer.append(' and ')
+				}
+				outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(' and '))
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Feature) {
@@ -821,6 +837,7 @@ function format(content, options = {}) {
 			if (options.insertSemicolons) {
 				outputBuffer.append(';')
 			}
+			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
 			if (insideExpression === false) {

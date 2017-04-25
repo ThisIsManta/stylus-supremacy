@@ -1,8 +1,6 @@
 {
-	"wrapMode": true,
-	"insertBraces": false,
 	"insertNewLineAroundProperties": false,
 	"insertNewLineAroundOthers": "nested",
-	"sortProperties": "grouped",
+	"insertNewLineAroundBlock": "nested",
 	"newLineChar": "\r\n"
 }

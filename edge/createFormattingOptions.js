@@ -37,19 +37,19 @@ const schema = {
 			`
 		}
 	},
-	insertNewLineAroundBlock: {
-		description: '',
-		type: 'boolean',
-		default: true,
-	},
 	insertNewLineAroundProperties: {
 		description: '',
-		type: 'boolean',
+		oneOf: [true, false],
 		default: true,
 	},
 	insertNewLineAroundOthers: {
 		description: '',
-		type: 'boolean',
+		oneOf: [true, false, 'root', 'nested'],
+		default: true,
+	},
+	insertNewLineAroundBlock: {
+		description: '',
+		oneOf: [true, false, 'root', 'nested'],
 		default: true,
 	},
 	insertNewLineBetweenSelectors: {
@@ -290,8 +290,7 @@ function createFormattingOptions(options = {}) {
 					hash[name] = options[name]
 				}
 			} catch (ex) {
-				ex.message += ` at "${name}".` 
-				throw ex
+				throw new Error(ex.message + ` at "${name}".`)
 			}
 			return hash
 		}, {})
@@ -300,7 +299,20 @@ function createFormattingOptions(options = {}) {
 
 function verify(data, info) {
 	if (info.oneOf !== undefined) {
-		info.oneOf.some(item => _.isObject(item) ? verify(data, item) : (item === data))
+		const matchAnyValue = info.oneOf.some(item => {
+			if (_.isObject(item)) {
+				try {
+					return verify(data, item)
+				} catch (ex) {
+					return false
+				}
+			} else {
+				return item === data
+			}
+		})
+		if (matchAnyValue === false) {
+			throw new Error(`Expected ${data} to be one of the defined values`)
+		}
 
 	} else if (info.type === 'integer') {
 		if (_.isInteger(data) === false) {
