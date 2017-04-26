@@ -20,7 +20,7 @@ function updateDocument(document, placeholder, worker) {
 
 function createFormattingTogglersForDemo() {
 	return _.chain(createFormattingOptions.schema)
-		.omitBy(item => item.example === undefined)
+		.omitBy(item => item.hideInDemo === true)
 		.map((item, name) => {
 			if (item.type === 'boolean') {
 				return (
@@ -79,6 +79,7 @@ function createFormattingDescription() {
 			`<code>${getNonBreakableForFirstWord(': ', getType(item))}</code>`,
 			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
+			item.hideInVSCE ? '<p>This option is not available in the Visual Studio Code extension.</p>' : '',
 			item.example && '<table>' + _.chunk(item.example.values, 2).map(values => {
 				const headList = values.map(value =>
 					'<th>' +

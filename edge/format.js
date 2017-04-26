@@ -252,7 +252,7 @@ function format(content, options = {}) {
 
 					let newLineAround = ''
 					if (
-						nodeType === 'Block' && checkIf(options.insertNewLineAroundBlock) ||
+						nodeType === 'Block' && checkIf(options.insertNewLineAroundBlocks) ||
 						nodeType === 'Property' && checkIf(options.insertNewLineAroundProperties) ||
 						nodeType === 'Other' && checkIf(options.insertNewLineAroundOthers)
 					) {

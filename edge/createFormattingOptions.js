@@ -37,18 +37,18 @@ const schema = {
 			`
 		}
 	},
+	insertNewLineAroundBlocks: {
+		description: 'Insert a new-line around blocks. Only apply to top-level blocks when set to <code>"root"</code>. Only apply to nested blocks when set to <code>"nested"</code>.\nPlease see <a href="#newline">New-line options</a> for examples.',
+		oneOf: [true, false, 'root', 'nested'],
+		default: true,
+	},
 	insertNewLineAroundProperties: {
-		description: '',
+		description: 'Insert a new-line around a group of CSS properties.\nUnlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.\nPlease see <a href="#newline">New-line options</a> for examples.',
 		oneOf: [true, false],
 		default: true,
 	},
 	insertNewLineAroundOthers: {
-		description: '',
-		oneOf: [true, false, 'root', 'nested'],
-		default: true,
-	},
-	insertNewLineAroundBlock: {
-		description: '',
+		description: 'Insert a new-line around a group of non-properties and non-blocks. Only apply to others outside a block when set to <code>"root"</code>. Only apply to others inside a block when set to <code>"nested"</code>.\nPlease see <a href="#newline">New-line options</a> for examples.',
 		oneOf: [true, false, 'root', 'nested'],
 		default: true,
 	},
@@ -153,12 +153,16 @@ const schema = {
 	tabStopChar: {
 		description: 'Represent an indentation. You may change this to any sequence of white-spaces.',
 		type: 'string',
-		default: '\t'
+		default: '\t',
+		hideInDemo: true,
+		hideInVSCE: true,
 	},
 	newLineChar: {
 		description: 'Represent a new-line character. You may want to change this to <code>"\\r\\n"</code> for Microsoft Windows.',
 		oneOf: ['\n', '\r\n'],
-		default: '\n'
+		default: '\n',
+		hideInDemo: true,
+		hideInVSCE: true,
 	},
 	quoteChar: {
 		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.',

@@ -54,7 +54,7 @@ h1 {
 }
 
 h2 {
-	margin: 2rem 0 0 0;
+	margin: 4rem 0 0 0;
 	font-size: 1.5rem;
 	line-height: calc(2rem + 2px);
 }
@@ -66,6 +66,11 @@ p {
 
 h2 + p {
 	margin-top: 1rem;
+}
+
+s {
+	color: #388E3C;
+	text-decoration: none;
 }
 
 .nobr {
