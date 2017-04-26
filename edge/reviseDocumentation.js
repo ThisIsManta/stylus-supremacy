@@ -71,7 +71,8 @@ function createFormattingDescription() {
 
 	const formattingOptionDescription = _.chain(createFormattingOptions.schema)
 		.map((item, name) => [
-			`<h2 id="option-${_.kebabCase(name)}">`,
+			`<section id="option-${_.kebabCase(name)}">`,
+			`<h2>`,
 			`<mark>${name}</mark>`,
 			`<wbr>`,
 			`<data>${getNonBreakableForFirstWord('= ', JSON.stringify(item.default))}</data>`,
@@ -97,7 +98,8 @@ function createFormattingDescription() {
 					`<thead><tr>${headList}</tr></thead>` +
 					`<tbody><tr>${codeList}</tr></tbody>`
 				)
-			}).join('') + '</table>'
+			}).join('') + '</table>',
+			`</section>`
 		])
 		.flatten()
 		.compact()
