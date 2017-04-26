@@ -149,6 +149,36 @@ article > img {
 	width: 100%;
 }
 
+#availability {
+	display: flex;
+	margin: 10px 0;
+	padding: 0 40px;
+	border: 5px solid #CFD8DC;
+	border-radius: 10px;
+	justify-content: space-around;
+}
+
+#availability > a {
+	display: inline-block;
+	margin: 10px;
+	color: #212121;
+	text-align: center;
+	text-decoration: none;
+}
+
+#availability > a:hover {
+	color: #D50000;
+	text-decoration: underline;
+}
+
+#availability img {
+	width: 128px;
+}
+
+#availability figcaption {
+	width: 144px;
+}
+
 #demo table {
 	width: 100%;
 	border-spacing: 0;
