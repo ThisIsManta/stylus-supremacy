@@ -19,7 +19,7 @@
   "scripts": {
     "test": "node ./test/runner.js",
     "docs": "browserify --transform [ babelify --presets [ es2015 ] ] --require ./edge/format.js:format | uglifyjs --compress > docs/format.js && node edge/reviseDocumentation.js",
-    "preversion": "npm test && npm run docs && git commit --all --message=\"Updated the static site\"",
+    "preversion": "npm test && npm run docs",
     "version": "npm publish",
     "postversion": "git push --tags --quiet origin master:master"
   },
