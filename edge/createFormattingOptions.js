@@ -38,17 +38,17 @@ const schema = {
 		}
 	},
 	insertNewLineAroundBlocks: {
-		description: 'Insert a new-line around blocks.\nOnly apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.\nCheck the detailed examples <a href="#option-insert-newline-around-any">below</a>.',
+		description: 'Insert a new-line around blocks.\nOnly apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
 		oneOf: [true, false, 'root', 'nested'],
 		default: true,
 	},
 	insertNewLineAroundProperties: {
-		description: 'Insert a new-line around a group of CSS properties.\nUnlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.\nCheck the detailed examples <a href="#option-insert-newline-around-any">below</a>.',
+		description: 'Insert a new-line around a group of CSS properties.\nUnlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
 		oneOf: [true, false],
 		default: true,
 	},
 	insertNewLineAroundOthers: {
-		description: 'Insert a new-line around a group of non-properties and non-blocks.\nOnly apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.\nCheck the detailed examples <a href="#option-insert-newline-around-any">below</a>.',
+		description: 'Insert a new-line around a group of non-properties and non-blocks.\nOnly apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
 		oneOf: [true, false, 'root', 'nested'],
 		default: true,
 	},
