@@ -4,15 +4,8 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Test",
+			"name": "Run all specs",
 			"program": "${workspaceRoot}\\test\\runner.js"
-		},
-		{
-			"type": "node",
-			"request": "attach",
-			"name": "Attach to Port",
-			"address": "localhost",
-			"port": 5858
 		}
 	]
 }
