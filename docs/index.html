@@ -64,19 +64,19 @@
 				<code>npm install stylus-supremacy -g</code>
 
 				<p>Now, you can run <mark>stylus-supremacy</mark> command followed by a path to your Stylus file. Normally, the formatted Stylus content will be printed to the output stream (console/terminal).</p>
-				<code>stylus-supremacy ./path/to/your/file.styl</code>
+				<code>stylus-supremacy format ./path/to/your/file.styl</code>
 
 				<p>In case you want to format many files at a time, you can specify multiple paths, or pass the path in <a href="https://www.npmjs.com/package/glob" target="_blank">glob pattern</a>.</p>
-				<code>stylus-supremacy ./**/*.styl</code>
+				<code>stylus-supremacy format ./**/*.styl</code>
 
 				<p>The <a href="#options">default formatting options</a> will be used, unless you specify your own options explicitly using <mark>--options</mark> or <mark>-p</mark>.</p>
-				<code>stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/options.json</code>
+				<code>stylus-supremacy format ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/options.json</code>
 
 				<p>You may redirect the formatted Stylus content to a directory by adding <mark>--outDir</mark> or <mark>-o</mark> followed by the path to a directory. This is useful when formatting multiple files.</p>
-				<code>node stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--outDir ./path/to/output/directory</code>
+				<code>node stylus-supremacy format ./path/to/your/file.styl <br>&nbsp;&nbsp;--outDir ./path/to/output/directory</code>
 
 				<p>Alternatively, you may overwrite the original files by specifying <mark>--replace</mark> or <mark>-r</mark> parameter.</p>
-				<code>stylus-supremacy ./path/to/your/file.styl --replace</code>
+				<code>stylus-supremacy format ./path/to/your/file.styl --replace</code>
 
 				<p>Note that <mark>--outDir</mark> and <mark>--replace</mark> do not work together. You have to choose just one.</p>
 			</article>
@@ -319,7 +319,7 @@
 				<h1>Stylint compatibility</h1>
 
 				<p>If you are using <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a> as a Stylus linter and wanting to use <mark class="alt">.stylintrc</mark> file as formatting options, simply pass the <mark class="alt">.stylintrc</mark> file via <mark>--options</mark> command-line parameter.</p>
-				<code>stylus-supremacy ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/.stylintrc</code>
+				<code>stylus-supremacy format ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/.stylintrc</code>
  
 				<p>Programmatically, starting from <b>Stylus Supremacy</b> version 1.0.0, the <mark>format</mark> function does not recognize Stylint rules, but you can convert them to formatting options by calling <mark>createFormattingOptionsFromStylint</mark> function.</p>
 				<code>

@@ -43,7 +43,7 @@ function process(command, params) {
 			}
 		}
 
-		if (debuggingParams.length > 0 && _.isEmpty(formattingOptions) === false) {
+		if (debuggingParams.length > 0) {
 			console.log(JSON.stringify(formattingOptions, null, '  '))
 		}
 
