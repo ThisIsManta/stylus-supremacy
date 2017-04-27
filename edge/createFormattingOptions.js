@@ -37,6 +37,11 @@ const schema = {
 			`
 		}
 	},
+	insertNewLineAroundImports: {
+		description: 'Insert a new-line around a group of <code>@import</code>/<code>@require</code>(s).\nOnly apply to imports outside a block when set to <code>"root"</code>, or only apply to imports inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
+		oneOf: [true, false, 'root', 'nested'],
+		default: true,
+	},
 	insertNewLineAroundBlocks: {
 		description: 'Insert a new-line around blocks.\nOnly apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
 		oneOf: [true, false, 'root', 'nested'],
@@ -48,9 +53,9 @@ const schema = {
 		default: true,
 	},
 	insertNewLineAroundOthers: {
-		description: 'Insert a new-line around a group of non-properties and non-blocks.\nOnly apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
+		description: 'Insert a new-line around a group of non-properties, non-imports and non-blocks.\nOnly apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
 		oneOf: [true, false, 'root', 'nested'],
-		default: true,
+		default: false,
 	},
 	insertNewLineBetweenSelectors: {
 		description: 'Insert or remove a new-line between selectors.',

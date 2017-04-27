@@ -1,6 +1,7 @@
 {
 	"insertNewLineAroundBlocks": "nested",
 	"insertNewLineAroundProperties": false,
+	"insertNewLineAroundImports": "nested",
 	"insertNewLineAroundOthers": "nested",
 	"newLineChar": "\r\n"
 }

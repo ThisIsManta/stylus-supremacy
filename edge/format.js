@@ -245,7 +245,7 @@ function format(content, options = {}) {
 				return false
 			}
 
-			// Insert CSS body
+			// Insert CSS body and new-lines between them
 			outputBuffer.append(_.chain(groups)
 				.map(group => {
 					const nodeType = getType(group[0])
@@ -254,6 +254,7 @@ function format(content, options = {}) {
 					if (
 						nodeType === 'Block' && checkIf(options.insertNewLineAroundBlocks) ||
 						nodeType === 'Property' && checkIf(options.insertNewLineAroundProperties) ||
+						nodeType === 'Import' && checkIf(options.insertNewLineAroundImports) ||
 						nodeType === 'Other' && checkIf(options.insertNewLineAroundOthers)
 					) {
 						newLineAround = options.newLineChar
@@ -1054,6 +1055,9 @@ function format(content, options = {}) {
 	function getType(inputNode) {
 		if (inputNode instanceof Stylus.nodes.Property) {
 			return 'Property'
+
+		} else if (inputNode instanceof Stylus.nodes.Import) {
+			return 'Import'
 
 		} else if (inputNode.block !== undefined || (inputNode instanceof Stylus.nodes.Ident && inputNode.val.block !== undefined)) {
 			return 'Block'
