@@ -18,6 +18,7 @@ function process(command, params) {
 		const optionFilePathParams = getParam(params, ['--options', '-p'], 1)
 		const outputDirectoryParams = getParam(params, ['--outDir', '-o'], 1)
 		const replaceOriginalParams = getParam(params, ['--replace', '-r'])
+		const dryRunParams = getParam(params, ['--dryRun'])
 		const debuggingParams = getParam(params, ['--debug', '-d'])
 
 		const inputFiles = _.chain(params)
@@ -58,7 +59,10 @@ function process(command, params) {
 					const inputContent = fs.readFileSync(path, 'utf8')
 					const outputContent = format(inputContent, formattingOptions)
 
-					if (outputDirectoryParams.length > 0) {
+					if (dryRunParams.length > 0) {
+						// Do nothing
+
+					} else if (outputDirectoryParams.length > 0) {
 						if (fs.existsSync(pt.resolve(outputDirectoryParams[1])) === false) {
 							fs.mkdirSync(pt.resolve(outputDirectoryParams[1]))
 						}
@@ -77,9 +81,9 @@ function process(command, params) {
 
 				} catch (error) {
 					if (error.stack) {
-						console.error(error.stack)
+						console.log(error.stack)
 					} else {
-						console.error(error.name + ': ' + error.message)
+						console.log(error.name + ': ' + error.message)
 					}
 					return 1
 				}
