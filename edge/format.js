@@ -323,6 +323,8 @@ function format(content, options = {}) {
 						propertyValues = [propertyValues[0]]
 					} else if (propertyValues.length >= 3 && propertyValues[0] === propertyValues[2] && (propertyValues[1] === propertyValues[3] || propertyValues[3] === undefined)) {
 						propertyValues = [propertyValues[0], propertyValues[1]]
+					} else if (propertyValues.length === 4 && propertyValues[0] !== propertyValues[2] && propertyValues[1] === propertyValues[3]) {
+						propertyValues = [propertyValues[0], propertyValues[1], propertyValues[2]]
 					}
 				}
 
