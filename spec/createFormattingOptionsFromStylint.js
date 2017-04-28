@@ -14,6 +14,7 @@ describe('createFormattingOptionsFromStylint', () => {
 			insertLeadingZeroBeforeFraction: false,
 			insertSemicolons: false,
 			sortProperties: 'alphabetical',
+			alwaysUseNoneOverZero: false,
 			alwaysUseZeroWithoutUnit: true,
 		}
 

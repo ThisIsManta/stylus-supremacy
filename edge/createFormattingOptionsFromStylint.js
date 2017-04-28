@@ -12,6 +12,7 @@ const stylintOptionMap = {
 	'extendPref': value => ['alwaysUseExtends', value === '@extends'],
 	'indentPref': value => value > 0 ? ['tabStopChar', _.repeat(' ', value)] : [],
 	'leadingZero': createAdapterForAlwaysNeverFalse('insertLeadingZeroBeforeFraction'),
+	'none': createAdapterForAlwaysNeverFalse('alwaysUseNoneOverZero'),
 	'parenSpace': createAdapterForAlwaysNeverFalse('insertSpaceInsideParenthesis'),
 	'quotePref': value => value === 'single' && ['quoteChar', '\''] || value === 'double' && ['quoteChar', '"'], // the values "single" and "double" will be converted to "'" and "\"" respectively.
 	'semicolons': createAdapterForAlwaysNeverFalse('insertSemicolons'),

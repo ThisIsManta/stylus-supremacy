@@ -255,8 +255,20 @@ const schema = {
 			`
 		}
 	},
+	alwaysUseNoneOverZero: {
+		description: 'Replace <code>0</code> (regardless of its unit) with <code>none</code> for <code>border</code> and <code>outline</code> properties, or do nothing.',
+		type: 'boolean',
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				border 0px
+			`
+		}
+	},
 	alwaysUseZeroWithoutUnit: {
-		description: 'Replace <code>0px</code>, <code>0%</code>, <code>0em</code> and so on with <code>0</code> without units, or do nothing.',
+		description: 'Replace <code>0</code> (regardless of its unit) with <code>0</code> (without units), or do nothing.',
 		type: 'boolean',
 		default: false,
 		example: {
@@ -268,7 +280,7 @@ const schema = {
 		}
 	},
 	reduceMarginAndPaddingValues: {
-		description: 'Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x x x x</code> to <code>margin x</code>, <code>margin x y x y</code> to <code>margin x y</code>, and <code>margin x y y y</code> to <code>margin x y y</code> where <code>x</code>, <code>y</code> is a property value.',
+		description: 'Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x x x x</code> to <code>margin x</code>, <code>margin x y x y</code> to <code>margin x y</code>, and <code>margin x y y y</code> to <code>margin x y y</code> where <code>x</code>, <code>y</code> is a unique property value.',
 		type: 'boolean',
 		default: false,
 		example: {

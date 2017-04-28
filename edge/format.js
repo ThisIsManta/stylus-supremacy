@@ -326,6 +326,10 @@ function format(content, options = {}) {
 					} else if (propertyValues.length === 4 && propertyValues[0] !== propertyValues[2] && propertyValues[1] === propertyValues[3]) {
 						propertyValues = [propertyValues[0], propertyValues[1], propertyValues[2]]
 					}
+				} else if (propertyName === 'border' || propertyName === 'outline') {
+					if (options.alwaysUseNoneOverZero && propertyValues.length === 1 && /^0(\.0*)?(\w+|\%)?/.test(propertyValues[0])) {
+						propertyValues = ['none']
+					}
 				}
 
 				// Insert the property value(s) without the last portion of comments
