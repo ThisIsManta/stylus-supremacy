@@ -1,6 +1,3 @@
-#!/usr/bin/env node
-
-const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
 const glob = require('glob')
@@ -10,9 +7,9 @@ const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 
-function process(command, params) {
+function process(command, params = [], Console = console) {
 	if (command === '--version' || command === '-v') {
-		console.log('v' + require('../package.json').version)
+		Console.log('v' + require('../package.json').version)
 
 	} else if (command === 'format') {
 		const optionFilePathParams = getParam(params, ['--options', '-p'], 1)
@@ -27,7 +24,7 @@ function process(command, params) {
 			.flatten()
 			.value()
 		if (inputFiles.length === 0) {
-			console.log('No input files found.')
+			Console.log('No input files found.')
 		}
 
 		let formattingOptions = {}
@@ -45,14 +42,14 @@ function process(command, params) {
 		}
 
 		if (debuggingParams.length > 0) {
-			console.log(JSON.stringify(formattingOptions, null, '  '))
+			Console.log(JSON.stringify(formattingOptions, null, '  '))
 		}
 
-		const errorCount = _.chain(inputFiles)
+		const errors = _.chain(inputFiles)
 			.map(path => {
 				if (inputFiles.length > 1) {
-					console.log()
-					console.log('»', path)
+					Console.log()
+					Console.log('»', path)
 				}
 
 				try {
@@ -75,26 +72,18 @@ function process(command, params) {
 						}
 
 					} else {
-						console.log(outputContent)
+						Console.log(outputContent)
 					}
-					return 0
 
 				} catch (error) {
-					if (error.stack) {
-						console.log(error.stack)
-					} else {
-						console.log(error.name + ': ' + error.message)
-					}
-					return 1
+					Console.error(error)
 				}
 			})
-			.sum()
+			.compact()
 			.value()
 
-		if (errorCount > 0) {
-			console.log()
-			console.log(`Done with ${errorCount} error${errorCount === 1 ? '' : 's'}.`)
-			ps.exit(1)
+		if (errors.length > 0) {
+			throw new Error(`Done with ${errors.length} error${errors.length === 1 ? '' : 's'}.`)
 		}
 
 	} else {
@@ -112,4 +101,4 @@ function getParam(paramArray, names, nextValueCount = 0) {
 	return []
 }
 
-process(ps.argv[2], ps.argv.slice(3))
+module.exports = process

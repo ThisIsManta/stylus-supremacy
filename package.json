@@ -14,7 +14,7 @@
     "beautify"
   ],
   "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
-  "bin": "./edge/command.js",
+  "bin": "./edge/commandLineInterface.js",
   "main": "./edge/index.js",
   "scripts": {
     "test": "node ./test/runner.js",

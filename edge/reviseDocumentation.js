@@ -5,6 +5,7 @@ const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const format = require('./format')
 const stylintOptions = require('stylint/src/core/config')
+const getCodeForFormatting = require('./getCodeForFormatting')
 
 let document = fs.readFileSync('docs/index.html', 'utf-8')
 document = updateDocument(document, '<!-- formatting toggler placeholder -->', createFormattingTogglersForDemo)
@@ -148,19 +149,6 @@ function getNonBreakableForFirstWord(prefix, text) {
 		pivot = text.length
 	}
 	return '<span class="nobr">' + prefix + text.substring(0, pivot) + '</span>' + text.substring(pivot)
-}
-
-function getCodeForFormatting(code) {
-	let lines = code.split(/\r?\n/)
-
-	while (lines[0].trim() === '') {
-		lines.shift()
-	}
-
-	const indent = _.get(lines[0].match(/(\s|\t)+/g), '0', '')
-	lines = lines.map(line => line.substring(indent.length))
-
-	return lines.join('\n')
 }
 
 function getCodeForHTML(code) {
