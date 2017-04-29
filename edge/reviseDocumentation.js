@@ -2,6 +2,7 @@ const fs = require('fs')
 const _ = require('lodash')
 
 const createFormattingOptions = require('./createFormattingOptions')
+const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const format = require('./format')
 const stylintOptions = require('stylint/src/core/config')
 
@@ -110,35 +111,22 @@ function createFormattingDescription() {
 }
 
 function createStylintConversionTable() {
-	const formattingOptions = Object.keys(createFormattingOptions.schema)
+	const validFormattingOptionNames = Object.keys(createFormattingOptions.schema)
 
-	const stylintOptionText = fs.readFileSync('./edge/createFormattingOptionsFromStylint.js', 'utf-8').split(/\r?\n/)
-	const startIndex = _.findIndex(stylintOptionText, line => line.startsWith('const stylintOptionMap'))
-	const endIndex = _.findIndex(stylintOptionText, line => line.trim() === '}', startIndex)
-	if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
-		throw new Error('Found an unexpected index of "stylintOptionMap": ' + startIndex + ', ' + endIndex)
-	}
+	const stylintOptionMap = _.toPairs(createFormattingOptionsFromStylint.map)
+		.reduce((temp, pair) => {
+			const stylintOptionName = pair[0]
+			const formattingOptionNames = _.chunk(pair[1], 2)
+				.map(item => item[0])
+				.filter(item => validFormattingOptionNames.includes(item))
 
-	const stylintOptionDict = stylintOptionText
-		.slice(startIndex + 1, endIndex)
-		.map(line => line.trim())
-		.reduce((temp, line) => {
-			const name = line.match(/'(\w+)\'/)[1]
-			const list = formattingOptions
-				.filter(item => line.includes('\'' + item + '\''))
-				.map(item => `<mark>${item}</mark>`)
-				.join(', ')
-			const hint = line.includes('//')
-				? (';' + line.substring(line.lastIndexOf('//') + 2))
-				: ''
-
-			temp[name] = list + hint
+			temp[stylintOptionName] = formattingOptionNames
 			return temp
 		}, {})
 
 	return _.map(stylintOptions, (item, name) =>
-		'<tr><td><mark class="alt">' + name + '</mark></td><td>' +
-		_.get(stylintOptionDict, name, 'Not applicable') + '</td>'
+		'<tr><td><mark class="alt">' + name + '</mark></td>' +
+		'<td>' + (_.some(stylintOptionMap[name]) ? (stylintOptionMap[name].map(item => `<mark>${item}</mark>`).join(', ')) : 'Not applicable') + '</td>'
 	).join('')
 }
 
