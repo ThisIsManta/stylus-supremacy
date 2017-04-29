@@ -22,37 +22,37 @@ describe('createFormattingOptionsFromStylint', () => {
 	})
 
 	it('returns the correct value for for "always", "never" and false', () => {
-		expect(createFormattingOptions({ colons: 'always' }).insertColons).toBe(true)
-		expect(createFormattingOptions({ colons: 'never' }).insertColons).toBe(false)
+		expect(createFormattingOptions({ colons: 'always' })).toEqual(jasmine.objectContaining({ insertColons: true }))
+		expect(createFormattingOptions({ colons: 'never' })).toEqual(jasmine.objectContaining({ insertColons: false }))
 		expect(createFormattingOptions({ colons: false }).insertColons).toBeUndefined()
 	})
 
 	it('returns the correct value for `alwaysUseExtends`', () => {
-		expect(createFormattingOptions({ extendPref: '@extends' }).alwaysUseExtends).toBe(true)
-		expect(createFormattingOptions({ extendPref: '@extend' }).alwaysUseExtends).toBe(false)
+		expect(createFormattingOptions({ extendPref: '@extends' })).toEqual(jasmine.objectContaining({ alwaysUseExtends: true }))
+		expect(createFormattingOptions({ extendPref: '@extend' })).toEqual(jasmine.objectContaining({ alwaysUseExtends: false }))
 	})
 
 	it('returns the correct value for `tabStopChar`', () => {
-		expect(createFormattingOptions({ indentPref: 1 }).tabStopChar).toBe(' ')
-		expect(createFormattingOptions({ indentPref: 2 }).tabStopChar).toBe('  ')
+		expect(createFormattingOptions({ indentPref: 1 })).toEqual(jasmine.objectContaining({ tabStopChar: ' ' }))
+		expect(createFormattingOptions({ indentPref: 2 })).toEqual(jasmine.objectContaining({ tabStopChar: '  ' }))
 		expect(createFormattingOptions({ indentPref: false }).tabStopChar).toBeUndefined()
 	})
 
 	it('returns the correct value for `quoteChar`', () => {
-		expect(createFormattingOptions({ quotePref: 'single' }).quoteChar).toBe('\'')
-		expect(createFormattingOptions({ quotePref: 'double' }).quoteChar).toBe('"')
+		expect(createFormattingOptions({ quotePref: 'single' })).toEqual(jasmine.objectContaining({ quoteChar: '\'' }))
+		expect(createFormattingOptions({ quotePref: 'double' })).toEqual(jasmine.objectContaining({ quoteChar: '"' }))
 		expect(createFormattingOptions({ quotePref: false }).quoteChar).toBeUndefined()
 	})
 
 	it('returns the correct value for `sortProperties`', () => {
-		expect(createFormattingOptions({ sortOrder: 'alphabetical' }).sortProperties).toBe('alphabetical')
-		expect(createFormattingOptions({ sortOrder: 'grouped' }).sortProperties).toBe('grouped')
-		expect(createFormattingOptions({ sortOrder: ['a', 'b', 'c'] }).sortProperties).toEqual(['a', 'b', 'c'])
-		expect(createFormattingOptions({ sortOrder: false }).sortProperties).toBe(false)
+		expect(createFormattingOptions({ sortOrder: 'alphabetical' })).toEqual(jasmine.objectContaining({ sortProperties: 'alphabetical' }))
+		expect(createFormattingOptions({ sortOrder: 'grouped' })).toEqual(jasmine.objectContaining({ sortProperties: 'grouped', insertNewLineAroundProperties: true }))
+		expect(createFormattingOptions({ sortOrder: false })).toEqual(jasmine.objectContaining({ sortProperties: false }))
+		expect(createFormattingOptions({ sortOrder: ['a', 'b', 'c'] })).toEqual(jasmine.objectContaining({ sortProperties: ['a', 'b', 'c'] }))
 	})
 
 	it('returns the correct value for `zeroUnits`', () => {
-		expect(createFormattingOptions({ zeroUnits: 'always' }).alwaysUseZeroWithoutUnit).toBe(false)
-		expect(createFormattingOptions({ zeroUnits: 'never' }).alwaysUseZeroWithoutUnit).toBe(true)
+		expect(createFormattingOptions({ zeroUnits: 'always' })).toEqual(jasmine.objectContaining({ alwaysUseZeroWithoutUnit: false }))
+		expect(createFormattingOptions({ zeroUnits: 'never' })).toEqual(jasmine.objectContaining({ alwaysUseZeroWithoutUnit: true }))
 	})
 })
