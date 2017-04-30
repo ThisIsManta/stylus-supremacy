@@ -16,6 +16,7 @@ const stylintOptionMap = {
 	quotePref: ['quoteChar', value => (value === 'single' && '\'' || value === 'double' && '"' || undefined)],
 	semicolons: ['insertSemicolons', createAdapterForAlwaysNeverFalse],
 	sortOrder: ['sortProperties', value => value, 'insertNewLineAroundProperties', value => value === 'grouped' ? true : undefined],
+	none: ['alwaysUseNoneOverZero', createAdapterForAlwaysNeverFalse],
 	zeroUnits: ['alwaysUseZeroWithoutUnit', value => value === false ? undefined : value === 'never'],
 }
 
