@@ -45,7 +45,7 @@ function process(command, params = [], Console = console) {
 			Console.log(JSON.stringify(formattingOptions, null, '  '))
 		}
 
-		const errors = _.chain(inputFiles)
+		return _.chain(inputFiles)
 			.map(path => {
 				if (inputFiles.length > 1) {
 					Console.log()
@@ -76,15 +76,12 @@ function process(command, params = [], Console = console) {
 					}
 
 				} catch (error) {
-					Console.error(error)
+					Console.log(error)
+					return error
 				}
 			})
 			.compact()
 			.value()
-
-		if (errors.length > 0) {
-			throw new Error(`Done with ${errors.length} error${errors.length === 1 ? '' : 's'}.`)
-		}
 
 	} else {
 		throw new Error(`Command "${command}" was not recognized.`)

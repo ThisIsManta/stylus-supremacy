@@ -1091,7 +1091,7 @@ function format(content, options = {}) {
 	}
 
 	// Trim all trailing new-line characters
-	while (_.last(outputLines).trim().length === 0) {
+	while (outputLines.length > 0 && _.last(outputLines).trim().length === 0) {
 		outputLines.pop()
 	}
 
