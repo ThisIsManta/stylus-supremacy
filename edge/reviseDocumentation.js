@@ -75,11 +75,11 @@ function createFormattingDescription() {
 		.map((item, name) => [
 			`<section id="option-${_.kebabCase(name)}">`,
 			`<h2>`,
-			`<mark>${name}</mark>`,
+			`<mark>${getBreakableLastWord(name)}</mark>`,
 			`<wbr>`,
-			`<data>${getNonBreakableForFirstWord('= ', JSON.stringify(item.default))}</data>`,
+			`<code class="default-value">${getNonBreakableFirstWord('= ', JSON.stringify(item.default))}</code>`,
 			`<wbr>`,
-			`<code>${getNonBreakableForFirstWord(': ', getType(item))}</code>`,
+			`<code>${getNonBreakableFirstWord(': ', getType(item))}</code>`,
 			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
 			item.hideInVSCE ? '<p>This option is not available in the Visual Studio Code extension.</p>' : '',
@@ -126,8 +126,13 @@ function createStylintConversionTable() {
 		}, {})
 
 	return _.map(stylintOptions, (item, name) =>
-		'<tr><td><mark class="alt">' + name + '</mark></td>' +
-		'<td>' + (_.some(stylintOptionMap[name]) ? (stylintOptionMap[name].map(item => `<mark>${item}</mark>`).join(', ')) : 'Not applicable') + '</td>'
+		'<tr>' +
+		'<td><mark class="alt">' + getBreakableLastWord(name) + '</mark></td>' +
+		'<td>' + (_.some(stylintOptionMap[name])
+			? (stylintOptionMap[name].map(item => '<mark>' + getBreakableLastWord(item) + '</mark>').join(', '))
+			: 'Not applicable') +
+		'</td>' +
+		'</tr>'
 	).join('')
 }
 
@@ -143,12 +148,25 @@ function getType(item) {
 	}
 }
 
-function getNonBreakableForFirstWord(prefix, text) {
+function getNonBreakableFirstWord(prefix, text) {
 	let pivot = text.indexOf(' ')
 	if (pivot === -1) {
 		pivot = text.length
 	}
-	return '<span class="nobr">' + prefix + text.substring(0, pivot) + '</span>' + text.substring(pivot)
+	return '<span class="no-break">' + prefix + text.substring(0, pivot) + '</span>' + text.substring(pivot)
+}
+
+function getBreakableLastWord(text) {
+	const pattern = _.camelCase(text)
+	if (text === pattern) {
+		return _.kebabCase(text)
+			.split('-')
+			.map((word, rank) => rank === 0 ? word : _.upperFirst(word))
+			.join('<wbr>')
+
+	} else {
+		return text
+	}
 }
 
 function getCodeForHTML(code) {

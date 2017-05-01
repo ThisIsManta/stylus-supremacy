@@ -5,13 +5,18 @@ html {
 	cursor: default;
 }
 
+* {
+	font-size: 1em;
+}
+
 body {
 	font-family: 'Roboto', sans-serif;
 	margin: 0;
 	color: #212121;
+	overflow-x: hidden;
 }
 
-mark, data, code, samp {
+mark, code, samp {
 	font-family: 'Roboto Mono', monospace;
 	padding: 0 5px 2px 5px;
 }
@@ -29,7 +34,7 @@ a.nada {
 	text-decoration: none;
 }
 
-data {
+code.default-value {
 	background: #FFC400;
 }
 
@@ -73,7 +78,7 @@ s {
 	text-decoration: none;
 }
 
-.nobr {
+.no-break {
 	white-space: nowrap;
 }
 
@@ -345,11 +350,6 @@ table + table {
 	margin-top: 1rem;
 }
 
-#options data {
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
 table {
 	width: 100%;
 	border-spacing: 0;
@@ -412,5 +412,24 @@ tr:nth-child(even) td:nth-child(odd) {
 
 	40%, 60% {
 		transform: translate3d(4px, 0, 0);
+	}
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 568px) and (-webkit-min-device-pixel-ratio: 2) {
+	html {
+		font-size: 20px;
+	}
+
+	main {
+		padding-bottom: 2rem;
+	}
+
+	article > code {
+		word-break: break-all;
+	}
+
+	#demo-options {
+		width: 100%;
+		left: 0;
 	}
 }
