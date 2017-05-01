@@ -208,6 +208,7 @@ section > *:last-child {
 	border: 5px solid #CFD8DC;
 	border-radius: 10px;
 	justify-content: space-around;
+	flex-wrap: wrap;
 }
 
 #availability > a {
@@ -424,16 +425,16 @@ tr:nth-child(even) td:nth-child(odd) {
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 568px) and (-webkit-min-device-pixel-ratio: 2) {
-	html {
-		font-size: 20px;
-	}
-
 	main {
 		padding-bottom: 2rem;
 	}
 
 	article > code {
 		word-break: break-all;
+	}
+
+	#availability {
+		padding: 0;
 	}
 
 	#demo-options {
