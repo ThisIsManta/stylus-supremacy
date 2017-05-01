@@ -6,6 +6,7 @@ $(document).ready(function () {
 	$input.on('input', reformat)
 	$input.on('input', saveToLocalStorage)
 	$input.on('keydown', insertTwoSpacesInsteadOfTab)
+	$input.add($output).on('mousewheel', stopScrollingOutside)
 	$('#demo-options input, #demo-options select').on('change', reformat)
 	setTimeout(reformat, 600)
 
@@ -13,7 +14,7 @@ $(document).ready(function () {
 	if (window.localStorage) {
 		$input.val(window.localStorage.getItem('input'))
 	}
-	
+
 	// Set default input
 	if ($input.val().trim().length === 0) {
 		$input.val([
@@ -28,7 +29,7 @@ $(document).ready(function () {
 			'    background blue',
 			'  block =',
 			'    display none',
-		].join('\n'))	
+		].join('\n'))
 	}
 
 	function reformat() {
@@ -78,6 +79,12 @@ $(document).ready(function () {
 			e.target.selectionStart = cursor + 2
 			e.target.selectionEnd = cursor + 2
 
+			e.preventDefault()
+		}
+	}
+
+	function stopScrollingOutside(e) {
+		if (e.target.scrollTop === 0 && e.originalEvent.deltaY < 0 || e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight && e.originalEvent.deltaY > 0) {
 			e.preventDefault()
 		}
 	}

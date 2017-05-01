@@ -65,9 +65,12 @@ function createFormattingTogglersForDemo() {
 }
 
 function createFormattingDescription() {
-	const defaultOptionJSON = (
+	const defaultOptionJSON = JSON.stringify(createFormattingOptions({}), null, '  ').replace(/^\s\s"(\w+)"/gm, (full, part) =>
+		full.replace(part, `<a href="#option-${_.kebabCase(part)}">${part}</a>`)
+	)
+	const defaultOptionHTML = (
 		'<code>' +
-		getCodeForHTML(JSON.stringify(createFormattingOptions({}), null, '  ')) +
+		getCodeForHTML(defaultOptionJSON) +
 		'</code>'
 	)
 
@@ -86,7 +89,7 @@ function createFormattingDescription() {
 			item.example && '<table>' + _.chunk(item.example.values, 2).map(values => {
 				const headList = values.map(value =>
 					'<th>' +
-					JSON.stringify(value) +
+					JSON.stringify(value, null, '\t').replace(/(\[|\{)\n\t+/g, '[').replace(/^\t+/gm, ' ').replace(/\n/g, '') +
 					'</th>'
 				).join('')
 
@@ -108,7 +111,7 @@ function createFormattingDescription() {
 		.join('')
 		.value()
 
-	return defaultOptionJSON + formattingOptionDescription
+	return defaultOptionHTML + formattingOptionDescription
 }
 
 function createStylintConversionTable() {

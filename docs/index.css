@@ -156,7 +156,15 @@ main a {
 
 @media (max-width: 800px) {
 	nav {
-		display: none;
+		position: initial;
+		height: auto;
+		width: 100%;
+	}
+
+	#repository {
+		position: initial;
+		text-align: right;
+		padding: 10px 20px 10px 0;
 	}
 
 	main {
