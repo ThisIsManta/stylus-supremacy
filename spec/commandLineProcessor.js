@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 const process = require('../edge/commandLineProcessor')
-const getCodeForFormatting = require('../edge/getCodeForFormatting')
+const createCodeForFormatting = require('../edge/createCodeForFormatting')
 
 const inputTempFile = 'commandLineProcessorInput.styl'
 const optionTempFile = 'formattingOptions.json'
@@ -45,12 +45,12 @@ describe('commandLineProcessor', () => {
 	})
 
 	it('prints the formatted content given no formatting options', () => {
-		const inputContent = getCodeForFormatting(`
+		const inputContent = createCodeForFormatting(`
 		body
 		  display none
 		`)
 
-		const expectContent = getCodeForFormatting(`
+		const expectContent = createCodeForFormatting(`
 		body {
 			display: none;
 		}
@@ -65,7 +65,7 @@ describe('commandLineProcessor', () => {
 
 	;['--options', '-p'].forEach(param => {
 		it('prints the formatted content given the formatting options', () => {
-			const inputContent = getCodeForFormatting(`
+			const inputContent = createCodeForFormatting(`
 			body
 			  display none
 			`)
@@ -74,7 +74,7 @@ describe('commandLineProcessor', () => {
 				insertColons: false,
 			}
 
-			const expectContent = getCodeForFormatting(`
+			const expectContent = createCodeForFormatting(`
 			body {
 				display none;
 			}
@@ -91,12 +91,12 @@ describe('commandLineProcessor', () => {
 
 	;['--outDir', '-o'].forEach(param => {
 		it('writes the formatted content into the given output directory', () => {
-			const inputContent = getCodeForFormatting(`
+			const inputContent = createCodeForFormatting(`
 			body
 			  display none
 			`)
 
-			const expectContent = getCodeForFormatting(`
+			const expectContent = createCodeForFormatting(`
 			body {
 				display: none;
 			}
@@ -113,12 +113,12 @@ describe('commandLineProcessor', () => {
 
 	;['--replace', '-r'].forEach(param => {
 		it('writes the formatted content into the given output directory', () => {
-			const inputContent = getCodeForFormatting(`
+			const inputContent = createCodeForFormatting(`
 			body
 			  display none
 			`)
 
-			const expectContent = getCodeForFormatting(`
+			const expectContent = createCodeForFormatting(`
 			body {
 				display: none;
 			}

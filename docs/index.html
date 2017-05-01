@@ -48,14 +48,12 @@
 			<article id="demo">
 				<h1>Try it in your browser</h1>
 				<p>You can play around with <b>Stylus Supremacy</b> by editing the code in the gray box, clicking the formatting options below to turn them on or off, and inspecting the output in the black box.</p>
-				<table>
-					<tbody>
-						<tr>
-							<td><textarea id="demo-input" spellcheck="false"></textarea></td>
-							<td><code id="demo-output"></code></td>
-						</tr>
-					<tbody>
-				</table>
+				<div class="table responsive">
+					<div class="table-body">
+						<div class="no-inner"><textarea id="demo-input" spellcheck="false"></textarea></div>
+						<div class="no-inner"><code id="demo-output"></code></div>
+					</div>
+				</div>
 				<div id="demo-options"><!-- formatting toggler placeholder --><label for="demo-insertColons"><span>insertColons</span><input id="demo-insertColons" type="checkbox" checked></label><label for="demo-insertSemicolons"><span>insertSemicolons</span><input id="demo-insertSemicolons" type="checkbox" checked></label><label for="demo-insertBraces"><span>insertBraces</span><input id="demo-insertBraces" type="checkbox" checked></label><label for="demo-insertNewLineAroundImports"><span>insertNewLineAroundImports</span><select id="demo-insertNewLineAroundImports" value="true"><option value="true" >true</option>,<option value="false" >false</option>,<option value="&quot;root&quot;" >&quot;root&quot;</option>,<option value="&quot;nested&quot;" >&quot;nested&quot;</option></select></label><label for="demo-insertNewLineAroundBlocks"><span>insertNewLineAroundBlocks</span><select id="demo-insertNewLineAroundBlocks" value="true"><option value="true" >true</option>,<option value="false" >false</option>,<option value="&quot;root&quot;" >&quot;root&quot;</option>,<option value="&quot;nested&quot;" >&quot;nested&quot;</option></select></label><label for="demo-insertNewLineAroundProperties"><span>insertNewLineAroundProperties</span><select id="demo-insertNewLineAroundProperties" value="false"><option value="true" >true</option>,<option value="false" >false</option></select></label><label for="demo-insertNewLineAroundOthers"><span>insertNewLineAroundOthers</span><select id="demo-insertNewLineAroundOthers" value="false"><option value="true" >true</option>,<option value="false" >false</option>,<option value="&quot;root&quot;" >&quot;root&quot;</option>,<option value="&quot;nested&quot;" >&quot;nested&quot;</option></select></label><label for="demo-insertNewLineBetweenSelectors"><span>insertNewLineBetweenSelectors</span><input id="demo-insertNewLineBetweenSelectors" type="checkbox" ></label><label for="demo-insertSpaceBeforeComment"><span>insertSpaceBeforeComment</span><input id="demo-insertSpaceBeforeComment" type="checkbox" checked></label><label for="demo-insertSpaceAfterComment"><span>insertSpaceAfterComment</span><input id="demo-insertSpaceAfterComment" type="checkbox" checked></label><label for="demo-insertSpaceAfterComma"><span>insertSpaceAfterComma</span><input id="demo-insertSpaceAfterComma" type="checkbox" checked></label><label for="demo-insertSpaceInsideParenthesis"><span>insertSpaceInsideParenthesis</span><input id="demo-insertSpaceInsideParenthesis" type="checkbox" ></label><label for="demo-insertParenthesisAroundIfCondition"><span>insertParenthesisAroundIfCondition</span><input id="demo-insertParenthesisAroundIfCondition" type="checkbox" checked></label><label for="demo-insertNewLineBeforeElse"><span>insertNewLineBeforeElse</span><input id="demo-insertNewLineBeforeElse" type="checkbox" ></label><label for="demo-insertLeadingZeroBeforeFraction"><span>insertLeadingZeroBeforeFraction</span><input id="demo-insertLeadingZeroBeforeFraction" type="checkbox" checked></label><label for="demo-quoteChar"><span>quoteChar</span><select id="demo-quoteChar" value="&quot;&#39;&quot;"><option value="&quot;&#39;&quot;" >&quot;&#39;&quot;</option>,<option value="&quot;\&quot;&quot;" >&quot;\&quot;&quot;</option></select></label><label for="demo-sortProperties"><span>sortProperties</span><select id="demo-sortProperties" value="false"><option value="false" >false</option>,<option value="&quot;alphabetical&quot;" >&quot;alphabetical&quot;</option>,<option value="&quot;grouped&quot;" >&quot;grouped&quot;</option>,<option value="array&lt;string&gt;" disabled>array&lt;string&gt;</option></select></label><label for="demo-alwaysUseImport"><span>alwaysUseImport</span><input id="demo-alwaysUseImport" type="checkbox" ></label><label for="demo-alwaysUseNot"><span>alwaysUseNot</span><input id="demo-alwaysUseNot" type="checkbox" ></label><label for="demo-alwaysUseAtBlock"><span>alwaysUseAtBlock</span><input id="demo-alwaysUseAtBlock" type="checkbox" ></label><label for="demo-alwaysUseExtends"><span>alwaysUseExtends</span><input id="demo-alwaysUseExtends" type="checkbox" ></label><label for="demo-alwaysUseNoneOverZero"><span>alwaysUseNoneOverZero</span><input id="demo-alwaysUseNoneOverZero" type="checkbox" ></label><label for="demo-alwaysUseZeroWithoutUnit"><span>alwaysUseZeroWithoutUnit</span><input id="demo-alwaysUseZeroWithoutUnit" type="checkbox" ></label><label for="demo-reduceMarginAndPaddingValues"><span>reduceMarginAndPaddingValues</span><input id="demo-reduceMarginAndPaddingValues" type="checkbox" ></label><!-- formatting toggler placeholder --></div>
 				<p>Some formatting options are not showing above because they are not available in this mode. Please see <a href="#options">formatting options</a> section for full details.</p>
 			</article>
@@ -119,7 +117,7 @@
 
 				<p>The below is a JSON containing the default formatting options.</p>
 
-				<!-- formatting option placeholder --><code>{<br>&nbsp;&nbsp;"<a href="#option-insert-colons">insertColons</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-semicolons">insertSemicolons</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-braces">insertBraces</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-around-imports">insertNewLineAroundImports</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-around-blocks">insertNewLineAroundBlocks</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-around-properties">insertNewLineAroundProperties</a>": false,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-around-others">insertNewLineAroundOthers</a>": false,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-between-selectors">insertNewLineBetweenSelectors</a>": false,<br>&nbsp;&nbsp;"<a href="#option-insert-space-before-comment">insertSpaceBeforeComment</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-space-after-comment">insertSpaceAfterComment</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-space-after-comma">insertSpaceAfterComma</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-space-inside-parenthesis">insertSpaceInsideParenthesis</a>": false,<br>&nbsp;&nbsp;"<a href="#option-insert-parenthesis-around-if-condition">insertParenthesisAroundIfCondition</a>": true,<br>&nbsp;&nbsp;"<a href="#option-insert-new-line-before-else">insertNewLineBeforeElse</a>": false,<br>&nbsp;&nbsp;"<a href="#option-insert-leading-zero-before-fraction">insertLeadingZeroBeforeFraction</a>": true,<br>&nbsp;&nbsp;"<a href="#option-tab-stop-char">tabStopChar</a>": "\t",<br>&nbsp;&nbsp;"<a href="#option-new-line-char">newLineChar</a>": "\n",<br>&nbsp;&nbsp;"<a href="#option-quote-char">quoteChar</a>": "'",<br>&nbsp;&nbsp;"<a href="#option-sort-properties">sortProperties</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-import">alwaysUseImport</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-not">alwaysUseNot</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-at-block">alwaysUseAtBlock</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-extends">alwaysUseExtends</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-none-over-zero">alwaysUseNoneOverZero</a>": false,<br>&nbsp;&nbsp;"<a href="#option-always-use-zero-without-unit">alwaysUseZeroWithoutUnit</a>": false,<br>&nbsp;&nbsp;"<a href="#option-reduce-margin-and-padding-values">reduceMarginAndPaddingValues</a>": false<br>}</code><section id="option-insert-colons"><h2><mark>insert<wbr>Colons</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a colon between a property name and its value.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background red;<br>}<br></td></tr></tbody></table></section><section id="option-insert-semicolons"><h2><mark>insert<wbr>Semicolons</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a mixin/function call.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red<br>}<br></td></tr></tbody></table></section><section id="option-insert-braces"><h2><mark>insert<wbr>Braces</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a pair of curly braces where they are supposed to be. Note that this option does not affect <code>@block</code> construction, see <a class="nada" href="#option-always-use-at-block"><mark>alwaysUseAtBlock</mark></a>.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1<br>&nbsp;&nbsp;background: red;<br></td></tr></tbody></table></section><section id="option-insert-new-line-around-imports"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Imports</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around a group of <code>@import</code>/<code>@require</code>(s).</p><p>Only apply to imports outside a block when set to <code>"root"</code>, or only apply to imports inside a block when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p></section><section id="option-insert-new-line-around-blocks"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Blocks</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around blocks.</p><p>Only apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p></section><section id="option-insert-new-line-around-properties"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Properties</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: true</span> | false</code></h2><p>Insert a new-line around a group of CSS properties.</p><p>Unlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p></section><section id="option-insert-new-line-around-others"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Others</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around a group of non-properties, non-imports and non-blocks.</p><p>Only apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p></section><section id="option-insert-new-line-between-selectors"><h2><mark>insert<wbr>New<wbr>Line<wbr>Between<wbr>Selectors</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a new-line between selectors.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1,<br>.class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>.class1, .class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></td></tr></tbody></table></section><section id="option-insert-space-before-comment"><h2><mark>insert<wbr>Space<wbr>Before<wbr>Comment</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space before a comment.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red; // comment<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red;// comment<br>}<br></td></tr></tbody></table></section><section id="option-insert-space-after-comment"><h2><mark>insert<wbr>Space<wbr>After<wbr>Comment</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after a comment.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red; // comment<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red; //comment<br>}<br></td></tr></tbody></table></section><section id="option-insert-space-after-comma"><h2><mark>insert<wbr>Space<wbr>After<wbr>Comma</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after a comma.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td><td>mixin(a,b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td></tr></tbody></table></section><section id="option-insert-space-inside-parenthesis"><h2><mark>insert<wbr>Space<wbr>Inside<wbr>Parenthesis</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after an open parenthesis and before a close parenthesis.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>mixin( a, b ) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td><td>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></td></tr></tbody></table></section><section id="option-insert-parenthesis-around-if-condition"><h2><mark>insert<wbr>Parenthesis<wbr>Around<wbr>If<wbr>Condition</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a pair of parentheses around <code>if</code>-condition.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>if (a > b) {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>if a > b {<br>&nbsp;&nbsp;background: red;<br>}<br></td></tr></tbody></table></section><section id="option-insert-new-line-before-else"><h2><mark>insert<wbr>New<wbr>Line<wbr>Before<wbr>Else</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a new-line before <code>else</code> keyword.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>if (a > b) {<br>&nbsp;&nbsp;background: red;<br>}<br>else {<br>&nbsp;&nbsp;background: blue;<br>}<br></td><td>if (a > b) {<br>&nbsp;&nbsp;background: red;<br>} else {<br>&nbsp;&nbsp;background: blue;<br>}<br></td></tr></tbody></table></section><section id="option-insert-leading-zero-before-fraction"><h2><mark>insert<wbr>Leading<wbr>Zero<wbr>Before<wbr>Fraction</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a zero before a number that between 1 and 0.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;margin: 0.5px;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;margin: .5px;<br>}<br></td></tr></tbody></table></section><section id="option-tab-stop-char"><h2><mark>tab<wbr>Stop<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "\t"</span></code><wbr><code><span class="no-break">: string</span></code></h2><p>Represent an indentation. You may change this to any sequence of white-spaces.</p><p>This option is not available in the Visual Studio Code extension.</p></section><section id="option-new-line-char"><h2><mark>new<wbr>Line<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "\n"</span></code><wbr><code><span class="no-break">: &quot;\n&quot;</span> | &quot;\r\n&quot;</code></h2><p>Represent a new-line character. You may want to change this to <code>"\r\n"</code> for Microsoft Windows.</p><p>This option is not available in the Visual Studio Code extension.</p></section><section id="option-quote-char"><h2><mark>quote<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "'"</span></code><wbr><code><span class="no-break">: &quot;&#39;&quot;</span> | &quot;\&quot;&quot;</code></h2><p>Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.</p><table><thead><tr><th>"'"</th><th>"\""</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;font-family: 'Open Sans';<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;font-family: "Open Sans";<br>}<br></td></tr></tbody></table></section><section id="option-sort-properties"><h2><mark>sort<wbr>Properties</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: false</span> | &quot;alphabetical&quot; | &quot;grouped&quot; | array&lt;string&gt;</code></h2><p>Can be either <code>false</code> for doing nothing, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).</p><table><thead><tr><th>false</th><th>"alphabetical"</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;color: white;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;display: block;<br>}<br></td></tr></tbody><thead><tr><th>"grouped"</th><th>["color", "background", "display"]</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>}<br></td></tr></tbody></table></section><section id="option-always-use-import"><h2><mark>always<wbr>Use<wbr>Import</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>@require</code> with <code>@import</code>, or do nothing.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>@import './file.styl';<br></td><td>@require './file.styl';<br></td></tr></tbody></table></section><section id="option-always-use-not"><h2><mark>always<wbr>Use<wbr>Not</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>!</code> operator with <code>not</code> keyword, or vice versa.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;if (not condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;if (!condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></td></tr></tbody></table></section><section id="option-always-use-at-block"><h2><mark>always<wbr>Use<wbr>At<wbr>Block</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.</p><p>Note that this option does not incorporate <a class="nada" href="#option-insert-braces"><mark>insertBraces</mark></a> option.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>block = @block {<br>&nbsp;&nbsp;background: red;<br>}<br></td><td>block =<br>&nbsp;&nbsp;background: red;<br></td></tr></tbody></table></section><section id="option-always-use-extends"><h2><mark>always<wbr>Use<wbr>Extends</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Convert <code>@extend</code> keyword to <code>@extends</code> keyword, or vice versa.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extends .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extend .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></td></tr></tbody></table></section><section id="option-always-use-none-over-zero"><h2><mark>always<wbr>Use<wbr>None<wbr>Over<wbr>Zero</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>0</code> (regardless of its unit) with <code>none</code> for <code>border</code> and <code>outline</code> properties, or do nothing.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;border: none;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;border: 0px;<br>}<br></td></tr></tbody></table></section><section id="option-always-use-zero-without-unit"><h2><mark>always<wbr>Use<wbr>Zero<wbr>Without<wbr>Unit</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>0</code> (regardless of its unit) with <code>0</code> (without units), or do nothing.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;margin: 0;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>}<br></td></tr></tbody></table></section><section id="option-reduce-margin-and-padding-values"><h2><mark>reduce<wbr>Margin<wbr>And<wbr>Padding<wbr>Values</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x x x x</code> to <code>margin x</code>, <code>margin x y x y</code> to <code>margin x y</code>, and <code>margin x y y y</code> to <code>margin x y y</code> where <code>x</code>, <code>y</code> is a unique property value.</p><table><thead><tr><th>true</th><th>false</th></tr></thead><tbody><tr><td>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>&nbsp;&nbsp;padding: 0px 5px;<br>}<br></td><td>.class1 {<br>&nbsp;&nbsp;margin: 0px 0px;<br>&nbsp;&nbsp;padding: 0px 5px 0px 5px;<br>}<br></td></tr></tbody></table></section><!-- formatting option placeholder -->
+				<!-- formatting option placeholder --><code>{<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-colons&quot;&gt;insert&lt;wbr&gt;Colons&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-semicolons&quot;&gt;insert&lt;wbr&gt;Semicolons&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-braces&quot;&gt;insert&lt;wbr&gt;Braces&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-around-imports&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Around&lt;wbr&gt;Imports&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-around-blocks&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Around&lt;wbr&gt;Blocks&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-around-properties&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Around&lt;wbr&gt;Properties&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-around-others&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Around&lt;wbr&gt;Others&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-between-selectors&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Between&lt;wbr&gt;Selectors&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-space-before-comment&quot;&gt;insert&lt;wbr&gt;Space&lt;wbr&gt;Before&lt;wbr&gt;Comment&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-space-after-comment&quot;&gt;insert&lt;wbr&gt;Space&lt;wbr&gt;After&lt;wbr&gt;Comment&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-space-after-comma&quot;&gt;insert&lt;wbr&gt;Space&lt;wbr&gt;After&lt;wbr&gt;Comma&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-space-inside-parenthesis&quot;&gt;insert&lt;wbr&gt;Space&lt;wbr&gt;Inside&lt;wbr&gt;Parenthesis&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-parenthesis-around-if-condition&quot;&gt;insert&lt;wbr&gt;Parenthesis&lt;wbr&gt;Around&lt;wbr&gt;If&lt;wbr&gt;Condition&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-new-line-before-else&quot;&gt;insert&lt;wbr&gt;New&lt;wbr&gt;Line&lt;wbr&gt;Before&lt;wbr&gt;Else&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-insert-leading-zero-before-fraction&quot;&gt;insert&lt;wbr&gt;Leading&lt;wbr&gt;Zero&lt;wbr&gt;Before&lt;wbr&gt;Fraction&lt;/a&gt;&quot;: true,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-tab-stop-char&quot;&gt;tab&lt;wbr&gt;Stop&lt;wbr&gt;Char&lt;/a&gt;&quot;: &quot;\t&quot;,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-new-line-char&quot;&gt;new&lt;wbr&gt;Line&lt;wbr&gt;Char&lt;/a&gt;&quot;: &quot;\n&quot;,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-quote-char&quot;&gt;quote&lt;wbr&gt;Char&lt;/a&gt;&quot;: &quot;&#39;&quot;,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-sort-properties&quot;&gt;sort&lt;wbr&gt;Properties&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-import&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;Import&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-not&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;Not&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-at-block&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;At&lt;wbr&gt;Block&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-extends&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;Extends&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-none-over-zero&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;None&lt;wbr&gt;Over&lt;wbr&gt;Zero&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-always-use-zero-without-unit&quot;&gt;always&lt;wbr&gt;Use&lt;wbr&gt;Zero&lt;wbr&gt;Without&lt;wbr&gt;Unit&lt;/a&gt;&quot;: false,<br>&nbsp;&nbsp;&quot;&lt;a href=&quot;#option-reduce-margin-and-padding-values&quot;&gt;reduce&lt;wbr&gt;Margin&lt;wbr&gt;And&lt;wbr&gt;Padding&lt;wbr&gt;Values&lt;/a&gt;&quot;: false<br>}</code><section id="option-insert-colons"><h2><mark>insert<wbr>Colons</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a colon between a property name and its value.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background red;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background red;<br>}<br></div></div></div></section><section id="option-insert-semicolons"><h2><mark>insert<wbr>Semicolons</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a semi-colon after a property value, a variable declaration, a variable assignment and a mixin/function call.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background: red<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red<br>}<br></div></div></div></section><section id="option-insert-braces"><h2><mark>insert<wbr>Braces</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a pair of curly braces where they are supposed to be. Note that this option does not affect <code>@block</code> construction, see <a class="nada" href="#option-always-use-at-block"><mark>alwaysUseAtBlock</mark></a>.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>.class1<br>&nbsp;&nbsp;background: red;<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1<br>&nbsp;&nbsp;background: red;<br></div></div></div></section><section id="option-insert-new-line-around-imports"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Imports</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around a group of <code>@import</code>/<code>@require</code>(s).</p><p>Only apply to imports outside a block when set to <code>"root"</code>, or only apply to imports inside a block when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p><section id="option-insert-new-line-around-blocks"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Blocks</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around blocks.</p><p>Only apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p><section id="option-insert-new-line-around-properties"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Properties</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: true</span> | false</code></h2><p>Insert a new-line around a group of CSS properties.</p><p>Unlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p><section id="option-insert-new-line-around-others"><h2><mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Others</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: true</span> | false | &quot;root&quot; | &quot;nested&quot;</code></h2><p>Insert a new-line around a group of non-properties, non-imports and non-blocks.</p><p>Only apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.</p><p><span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span></p><section id="option-insert-new-line-between-selectors"><h2><mark>insert<wbr>New<wbr>Line<wbr>Between<wbr>Selectors</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a new-line between selectors.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1,<br>.class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>.class1, .class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1,<br>.class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1, .class2 {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div></div></section><section id="option-insert-space-before-comment"><h2><mark>insert<wbr>Space<wbr>Before<wbr>Comment</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space before a comment.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>// comment</s><br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background: red;<s>// comment</s><br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>// comment</s><br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<s>// comment</s><br>}<br></div></div></div></section><section id="option-insert-space-after-comment"><h2><mark>insert<wbr>Space<wbr>After<wbr>Comment</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after a comment.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>// comment</s><br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>//comment</s><br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>// comment</s><br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red; <s>//comment</s><br>}<br></div></div></div></section><section id="option-insert-space-after-comma"><h2><mark>insert<wbr>Space<wbr>After<wbr>Comma</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after a comma.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div><div>mixin(a,b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>mixin(a,b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div></div></section><section id="option-insert-space-inside-parenthesis"><h2><mark>insert<wbr>Space<wbr>Inside<wbr>Parenthesis</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a white-space after an open parenthesis and before a close parenthesis.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>mixin( a, b ) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div><div>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>mixin( a, b ) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>mixin(a, b) {<br>&nbsp;&nbsp;margin: a b;<br>}<br></div></div></div></section><section id="option-insert-parenthesis-around-if-condition"><h2><mark>insert<wbr>Parenthesis<wbr>Around<wbr>If<wbr>Condition</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a pair of parentheses around <code>if</code>-condition.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>if a &gt; b {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>if a &gt; b {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div></div></section><section id="option-insert-new-line-before-else"><h2><mark>insert<wbr>New<wbr>Line<wbr>Before<wbr>Else</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a new-line before <code>else</code> keyword.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>}<br>else {<br>&nbsp;&nbsp;background: blue;<br>}<br></div><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>} else {<br>&nbsp;&nbsp;background: blue;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>}<br>else {<br>&nbsp;&nbsp;background: blue;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>if (a &gt; b) {<br>&nbsp;&nbsp;background: red;<br>} else {<br>&nbsp;&nbsp;background: blue;<br>}<br></div></div></div></section><section id="option-insert-leading-zero-before-fraction"><h2><mark>insert<wbr>Leading<wbr>Zero<wbr>Before<wbr>Fraction</mark><wbr><code class="default-value"><span class="no-break">= true</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Insert or remove a zero before a number that between 1 and 0.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0.5px;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;margin: .5px;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0.5px;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: .5px;<br>}<br></div></div></div></section><section id="option-tab-stop-char"><h2><mark>tab<wbr>Stop<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "\t"</span></code><wbr><code><span class="no-break">: string</span></code></h2><p>Represent an indentation. You may change this to any sequence of white-spaces.</p><p>This option is not available in the Visual Studio Code extension.</p><section id="option-new-line-char"><h2><mark>new<wbr>Line<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "\n"</span></code><wbr><code><span class="no-break">: &quot;\n&quot;</span> | &quot;\r\n&quot;</code></h2><p>Represent a new-line character. You may want to change this to <code>"\r\n"</code> for Microsoft Windows.</p><p>This option is not available in the Visual Studio Code extension.</p><section id="option-quote-char"><h2><mark>quote<wbr>Char</mark><wbr><code class="default-value"><span class="no-break">= "'"</span></code><wbr><code><span class="no-break">: &quot;&#39;&quot;</span> | &quot;\&quot;&quot;</code></h2><p>Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.</p><div class="table"><div class="table-head"><div>"'"</div><div>"\""</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;font-family: &#39;Open Sans&#39;;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;font-family: &quot;Open Sans&quot;;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>"'"</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;font-family: &#39;Open Sans&#39;;<br>}<br></div></div><div class="table-head"><div>"\""</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;font-family: &quot;Open Sans&quot;;<br>}<br></div></div></div></section><section id="option-sort-properties"><h2><mark>sort<wbr>Properties</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: false</span> | &quot;alphabetical&quot; | &quot;grouped&quot; | array&lt;string&gt;</code></h2><p>Can be either <code>false</code> for doing nothing, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).</p><div class="table"><div class="table-head"><div>false</div><div>"alphabetical"</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;color: white;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;display: block;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;color: white;<br>}<br></div></div><div class="table-head"><div>"alphabetical"</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;display: block;<br>}<br></div></div></div><div class="table"><div class="table-head"><div>"grouped"</div><div>["color", "background", "display"]</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>"grouped"</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;display: block;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;color: white;<br>}<br></div></div><div class="table-head"><div>["color", "background", "display"]</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;color: white;<br>&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;display: block;<br>}<br></div></div></div></section><section id="option-always-use-import"><h2><mark>always<wbr>Use<wbr>Import</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>@require</code> with <code>@import</code>, or do nothing.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>@import &#39;./file.styl&#39;;<br></div><div>@require &#39;./file.styl&#39;;<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>@import &#39;./file.styl&#39;;<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>@require &#39;./file.styl&#39;;<br></div></div></div></section><section id="option-always-use-not"><h2><mark>always<wbr>Use<wbr>Not</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>!</code> operator with <code>not</code> keyword, or vice versa.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;if (not condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;if (!condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;if (not condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;if (!condition) {<br>&nbsp;&nbsp;&nbsp;&nbsp;background: red;<br>&nbsp;&nbsp;}<br>}<br></div></div></div></section><section id="option-always-use-at-block"><h2><mark>always<wbr>Use<wbr>At<wbr>Block</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace an increased-indent at-block construction with an explicit one with <code>@block</code> keyword or vice versa.</p><p>Note that this option does not incorporate <a class="nada" href="#option-insert-braces"><mark>insertBraces</mark></a> option.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>block = @block {<br>&nbsp;&nbsp;background: red;<br>}<br></div><div>block =<br>&nbsp;&nbsp;background: red;<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>block = @block {<br>&nbsp;&nbsp;background: red;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>block =<br>&nbsp;&nbsp;background: red;<br></div></div></div></section><section id="option-always-use-extends"><h2><mark>always<wbr>Use<wbr>Extends</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Convert <code>@extend</code> keyword to <code>@extends</code> keyword, or vice versa.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extends .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extend .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extends .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;background: red;<br>}<br><br>.class2 {<br>&nbsp;&nbsp;@extend .class1;<br>&nbsp;&nbsp;color: white;<br>}<br></div></div></div></section><section id="option-always-use-none-over-zero"><h2><mark>always<wbr>Use<wbr>None<wbr>Over<wbr>Zero</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>0</code> (regardless of its unit) with <code>none</code> for <code>border</code> and <code>outline</code> properties, or do nothing.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;border: none;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;border: 0px;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;border: none;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;border: 0px;<br>}<br></div></div></div></section><section id="option-always-use-zero-without-unit"><h2><mark>always<wbr>Use<wbr>Zero<wbr>Without<wbr>Unit</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Replace <code>0</code> (regardless of its unit) with <code>0</code> (without units), or do nothing.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>}<br></div></div></div></section><section id="option-reduce-margin-and-padding-values"><h2><mark>reduce<wbr>Margin<wbr>And<wbr>Padding<wbr>Values</mark><wbr><code class="default-value"><span class="no-break">= false</span></code><wbr><code><span class="no-break">: boolean</span></code></h2><p>Reduce <code>margin</code> and <code>padding</code> duplicate values by converting <code>margin x x x x</code> to <code>margin x</code>, <code>margin x y x y</code> to <code>margin x y</code>, and <code>margin x y y y</code> to <code>margin x y y</code> where <code>x</code>, <code>y</code> is a unique property value.</p><div class="table"><div class="table-head"><div>true</div><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>&nbsp;&nbsp;padding: 0px 5px;<br>}<br></div><div>.class1 {<br>&nbsp;&nbsp;margin: 0px 0px;<br>&nbsp;&nbsp;padding: 0px 5px 0px 5px;<br>}<br></div></div></div><div class="table responsive"><div class="table-head"><div>true</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0px;<br>&nbsp;&nbsp;padding: 0px 5px;<br>}<br></div></div><div class="table-head"><div>false</div></div><div class="table-body"><div>.class1 {<br>&nbsp;&nbsp;margin: 0px 0px;<br>&nbsp;&nbsp;padding: 0px 5px 0px 5px;<br>}<br></div></div></div></section><!-- formatting option placeholder -->
 
 				<section>
 				<p id="option-insert-newline-around-any"><mark>insertNewLineAroundImports</mark>, <mark>insertNewLineAroundBlocks</mark>, <mark>insertNewLineAroundProperties</mark> and <mark>insertNewLineAroundOthers</mark> are meant to be configured together. First of all, you have to understand what is what.</p>
@@ -137,218 +135,198 @@
 				<p>However, there will be no starting and trailing new-lines inside a block to prevent too many wasted space and maintain code coupling.</p>
 				
 				<p>The followings examples demonstrate the options in action.</p>
-				<table>
-					<thead>
-						<tr>
-							<th>
-								<mark>insertNewLineAroundImports</mark> = true
-								<br>
-								<mark>insertNewLineAroundBlocks</mark> = true
-								<br>
-								<mark>insertNewLineAroundProperties</mark> = true
-								<br>
-								<mark>insertNewLineAroundOthers</mark> = true
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<s>// The extra new-lines are added when all options are on.</s><br>
-								@import 'first.styl'<br>
-								<br>
-								.class1 {<br>
-								&nbsp;&nbsp;@import 'second.styl'<br>
-								<br>
-								&nbsp;&nbsp;$orange = #FFA500;<br>
-								&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
-								<br>
-								&nbsp;&nbsp;background: $orangeRed;<br>
-								&nbsp;&nbsp;color: white;<br>
-								<br>
-								&nbsp;&nbsp;.class2 {<br>
-								&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
-								&nbsp;&nbsp;}<br>
-								}<br>
-								<br>
-								$hotPink = #FF69B4;<br>
-								<br>
-								.class3 {<br>
-								&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
-								<br>
-								&nbsp;&nbsp;background: $hotPink;<br>
-								&nbsp;&nbsp;color: $lavenderBlush;<br>
-								}<br>
-							</td>
-						</tr>
-					</tbody>
-					<thead>
-						<tr>
-							<th>
-								<mark>insertNewLineAroundImports</mark> = true
-								<br>
-								<mark>insertNewLineAroundBlocks</mark> = true
-								<br>
-								<mark>insertNewLineAroundProperties</mark> = false
-								<br>
-								<mark>insertNewLineAroundOthers</mark> = false
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<s>// The new-lines between property groups and others are gone because some options are off.</s><br>
-								@import 'first.styl'<br>
-								<br>
-								.class1 {<br>
-								&nbsp;&nbsp;@import 'second.styl'<br>
-								<br>
-								&nbsp;&nbsp;$orange = #FFA500;<br>
-								&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
-								&nbsp;&nbsp;background: $orangeRed;<br>
-								&nbsp;&nbsp;color: white;<br>
-								<br>
-								&nbsp;&nbsp;.class2 {<br>
-								&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
-								&nbsp;&nbsp;}<br>
-								}<br>
-								<br>
-								$hotPink = #FF69B4;<br>
-								<br>
-								.class3 {<br>
-								&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
-								&nbsp;&nbsp;background: $hotPink;<br>
-								&nbsp;&nbsp;color: $lavenderBlush;<br>
-								}<br>
-							</td>
-						</tr>
-					</tbody>
-					<thead>
-						<tr>
-							<th>
-								<mark>insertNewLineAroundImports</mark> = false
-								<br>
-								<mark>insertNewLineAroundBlocks</mark> = false
-								<br>
-								<mark>insertNewLineAroundProperties</mark> = false
-								<br>
-								<mark>insertNewLineAroundOthers</mark> = false
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<s>// There are no extra new-lines at all because all options are off.</s><br>
-								@import 'first.styl'<br>
-								.class1 {<br>
-								&nbsp;&nbsp;@import 'second.styl'<br>
-								&nbsp;&nbsp;$orange = #FFA500;<br>
-								&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
-								&nbsp;&nbsp;background: $orangeRed;<br>
-								&nbsp;&nbsp;color: white;<br>
-								&nbsp;&nbsp;.class2 {<br>
-								&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
-								&nbsp;&nbsp;}<br>
-								}<br>
-								$hotPink = #FF69B4;<br>
-								.class3 {<br>
-								&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
-								&nbsp;&nbsp;background: $hotPink;<br>
-								&nbsp;&nbsp;color: $lavenderBlush;<br>
-								}<br>
-							</td>
-						</tr>
-					</tbody>
-					<thead>
-						<tr>
-							<th>
-								<mark>insertNewLineAroundImports</mark> = "root"
-								<br>
-								<mark>insertNewLineAroundBlocks</mark> = "root"
-								<br>
-								<mark>insertNewLineAroundProperties</mark> = false
-								<br>
-								<mark>insertNewLineAroundOthers</mark> = "root"
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<s>// There are no extra new-lines inside class1 and class3 because the options are set to insert new-lines for top-level only.</s><br>
-								@import 'first.styl'<br>
-								<br>								
-								.class1 {<br>
-								&nbsp;&nbsp;@import 'second.styl'<br>
-								&nbsp;&nbsp;$orange = #FFA500;<br>
-								&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
-								&nbsp;&nbsp;background: $orangeRed;<br>
-								&nbsp;&nbsp;color: white;<br>
-								&nbsp;&nbsp;.class2 {<br>
-								&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
-								&nbsp;&nbsp;}<br>
-								}<br>
-								<br>
-								$hotPink = #FF69B4;<br>
-								<br>
-								.class3 {<br>
-								&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
-								&nbsp;&nbsp;background: $hotPink;<br>
-								&nbsp;&nbsp;color: $lavenderBlush;<br>
-								}<br>
-							</td>
-						</tr>
-					</tbody>
-					<thead>
-						<tr>
-							<th>
-								<mark>insertNewLineAroundImports</mark> = "nested"
-								<br>
-								<mark>insertNewLineAroundBlocks</mark> = "nested"
-								<br>
-								<mark>insertNewLineAroundProperties</mark> = false
-								<br>
-								<mark>insertNewLineAroundOthers</mark> = "nested"
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<s>// In constrat to the previous example, there are no extra new-lines between class1, $hotPink and class3 because of the options.</s><br>
-								@import 'first.styl'<br>
-								.class1 {<br>
-								&nbsp;&nbsp;@import 'second.styl'<br>
-								<br>
-								&nbsp;&nbsp;$orange = #FFA500;<br>
-								&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
-								<br>
-								&nbsp;&nbsp;background: $orangeRed;<br>
-								&nbsp;&nbsp;color: white;<br>
-								<br>
-								&nbsp;&nbsp;.class2 {<br>
-								&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
-								&nbsp;&nbsp;}<br>
-								}<br>
-								$hotPink = #FF69B4;<br>
-								.class3 {<br>
-								&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
-								<br>
-								&nbsp;&nbsp;background: $hotPink;<br>
-								&nbsp;&nbsp;color: $lavenderBlush;<br>
-								}<br>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="table responsive">
+					<div class="table-head">
+						<div>
+							<mark>insertNewLineAroundImports</mark> = true
+							<br>
+							<mark>insertNewLineAroundBlocks</mark> = true
+							<br>
+							<mark>insertNewLineAroundProperties</mark> = true
+							<br>
+							<mark>insertNewLineAroundOthers</mark> = true
+						</div>
+					</div>
+					<div class="table-body">
+						<div>
+							<s>// The extra new-lines are added when all options are on.</s><br>
+							@import 'first.styl'<br>
+							<br>
+							.class1 {<br>
+							&nbsp;&nbsp;@import 'second.styl'<br>
+							<br>
+							&nbsp;&nbsp;$orange = #FFA500;<br>
+							&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
+							<br>
+							&nbsp;&nbsp;background: $orangeRed;<br>
+							&nbsp;&nbsp;color: white;<br>
+							<br>
+							&nbsp;&nbsp;.class2 {<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
+							&nbsp;&nbsp;}<br>
+							}<br>
+							<br>
+							$hotPink = #FF69B4;<br>
+							<br>
+							.class3 {<br>
+							&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
+							<br>
+							&nbsp;&nbsp;background: $hotPink;<br>
+							&nbsp;&nbsp;color: $lavenderBlush;<br>
+							}<br>
+						</div>
+					</div>
+					<div class="table-head">
+						<div>
+							<mark>insertNewLineAroundImports</mark> = true
+							<br>
+							<mark>insertNewLineAroundBlocks</mark> = true
+							<br>
+							<mark>insertNewLineAroundProperties</mark> = false
+							<br>
+							<mark>insertNewLineAroundOthers</mark> = false
+						</div>
+					</div>
+					<div class="table-body">
+						<div>
+							<s>// The new-lines between property groups and others are gone because some options are off.</s><br>
+							@import 'first.styl'<br>
+							<br>
+							.class1 {<br>
+							&nbsp;&nbsp;@import 'second.styl'<br>
+							<br>
+							&nbsp;&nbsp;$orange = #FFA500;<br>
+							&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
+							&nbsp;&nbsp;background: $orangeRed;<br>
+							&nbsp;&nbsp;color: white;<br>
+							<br>
+							&nbsp;&nbsp;.class2 {<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
+							&nbsp;&nbsp;}<br>
+							}<br>
+							<br>
+							$hotPink = #FF69B4;<br>
+							<br>
+							.class3 {<br>
+							&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
+							&nbsp;&nbsp;background: $hotPink;<br>
+							&nbsp;&nbsp;color: $lavenderBlush;<br>
+							}<br>
+						</div>
+					</div>
+					<div class="table-head">
+						<div>
+							<mark>insertNewLineAroundImports</mark> = false
+							<br>
+							<mark>insertNewLineAroundBlocks</mark> = false
+							<br>
+							<mark>insertNewLineAroundProperties</mark> = false
+							<br>
+							<mark>insertNewLineAroundOthers</mark> = false
+						</div>
+					</div>
+					<div class="table-body">
+						<div>
+							<s>// There are no extra new-lines at all because all options are off.</s><br>
+							@import 'first.styl'<br>
+							.class1 {<br>
+							&nbsp;&nbsp;@import 'second.styl'<br>
+							&nbsp;&nbsp;$orange = #FFA500;<br>
+							&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
+							&nbsp;&nbsp;background: $orangeRed;<br>
+							&nbsp;&nbsp;color: white;<br>
+							&nbsp;&nbsp;.class2 {<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
+							&nbsp;&nbsp;}<br>
+							}<br>
+							$hotPink = #FF69B4;<br>
+							.class3 {<br>
+							&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
+							&nbsp;&nbsp;background: $hotPink;<br>
+							&nbsp;&nbsp;color: $lavenderBlush;<br>
+							}<br>
+						</div>
+					</div>
+					<div class="table-head">
+						<div>
+							<mark>insertNewLineAroundImports</mark> = "root"
+							<br>
+							<mark>insertNewLineAroundBlocks</mark> = "root"
+							<br>
+							<mark>insertNewLineAroundProperties</mark> = false
+							<br>
+							<mark>insertNewLineAroundOthers</mark> = "root"
+						</div>
+					</div>
+					<div class="table-body">
+						<div>
+							<s>// There are no extra new-lines inside class1 and class3 because the options are set to insert new-lines for top-level only.</s><br>
+							@import 'first.styl'<br>
+							<br>								
+							.class1 {<br>
+							&nbsp;&nbsp;@import 'second.styl'<br>
+							&nbsp;&nbsp;$orange = #FFA500;<br>
+							&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
+							&nbsp;&nbsp;background: $orangeRed;<br>
+							&nbsp;&nbsp;color: white;<br>
+							&nbsp;&nbsp;.class2 {<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
+							&nbsp;&nbsp;}<br>
+							}<br>
+							<br>
+							$hotPink = #FF69B4;<br>
+							<br>
+							.class3 {<br>
+							&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
+							&nbsp;&nbsp;background: $hotPink;<br>
+							&nbsp;&nbsp;color: $lavenderBlush;<br>
+							}<br>
+						</div>
+					</div>
+					<div class="table-head">
+						<div>
+							<mark>insertNewLineAroundImports</mark> = "nested"
+							<br>
+							<mark>insertNewLineAroundBlocks</mark> = "nested"
+							<br>
+							<mark>insertNewLineAroundProperties</mark> = false
+							<br>
+							<mark>insertNewLineAroundOthers</mark> = "nested"
+						</div>
+					</div>
+					<div class="table-body">
+						<div>
+							<s>// In constrat to the previous example, there are no extra new-lines between class1, $hotPink and class3 because of the options.</s><br>
+							@import 'first.styl'<br>
+							.class1 {<br>
+							&nbsp;&nbsp;@import 'second.styl'<br>
+							<br>
+							&nbsp;&nbsp;$orange = #FFA500;<br>
+							&nbsp;&nbsp;$orangeRed = green($orange, 69);<br>
+							<br>
+							&nbsp;&nbsp;background: $orangeRed;<br>
+							&nbsp;&nbsp;color: white;<br>
+							<br>
+							&nbsp;&nbsp;.class2 {<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;background: blue;<br>
+							&nbsp;&nbsp;}<br>
+							}<br>
+							$hotPink = #FF69B4;<br>
+							.class3 {<br>
+							&nbsp;&nbsp;$lavenderBlush = #FFF0F5;<br>
+							<br>
+							&nbsp;&nbsp;background: $hotPink;<br>
+							&nbsp;&nbsp;color: $lavenderBlush;<br>
+							}<br>
+						</div>
+					</div>
+				</div>
 				</section>
 			</article>
 			<article id="stylint">
 				<h1>Stylint compatibility</h1>
 
-				<p>If you are using <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a> as a Stylus linter and wanting to use <mark class="alt">.stylintrc</mark> file as formatting options, simply pass the <mark class="alt">.stylintrc</mark> file via <mark>--options</mark> command-line parameter.</p>
+				<p>If you are using <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a> as a Stylus linter and wanting to use <mark class="alt">.stylintrc</mark> file as formatting options, simply pass the <mark class="alt">.stylintrc</mark> file via <mark class="no-break">--options</mark> command-line parameter.</p>
 				<code>stylus-supremacy format ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/.stylintrc</code>
  
 				<p>Programmatically, starting from <b>Stylus Supremacy</b> version 1.0.0, the <mark>format</mark> function does not recognize Stylint rules, but you can convert them to formatting options by calling <mark>createFormattingOptionsFromStylint</mark> function.</p>
@@ -365,7 +343,7 @@
 					&nbsp;&nbsp;braces: 'always'<br>
 					}<br>
 					<br>
-					const formattingOptions = <br>stylusSupremacy.createFormattingOptionsFromStylint(<wbr>stylintRules)<br>
+					const formattingOptions = <br>stylusSupremacy.createFormatting<wbr>Options<wbr>From<wbr>Stylint(<wbr>stylintRules)<br>
 					<br>
 					const result = stylusSupremacy.format(<br>
 					&nbsp;&nbsp;stylusContent, <br>
@@ -391,9 +369,7 @@
 							<th>Equivalent formatting options</th>
 						</tr>
 					</thead>
-					<tbody>
-						<!-- stylint option placeholder --><tr><td><mark class="alt">blocks</mark></td><td><mark>always<wbr>Use<wbr>At<wbr>Block</mark></td></tr><tr><td><mark class="alt">brackets</mark></td><td><mark>insert<wbr>Braces</mark></td></tr><tr><td><mark class="alt">colons</mark></td><td><mark>insert<wbr>Colons</mark></td></tr><tr><td><mark class="alt">colors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">comma<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comma</mark></td></tr><tr><td><mark class="alt">comment<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comment</mark></td></tr><tr><td><mark class="alt">css<wbr>Literal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">depth<wbr>Limit</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">duplicates</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">efficient</mark></td><td><mark>reduce<wbr>Margin<wbr>And<wbr>Padding<wbr>Values</mark></td></tr><tr><td><mark class="alt">extend<wbr>Pref</mark></td><td><mark>always<wbr>Use<wbr>Extends</mark></td></tr><tr><td><mark class="alt">global<wbr>Dupe</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">group<wbr>Output<wbr>By<wbr>File</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">reporter<wbr>Options</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">indent<wbr>Pref</mark></td><td><mark>tab<wbr>Stop<wbr>Char</mark></td></tr><tr><td><mark class="alt">leading<wbr>Zero</mark></td><td><mark>insert<wbr>Leading<wbr>Zero<wbr>Before<wbr>Fraction</mark></td></tr><tr><td><mark class="alt">max<wbr>Errors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">max<wbr>Warnings</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">mixed</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention<wbr>Strict</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">none</mark></td><td><mark>always<wbr>Use<wbr>None<wbr>Over<wbr>Zero</mark></td></tr><tr><td><mark class="alt">no<wbr>Important</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">paren<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>Inside<wbr>Parenthesis</mark></td></tr><tr><td><mark class="alt">placeholders</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">prefix<wbr>Vars<wbr>With<wbr>Dollar</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">quote<wbr>Pref</mark></td><td><mark>quote<wbr>Char</mark></td></tr><tr><td><mark class="alt">reporter</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">semicolons</mark></td><td><mark>insert<wbr>Semicolons</mark></td></tr><tr><td><mark class="alt">sort<wbr>Order</mark></td><td><mark>sort<wbr>Properties</mark>, <mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Properties</mark></td></tr><tr><td><mark class="alt">stacked<wbr>Properties</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">trailing<wbr>Whitespace</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">universal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">valid</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">zero<wbr>Units</mark></td><td><mark>always<wbr>Use<wbr>Zero<wbr>Without<wbr>Unit</mark></td></tr><tr><td><mark class="alt">z<wbr>Index<wbr>Normalize</mark></td><td>Not applicable</td></tr><!-- stylint option placeholder -->
-					</tbody>
+					<!-- stylint option placeholder --><tbody><tr><td><mark class="alt">blocks</mark></td><td><mark>always<wbr>Use<wbr>At<wbr>Block</mark></td></tr><tr><td><mark class="alt">brackets</mark></td><td><mark>insert<wbr>Braces</mark></td></tr><tr><td><mark class="alt">colons</mark></td><td><mark>insert<wbr>Colons</mark></td></tr><tr><td><mark class="alt">colors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">comma<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comma</mark></td></tr><tr><td><mark class="alt">comment<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comment</mark></td></tr><tr><td><mark class="alt">css<wbr>Literal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">depth<wbr>Limit</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">duplicates</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">efficient</mark></td><td><mark>reduce<wbr>Margin<wbr>And<wbr>Padding<wbr>Values</mark></td></tr><tr><td><mark class="alt">extend<wbr>Pref</mark></td><td><mark>always<wbr>Use<wbr>Extends</mark></td></tr><tr><td><mark class="alt">global<wbr>Dupe</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">group<wbr>Output<wbr>By<wbr>File</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">reporter<wbr>Options</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">indent<wbr>Pref</mark></td><td><mark>tab<wbr>Stop<wbr>Char</mark></td></tr><tr><td><mark class="alt">leading<wbr>Zero</mark></td><td><mark>insert<wbr>Leading<wbr>Zero<wbr>Before<wbr>Fraction</mark></td></tr><tr><td><mark class="alt">max<wbr>Errors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">max<wbr>Warnings</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">mixed</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention<wbr>Strict</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">none</mark></td><td><mark>always<wbr>Use<wbr>None<wbr>Over<wbr>Zero</mark></td></tr><tr><td><mark class="alt">no<wbr>Important</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">paren<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>Inside<wbr>Parenthesis</mark></td></tr><tr><td><mark class="alt">placeholders</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">prefix<wbr>Vars<wbr>With<wbr>Dollar</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">quote<wbr>Pref</mark></td><td><mark>quote<wbr>Char</mark></td></tr><tr><td><mark class="alt">reporter</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">semicolons</mark></td><td><mark>insert<wbr>Semicolons</mark></td></tr><tr><td><mark class="alt">sort<wbr>Order</mark></td><td><mark>sort<wbr>Properties</mark>, <mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Properties</mark></td></tr><tr><td><mark class="alt">stacked<wbr>Properties</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">trailing<wbr>Whitespace</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">universal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">valid</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">zero<wbr>Units</mark></td><td><mark>always<wbr>Use<wbr>Zero<wbr>Without<wbr>Unit</mark></td></tr><tr><td><mark class="alt">z<wbr>Index<wbr>Normalize</mark></td><td>Not applicable</td></tr></tbody><!-- stylint option placeholder -->
 				</table>
 			</article>
 			<article id="vscode">

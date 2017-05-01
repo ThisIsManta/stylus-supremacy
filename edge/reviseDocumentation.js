@@ -5,7 +5,8 @@ const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const format = require('./format')
 const stylintOptions = require('stylint/src/core/config')
-const getCodeForFormatting = require('./getCodeForFormatting')
+const createCodeForFormatting = require('./createCodeForFormatting')
+const createCodeForHTML = require('./createCodeForHTML')
 
 let document = fs.readFileSync('docs/index.html', 'utf-8')
 document = updateDocument(document, '<!-- formatting toggler placeholder -->', createFormattingTogglersForDemo)
@@ -66,11 +67,11 @@ function createFormattingTogglersForDemo() {
 
 function createFormattingDescription() {
 	const defaultOptionJSON = JSON.stringify(createFormattingOptions({}), null, '  ').replace(/^\s\s"(\w+)"/gm, (full, part) =>
-		full.replace(part, `<a href="#option-${_.kebabCase(part)}">${part}</a>`)
+		full.replace(part, `<a href="#option-${_.kebabCase(part)}">${createBreakableWords(part)}</a>`)
 	)
 	const defaultOptionHTML = (
 		'<code>' +
-		getCodeForHTML(defaultOptionJSON) +
+		createCodeForHTML(defaultOptionJSON) +
 		'</code>'
 	)
 
@@ -78,32 +79,20 @@ function createFormattingDescription() {
 		.map((item, name) => [
 			`<section id="option-${_.kebabCase(name)}">`,
 			`<h2>`,
-			`<mark>${getBreakableLastWord(name)}</mark>`,
+			`<mark>${createBreakableWords(name)}</mark>`,
 			`<wbr>`,
-			`<code class="default-value">${getNonBreakableFirstWord('= ', JSON.stringify(item.default))}</code>`,
+			`<code class="default-value">${createNonBreakableForFirstWord('= ', JSON.stringify(item.default))}</code>`,
 			`<wbr>`,
-			`<code>${getNonBreakableFirstWord(': ', getType(item))}</code>`,
+			`<code>${createNonBreakableForFirstWord(': ', getType(item))}</code>`,
 			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
 			item.hideInVSCE ? '<p>This option is not available in the Visual Studio Code extension.</p>' : '',
-			item.example && '<table>' + _.chunk(item.example.values, 2).map(values => {
-				const headList = values.map(value =>
-					'<th>' +
-					JSON.stringify(value, null, '\t').replace(/(\[|\{)\n\t+/g, '[').replace(/^\t+/gm, ' ').replace(/\n/g, '') +
-					'</th>'
-				).join('')
-
-				const codeList = values.map(value =>
-					'<td>' +
-					getCodeForHTML(format(getCodeForFormatting(item.example.code), { [name]: value })) +
-					'</td>'
-				).join('')
-
-				return (
-					`<thead><tr>${headList}</tr></thead>` +
-					`<tbody><tr>${codeList}</tr></tbody>`
+			item.example && _.chunk(item.example.values, 2).map(values =>
+				createResponsiveTable(
+					values.map(value => JSON.stringify(value, null, '\t').replace(/(\[|\{)\n\t+/g, '[').replace(/^\t+/gm, ' ').replace(/\n/g, '')),
+					values.map(value => createCodeForHTML(format(createCodeForFormatting(item.example.code), { [name]: value })))
 				)
-			}).join('') + '</table>',
+			).join('') +
 			`</section>`
 		])
 		.flatten()
@@ -128,15 +117,15 @@ function createStylintConversionTable() {
 			return temp
 		}, {})
 
-	return _.map(stylintOptions, (item, name) =>
+	return '<tbody>' + _.map(stylintOptions, (item, name) =>
 		'<tr>' +
-		'<td><mark class="alt">' + getBreakableLastWord(name) + '</mark></td>' +
+		'<td><mark class="alt">' + createBreakableWords(name) + '</mark></td>' +
 		'<td>' + (_.some(stylintOptionMap[name])
-			? (stylintOptionMap[name].map(item => '<mark>' + getBreakableLastWord(item) + '</mark>').join(', '))
+			? (stylintOptionMap[name].map(item => '<mark>' + createBreakableWords(item) + '</mark>').join(', '))
 			: 'Not applicable') +
 		'</td>' +
 		'</tr>'
-	).join('')
+	).join('') + '</tbody>'
 }
 
 function getType(item) {
@@ -151,7 +140,7 @@ function getType(item) {
 	}
 }
 
-function getNonBreakableFirstWord(prefix, text) {
+function createNonBreakableForFirstWord(prefix, text) {
 	let pivot = text.indexOf(' ')
 	if (pivot === -1) {
 		pivot = text.length
@@ -159,7 +148,7 @@ function getNonBreakableFirstWord(prefix, text) {
 	return '<span class="no-break">' + prefix + text.substring(0, pivot) + '</span>' + text.substring(pivot)
 }
 
-function getBreakableLastWord(text) {
+function createBreakableWords(text) {
 	const pattern = _.camelCase(text)
 	if (text === pattern) {
 		return _.kebabCase(text)
@@ -172,12 +161,25 @@ function getBreakableLastWord(text) {
 	}
 }
 
-function getCodeForHTML(code) {
-	return code
-		.split(/\r?\n/)
-		.map(line => line
-			.replace(/^\t+/, s => '  '.repeat(s.length))
-			.replace(/^\s+/, s => '&nbsp;'.repeat(s.length))
-		)
-		.join('<br>')
+function createResponsiveTable(head, body) {
+	return (
+		'<div class="table">' +
+		'<div class="table-head">' +
+		head.map(cell =>
+			'<div>' + cell + '</div>'
+		).join('') +
+		'</div>' +
+		'<div class="table-body">' +
+		body.map(cell =>
+			'<div>' + cell + '</div>'
+		).join('') +
+		'</div>' +
+		'</div>' +
+		'<div class="table responsive">' +
+		head.map((nope, rank) =>
+			'<div class="table-head">' + '<div>' + head[rank] + '</div>' + '</div>' +
+			'<div class="table-body">' + '<div>' + body[rank] + '</div>' + '</div>'
+		).join('') +
+		'</div>'
+	)
 }

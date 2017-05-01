@@ -1,28 +1,28 @@
-const format = require('format')
 
 $(document).ready(function () {
+	const _ = require('lodash')
+	const format = require('format')
+	const createCodeForHTML = require('createCodeForHTML')
+
 	const $input = $('#demo-input')
 	const $output = $('#demo-output')
 	$input.on('input', reformat)
-	$input.on('input', saveToLocalStorage)
 	$input.on('keydown', insertTwoSpacesInsteadOfTab)
 	$input.add($output).on('mousewheel', stopScrollingOutside)
 	$('#demo-options input, #demo-options select').on('change', reformat)
 	setTimeout(reformat, 600)
 
-	// Load saved input from local storage
-	if (window.localStorage) {
-		$input.val(window.localStorage.getItem('input'))
-	}
-
 	// Set default input
 	if ($input.val().trim().length === 0) {
 		$input.val([
 			'@require "./file.styl"',
+			'/**',
+			'multi-line comment',
+			'*/',
 			'.class1, .class2',
-			'  color alpha(red, 0.5)',
 			'  padding 1px // comment',
 			'  margin 0px 5px 0px 5px',
+			'  color alpha(red, 0.5)',
 			'  if (!condition)',
 			'    @extend .class3',
 			'  else',
@@ -49,25 +49,9 @@ $(document).ready(function () {
 
 		try {
 			const result = format($input.val(), options)
-				.split(/\r?\n/)
-				.map(line => line
-					.replace(/^\t+/, s => '  '.repeat(s.length))
-					.replace(/^\s+/, s => '&nbsp;'.repeat(s.length))
-				)
-				.join('<br>')
-			$output.removeClass('error').html(result)
+			$output.removeClass('error').html(createCodeForHTML(result))
 		} catch (ex) {
 			$output.addClass('error').text(ex.message).prepend('<b>ERROR</b>: <br>')
-		}
-	}
-
-	function saveToLocalStorage(e) {
-		if (window.localStorage) {
-			if (e.target.value.trim().length > 0) {
-				window.localStorage.setItem('input', e.target.value)
-			} else {
-				window.localStorage.removeItem('input')
-			}
 		}
 	}
 

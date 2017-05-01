@@ -1,4 +1,4 @@
-function getCodeForFormatting(code) {
+function createCodeForFormatting(code) {
 	let lines = code.split(/\r?\n/)
 
 	while (lines[0].trim() === '') {
@@ -11,4 +11,4 @@ function getCodeForFormatting(code) {
 	return lines.join('\n')
 }
 
-module.exports = getCodeForFormatting
+module.exports = createCodeForFormatting
