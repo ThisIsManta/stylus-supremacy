@@ -66,12 +66,14 @@ function createFormattingTogglersForDemo() {
 }
 
 function createFormattingDescription() {
-	const defaultOptionJSON = JSON.stringify(createFormattingOptions({}), null, '  ').replace(/^\s\s"(\w+)"/gm, (full, part) =>
-		full.replace(part, `<a href="#option-${_.kebabCase(part)}">${createBreakableWords(part)}</a>`)
-	)
+	const defaultOptionJSON = createCodeForHTML(JSON.stringify(createFormattingOptions(), null, '  '))
+
 	const defaultOptionHTML = (
 		'<code>' +
-		createCodeForHTML(defaultOptionJSON) +
+		defaultOptionJSON
+			.replace(/<br>/g, '\n')
+			.replace(/^&nbsp;&nbsp;&quot;(\w+)&quot;/gm, (full, part) => full.replace(part, `<a href="#option-${_.kebabCase(part)}">${createBreakableWords(part)}</a>`))
+			.replace(/\n/g, '<br>') +
 		'</code>'
 	)
 
