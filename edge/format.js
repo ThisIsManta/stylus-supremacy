@@ -137,59 +137,63 @@ function format(content, options = {}) {
 
 			// Filter multi-line comment(s)
 			const commentNodes = inputNode.nodes.filter(node => node instanceof Stylus.nodes.Comment)
+			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
 
-			const groups = []
-			_.difference(inputNode.nodes, commentNodes).forEach((node, rank, list) => {
+			const groupOfUnsortedNonCommentNodes = []
+			unsortedNonCommentNodes.forEach((node, rank, list) => {
 				if (rank === 0 || getType(node) !== getType(list[rank - 1]) || getType(node) === 'Block') {
-					groups.push([node])
+					groupOfUnsortedNonCommentNodes.push([node])
 				} else {
-					_.last(groups).push(node)
+					_.last(groupOfUnsortedNonCommentNodes).push(node)
 				}
 			})
 
-			// Sort CSS properties
-			groups.filter(group => group[0] instanceof Stylus.nodes.Property).forEach(group => {
-				let newGroup = group
-				if (options.sortProperties === 'alphabetical') {
-					newGroup = _.sortBy(group, node => {
-						const propertyName = node.segments.map(segment => segment.name).join('')
-						if (propertyName.startsWith('-')) {
-							return '~' + propertyName.substring(1)
-						} else {
-							return propertyName
-						}
-					})
-				} else if (options.sortProperties === 'grouped') {
-					// See also https://github.com/SimenB/stylint/blob/master/src/data/ordering.json
-					newGroup = _.sortBy(group, node => {
-						const propertyName = node.segments.map(segment => segment.name).join('')
-						const propertyRank = ordering.grouped.indexOf(propertyName)
-						if (propertyRank >= 0) {
-							return propertyRank
-						} else {
-							return Infinity
-						}
-					})
-				} else if (_.isArray(options.sortProperties) && _.some(options.sortProperties)) {
-					newGroup = _.sortBy(group, node => {
-						const propertyName = node.segments.map(segment => segment.name).join('')
-						const propertyRank = options.sortProperties.indexOf(propertyName)
-						if (propertyRank >= 0) {
-							return propertyRank
-						} else {
-							return Infinity
-						}
-					})
+			const groupOfSortedNonCommentNodes = groupOfUnsortedNonCommentNodes.map(nodes => {
+				if (nodes[0] instanceof Stylus.nodes.Property) {
+					// Sort CSS properties
+					if (options.sortProperties === 'alphabetical') {
+						return _.sortBy(nodes, node => {
+							const propertyName = node.segments.map(segment => segment.name).join('')
+							if (propertyName.startsWith('-')) {
+								return '~' + propertyName.substring(1)
+							} else {
+								return propertyName
+							}
+						})
+
+					} else if (options.sortProperties === 'grouped') {
+						// See also https://github.com/SimenB/stylint/blob/master/src/data/ordering.json
+						return _.sortBy(nodes, node => {
+							const propertyName = node.segments.map(segment => segment.name).join('')
+							const propertyRank = ordering.grouped.indexOf(propertyName)
+							if (propertyRank >= 0) {
+								return propertyRank
+							} else {
+								return Infinity
+							}
+						})
+
+					} else if (_.isArray(options.sortProperties) && _.some(options.sortProperties)) {
+						return _.sortBy(nodes, node => {
+							const propertyName = node.segments.map(segment => segment.name).join('')
+							const propertyRank = options.sortProperties.indexOf(propertyName)
+							if (propertyRank >= 0) {
+								return propertyRank
+							} else {
+								return Infinity
+							}
+						})
+					}
 				}
 
-				groups[groups.indexOf(group)] = newGroup
+				return nodes
 			})
 
 			// Note that do not mutate this
-			const nonCommentNodes = _.flatten(groups)
+			const sortedNonCommentNodes = _.flatten(groupOfSortedNonCommentNodes)
 
 			// Put single-line comment(s) to the relevant node
-			nonCommentNodes.forEach(node => {
+			sortedNonCommentNodes.forEach(node => {
 				node.commentsOnTop = tryGetSingleLineCommentNodesOnTheTopOf(node)
 
 				const rightCommentNode = tryGetSingleLineCommentNodeOnTheRightOf(node)
@@ -203,7 +207,7 @@ function format(content, options = {}) {
 
 			// Put a sticky multi-line comment to the relevant node
 			_.orderBy(commentNodes, ['lineno', 'column'], ['desc', 'asc']).forEach(comment => {
-				const sideNode = nonCommentNodes.find(node => node.lineno === comment.lineno && node.column < comment.column)
+				const sideNode = sortedNonCommentNodes.find(node => node.lineno === comment.lineno && node.column < comment.column)
 				if (sideNode) {
 					if (sideNode.commentsOnRight === undefined) {
 						sideNode.commentsOnRight = []
@@ -213,18 +217,18 @@ function format(content, options = {}) {
 				} else {
 					const index = inputNode.nodes.indexOf(comment)
 					if (index === inputNode.nodes.length - 1) {
-						groups.push([comment])
+						groupOfSortedNonCommentNodes.push([comment])
 
 					} else {
 						let belowNode = inputNode.nodes[index + 1]
-						if (_.includes(nonCommentNodes, belowNode)) {
+						if (_.includes(sortedNonCommentNodes, belowNode)) {
 							if (belowNode.commentsOnTop === undefined) {
 								belowNode.commentsOnTop = []
 							}
 							belowNode.commentsOnTop.push(comment)
 
 						} else if (belowNode instanceof Stylus.nodes.Comment) {
-							belowNode = nonCommentNodes.find(node => node.commentsOnTop && node.commentsOnTop.find(node => belowNode === node))
+							belowNode = sortedNonCommentNodes.find(node => node.commentsOnTop && node.commentsOnTop.find(node => belowNode === node))
 							belowNode.commentsOnTop.unshift(comment)
 						}
 					}
@@ -246,9 +250,9 @@ function format(content, options = {}) {
 			}
 
 			// Insert CSS body and new-lines between them
-			outputBuffer.append(_.chain(groups)
-				.map(group => {
-					const nodeType = getType(group[0])
+			outputBuffer.append(_.chain(groupOfSortedNonCommentNodes)
+				.map(nodes => {
+					const nodeType = getType(nodes[0])
 
 					let newLineAround = ''
 					if (
@@ -262,7 +266,7 @@ function format(content, options = {}) {
 
 					return _.compact([
 						newLineAround,
-						group.map(node => travel(inputNode, node, childIndentLevel)).join(''),
+						nodes.map(node => travel(inputNode, node, childIndentLevel)).join(''),
 						newLineAround
 					])
 				})
@@ -277,7 +281,7 @@ function format(content, options = {}) {
 			)
 
 			// Insert the bottom comment(s)
-			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(nonCommentNodes))
+			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(unsortedNonCommentNodes))
 			if (bottomCommentNodes) {
 				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)).join(''))
 			}
@@ -930,6 +934,10 @@ function format(content, options = {}) {
 		return outputBuffer.toString()
 	}
 
+	// Store the line indexes of single-line comments that have been processed
+	// This prevents picking up duplicate comments
+	const usedStandaloneSingleLineComments = {}
+
 	function tryGetSingleLineCommentNodesOnTheTopOf(inputNode) {
 		// Skip operation for `Group` type
 		if (inputNode instanceof Stylus.nodes.Group) {
@@ -939,7 +947,12 @@ function format(content, options = {}) {
 		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
 		while (--zeroBasedLineIndex >= 0 && modifiedLines[zeroBasedLineIndex] !== undefined && modifiedLines[zeroBasedLineIndex].trim().startsWith('//')) {
-			commentNodes.unshift(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
+			if (usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
+				break
+			} else {
+				usedStandaloneSingleLineComments[zeroBasedLineIndex] = true
+				commentNodes.unshift(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
+			}
 		}
 		return commentNodes
 	}
@@ -954,15 +967,22 @@ function format(content, options = {}) {
 			return null
 		}
 
-		const commentNodes = []
 		let zeroBasedLineIndex = inputNode.lineno - 1
+
+		// Skip operation when `inputNode.lineno` is not valid
 		if (modifiedLines[zeroBasedLineIndex] === undefined) {
 			return null
 		}
 
+		const commentNodes = []
 		const sourceNodeIndent = modifiedLines[zeroBasedLineIndex].substring(0, modifiedLines[zeroBasedLineIndex].length - _.trimStart(modifiedLines[zeroBasedLineIndex]).length)
 		while (++zeroBasedLineIndex < modifiedLines.length && modifiedLines[zeroBasedLineIndex].trim().startsWith('//') && modifiedLines[zeroBasedLineIndex].startsWith(sourceNodeIndent)) {
-			commentNodes.push(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
+			if (usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
+				break
+			} else {
+				usedStandaloneSingleLineComments[zeroBasedLineIndex] = true
+				commentNodes.push(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
+			}
 		}
 		return commentNodes
 	}
