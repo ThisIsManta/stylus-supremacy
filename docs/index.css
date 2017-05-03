@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Mono');
+@import url('https://fonts.googleapis.com/css?family=Unna:400,700i');
 
 html {
 	font-size: 16px;
@@ -109,10 +110,27 @@ nav a:not(.nofx):hover {
 	}
 }
 
+header {
+	display: flex;
+	margin: 20px;
+}
+
 #logo {
 	height: 128px;
+	width: 128px;
 	border: 1.5px solid;
-	margin: 20px;
+}
+
+#slogan {
+	display: none;
+	margin-left: 20px;
+	align-self: center;
+	font-family: Unna;
+	font-size: 8vw;
+}
+
+#slogan em {
+	font-weight: 700;
 }
 
 @media (max-height: 450px) {
@@ -262,14 +280,18 @@ section > *:last-child {
 @media (max-width: 800px) {
 	nav {
 		position: initial;
-		height: auto;
 		width: 100%;
+		height: auto;
+	}
+
+	#slogan {
+		display: block;
 	}
 
 	#repository {
 		position: initial;
 		text-align: right;
-		padding: 10px 20px 10px 0;
+		padding: 5px 15px 15px 0;
 	}
 
 	main {
