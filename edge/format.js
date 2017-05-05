@@ -221,7 +221,7 @@ function format(content, options = {}) {
 
 					} else {
 						let belowNode = inputNode.nodes[index + 1]
-						if (_.includes(sortedNonCommentNodes, belowNode)) {
+						if (sortedNonCommentNodes.includes(belowNode)) {
 							if (belowNode.commentsOnTop === undefined) {
 								belowNode.commentsOnTop = []
 							}
@@ -238,36 +238,34 @@ function format(content, options = {}) {
 			const checkIf = (value) => {
 				if (value === true) {
 					return true
-				}
 
-				if (options.wrapMode) {
+				} else if (options.wrapMode) {
 					return _.some(originalBaseIndent) ? value === 'nested' : value === 'root'
+
 				} else {
 					return inputNode instanceof Stylus.nodes.Root ? value === 'root' : value === 'nested'
 				}
-
-				return false
 			}
 
 			// Insert CSS body and new-lines between them
 			outputBuffer.append(_.chain(groupOfSortedNonCommentNodes)
-				.map(nodes => {
+				.map((nodes, rank, list) => {
 					const nodeType = getType(nodes[0])
 
-					let newLineAround = ''
+					let newLineOrEmpty = ''
 					if (
 						nodeType === 'Block' && checkIf(options.insertNewLineAroundBlocks) ||
 						nodeType === 'Property' && checkIf(options.insertNewLineAroundProperties) ||
 						nodeType === 'Import' && checkIf(options.insertNewLineAroundImports) ||
 						nodeType === 'Other' && checkIf(options.insertNewLineAroundOthers)
 					) {
-						newLineAround = options.newLineChar
+						newLineOrEmpty = options.newLineChar
 					}
 
 					return _.compact([
-						newLineAround,
+						newLineOrEmpty,
 						nodes.map(node => travel(inputNode, node, childIndentLevel)).join(''),
-						newLineAround
+						newLineOrEmpty,
 					])
 				})
 				.flatten()
@@ -851,6 +849,9 @@ function format(content, options = {}) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
+			if (inputNode.insertNewLineAbove) {
+				outputBuffer.append(options.newLineChar)
+			}
 			if (insideExpression === false) {
 				outputBuffer.append(indent)
 			}
@@ -939,21 +940,30 @@ function format(content, options = {}) {
 	const usedStandaloneSingleLineComments = {}
 
 	function tryGetSingleLineCommentNodesOnTheTopOf(inputNode) {
-		// Skip operation for `Group` type
-		if (inputNode instanceof Stylus.nodes.Group) {
-			return []
+		let zeroBasedLineIndex
+		if (inputNode instanceof Stylus.nodes.Group && _.some(inputNode.nodes)) {
+			zeroBasedLineIndex = inputNode.nodes[0].lineno - 1
+		} else {
+			zeroBasedLineIndex = inputNode.lineno - 1
 		}
 
-		const commentNodes = []
-		let zeroBasedLineIndex = inputNode.lineno - 1
-		while (--zeroBasedLineIndex >= 0 && modifiedLines[zeroBasedLineIndex] !== undefined && modifiedLines[zeroBasedLineIndex].trim().startsWith('//')) {
-			if (usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
+		let commentNodes = []
+		while (--zeroBasedLineIndex >= 0 && modifiedLines[zeroBasedLineIndex] !== undefined) {
+			const text = modifiedLines[zeroBasedLineIndex].trim()
+			if (text === '') {
+				if (commentNodes.length > 0) {
+					commentNodes[0].insertNewLineAbove = true
+				}
+
+			} else if (text.startsWith('//') === false) {
 				break
-			} else {
+
+			} else if (!usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
 				usedStandaloneSingleLineComments[zeroBasedLineIndex] = true
-				commentNodes.unshift(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
+				commentNodes.unshift(new Stylus.nodes.Comment(text, false, false))
 			}
 		}
+
 		return commentNodes
 	}
 
@@ -984,6 +994,7 @@ function format(content, options = {}) {
 				commentNodes.push(new Stylus.nodes.Comment(modifiedLines[zeroBasedLineIndex].trim(), false, false))
 			}
 		}
+
 		return commentNodes
 	}
 
@@ -1003,19 +1014,19 @@ function format(content, options = {}) {
 		}
 
 		// Skip operation if the only "//" is in the string
-		let startingIndex = inputNode.column
+		let zeroBasedLineIndex = inputNode.column
 		const leftmostStringThatHasDoubleSlashes = _.chain(findChildNodes(inputNode, node => node instanceof Stylus.nodes.String))
 			.filter(node => node.lineno === inputNode.lineno && node.val.includes('//'))
 			.maxBy('column')
 			.value()
 		if (leftmostStringThatHasDoubleSlashes) {
-			startingIndex = leftmostStringThatHasDoubleSlashes.column + leftmostStringThatHasDoubleSlashes.val.length + 1
+			zeroBasedLineIndex = leftmostStringThatHasDoubleSlashes.column + leftmostStringThatHasDoubleSlashes.val.length + 1
 		}
-		if (currentLine.indexOf('//', startingIndex) === -1) {
+		if (currentLine.indexOf('//', zeroBasedLineIndex) === -1) {
 			return null
 		}
 
-		return new Stylus.nodes.Comment(currentLine.substring(currentLine.indexOf('//', startingIndex)).trim(), false, false)
+		return new Stylus.nodes.Comment(currentLine.substring(currentLine.indexOf('//', zeroBasedLineIndex)).trim(), false, false)
 	}
 
 	function tryGetMultiLineCommentNodeOnTheRightOf(inputNode) {
