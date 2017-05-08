@@ -964,6 +964,10 @@ function format(content, options = {}) {
 			}
 		}
 
+		if (commentNodes.length > 0) {
+			commentNodes[0].insertNewLineAbove = false
+		}
+
 		return commentNodes
 	}
 
