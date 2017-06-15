@@ -86,6 +86,8 @@ function process(command, params = [], Console = console) {
 	} else {
 		throw new Error(`Command "${command}" was not recognized.`)
 	}
+
+	return []
 }
 
 function getParam(paramArray, names, nextValueCount = 0) {
