@@ -417,6 +417,10 @@ function format(content, options = {}) {
 				outputBuffer.append(indent)
 			}
 
+			if (inputNode.property === true) { // In case of property lookup
+				outputBuffer.append('@')
+			}
+
 			// Replace the identifier name with '@' for anonymous functions
 			const currentIsAnonymousFunc = inputNode.name === 'anonymous' && inputNode.val instanceof Stylus.nodes.Function && inputNode.val.name === 'anonymous'
 			if (currentIsAnonymousFunc) {
@@ -562,7 +566,8 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.UnaryOp) {
-			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op).append(travel(inputNode, inputNode.expr, indentLevel, true))
+			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op)
+			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 
 		} else if (inputNode instanceof Stylus.nodes.BinOp) {
 			if (inputNode.op === '[]') { // In case of array accessing
@@ -582,8 +587,9 @@ function format(content, options = {}) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
+				const insideUnaryOp = inputNode.parent instanceof Stylus.nodes.Expression && inputNode.parent.parent instanceof Stylus.nodes.UnaryOp
 				const escapeDivider = inputNode.op === '/'
-				if (escapeDivider) {
+				if (insideUnaryOp || escapeDivider) {
 					outputBuffer.append(openParen)
 				}
 
@@ -593,7 +599,7 @@ function format(content, options = {}) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
 				}
 
-				if (escapeDivider) {
+				if (insideUnaryOp || escapeDivider) {
 					outputBuffer.append(closeParen)
 				}
 			}

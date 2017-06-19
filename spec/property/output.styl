@@ -1,6 +1,8 @@
 body {
 	filter: unquote('progid:DXImageTransform.Microsoft.Alpha(Opacity=' + round(n * 100) + ')');
 	padding: 1 \+ 2;
+	top: 14px - @padding;
+	bottom: -(14px - @padding);
 	font: 14px / 1.4;
 	font: (14px / 1.4);
 	transition: 0.3s opacity;
