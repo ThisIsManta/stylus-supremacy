@@ -587,7 +587,7 @@ function format(content, options = {}) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
-				const insideUnaryOp = inputNode.parent instanceof Stylus.nodes.Expression && inputNode.parent.parent instanceof Stylus.nodes.UnaryOp
+				const insideUnaryOp = inputNode.parent instanceof Stylus.nodes.Expression && (inputNode.parent.parent instanceof Stylus.nodes.UnaryOp || inputNode.parent.parent instanceof Stylus.nodes.BinOp)
 				const escapeDivider = inputNode.op === '/'
 				if (insideUnaryOp || escapeDivider) {
 					outputBuffer.append(openParen)
