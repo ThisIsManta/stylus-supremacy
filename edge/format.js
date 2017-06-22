@@ -528,6 +528,11 @@ function format(content, options = {}) {
 				outputBuffer.append('{')
 			}
 
+			const parentIsArithmeticOperator = inputNode.parent instanceof Stylus.nodes.UnaryOp || inputNode.parent instanceof Stylus.nodes.BinOp && inputNode.parent.left === inputNode
+			if (parentIsArithmeticOperator) {
+				outputBuffer.append(openParen)
+			}
+
 			const currentIsPartOfPropertyNames = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Property && node.segments.includes(inputNode))
 
 			const currentIsPartOfKeyframes = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Keyframes && node.segments.includes(inputNode))
@@ -556,6 +561,10 @@ function format(content, options = {}) {
 
 			if (parentIsSelector) {
 				outputBuffer.append('}')
+			}
+
+			if (parentIsArithmeticOperator) {
+				outputBuffer.append(closeParen)
 			}
 
 			if (insideExpression === false) {
@@ -601,9 +610,8 @@ function format(content, options = {}) {
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 			} else {
-				const insideUnaryOp = inputNode.parent instanceof Stylus.nodes.Expression && (inputNode.parent.parent instanceof Stylus.nodes.UnaryOp || inputNode.parent.parent instanceof Stylus.nodes.BinOp)
 				const escapeDivider = inputNode.op === '/'
-				if (insideUnaryOp || escapeDivider) {
+				if (escapeDivider) {
 					outputBuffer.append(openParen)
 				}
 
@@ -613,7 +621,7 @@ function format(content, options = {}) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
 				}
 
-				if (insideUnaryOp || escapeDivider) {
+				if (escapeDivider) {
 					outputBuffer.append(closeParen)
 				}
 			}
