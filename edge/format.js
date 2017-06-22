@@ -532,13 +532,27 @@ function format(content, options = {}) {
 
 			const currentIsPartOfKeyframes = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Keyframes && node.segments.includes(inputNode))
 
-			outputBuffer.append(inputNode.nodes.map(node => {
-				if (node instanceof Stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
-					return '{' + travel(inputNode, node, indentLevel, true) + '}'
+			outputBuffer.append(inputNode.nodes.map((node, rank) => {
+				// Use either a white-space or a comma as a separator
+				let separator
+				if (rank === 0) {
+					separator = ''
 				} else {
-					return travel(inputNode, node, indentLevel, true)
+					separator = ' '
+					if (node.lineno > 0 && node.column > 0) {
+						const currentLine = modifiedLines[node.lineno - 1]
+						if (typeof currentLine === 'string' && _.last(_.trimEnd(currentLine.substring(0, node.column - 1))) === ',') {
+							separator = comma
+						}
+					}
 				}
-			}).join(' '))
+
+				if (node instanceof Stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
+					return separator + '{' + travel(inputNode, node, indentLevel, true) + '}'
+				} else {
+					return separator + travel(inputNode, node, indentLevel, true)
+				}
+			}).join(''))
 
 			if (parentIsSelector) {
 				outputBuffer.append('}')
