@@ -791,7 +791,7 @@ function format(content, options = {}) {
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof Stylus.nodes.Keyframes) {
-			outputBuffer.append('@keyframes ')
+			outputBuffer.append(indent + '@keyframes ')
 			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).filter(text => text.trim().length > 0).join(comma))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
