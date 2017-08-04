@@ -146,7 +146,7 @@ const schema = {
 	insertParenthesisAroundNegatedVariable: {
 		description: 'Insert a pair of parentheses or a white-space around negated variables.',
 		type: 'boolean',
-		default: true,
+		default: false,
 		example: {
 			values: [true, false],
 			code: `
