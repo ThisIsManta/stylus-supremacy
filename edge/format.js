@@ -590,7 +590,23 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.UnaryOp) {
 			outputBuffer.append(inputNode.op === '!' && options.alwaysUseNot ? 'not ' : inputNode.op)
+			
+			const negation = inputNode.op === '-' && inputNode.expr instanceof Stylus.nodes.Ident
+			if (negation) {
+				if (options.insertParenthesisAroundNegatedVariable) {
+					outputBuffer.append(openParen)
+				} else {
+					outputBuffer.append(' ')
+				}
+			}
+
 			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
+			
+			if (negation) {
+				if (options.insertParenthesisAroundNegatedVariable) {
+					outputBuffer.append(closeParen)
+				}
+			}
 
 		} else if (inputNode instanceof Stylus.nodes.BinOp) {
 			if (inputNode.op === '[]') { // In case of array accessing

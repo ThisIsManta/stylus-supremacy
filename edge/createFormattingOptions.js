@@ -143,6 +143,19 @@ const schema = {
 			`
 		}
 	},
+	insertParenthesisAroundNegatedVariable: {
+		description: 'Insert a pair of parentheses or a white-space around negated variables.',
+		type: 'boolean',
+		default: true,
+		example: {
+			values: [true, false],
+			code: `
+			length = 10px
+			.class1
+				margin - length
+			`
+		}
+	},
 	insertLeadingZeroBeforeFraction: {
 		description: 'Insert or remove a zero before a number that between 1 and 0.',
 		type: 'boolean',
