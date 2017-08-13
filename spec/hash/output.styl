@@ -1,16 +1,21 @@
 foo = { width: 10px, height: 20px };
-foo = {
-	'0': false,
+bar = {
+	'0': 'none',
 	a1: {
 		b1: true,
 		b2: false
 	},
-	a2: { c2: true },
-	a3: {}
+	a2: { c1: {} }
 };
-foo['0'] = bar;
+qux = 30px;
+bar['a3'] = qux;
+bar[qux] = qux;
+bar['a2']['c1']['d1'] = 40px;
+zot = 'd1';
 
 body {
 	{foo};
-	display: a3 in foo;
+	// Must have a colon because of the bug in Stylus itself; See https://github.com/stylus/stylus/issues/2239
+	margin: bar['a2'].c1[zot];
+	padding: bar.a2.c1.d1;
 }

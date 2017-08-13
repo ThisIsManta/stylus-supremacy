@@ -625,6 +625,13 @@ function format(content, options = {}) {
 				outputBuffer.append('] = ')
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
+				if (insideExpression === false) {
+					if (options.insertSemicolons) {
+						outputBuffer.append(';')
+					}
+					outputBuffer.append(options.newLineChar)
+				}	
+
 			} else {
 				const escapeDivider = inputNode.op === '/'
 				if (escapeDivider) {
@@ -698,6 +705,11 @@ function format(content, options = {}) {
 				).join(',' + options.newLineChar))
 				outputBuffer.append(options.newLineChar + indent + '}')
 			}
+
+		} else if (inputNode instanceof Stylus.nodes.Member) {
+			outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+			outputBuffer.append('.')
+			outputBuffer.append(travel(inputNode, inputNode.right, indentLevel, true))
 
 		} else if (inputNode instanceof Stylus.nodes.If) {
 			if (insideExpression === false) {
