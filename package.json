@@ -31,7 +31,7 @@
     "uglifyjs": "~2.4.11"
   },
   "dependencies": {
-    "glob": "^7.1.1",
+    "glob": "^7.1.2",
     "lodash": "^4.17.4",
     "stylint": "^1.5.9",
     "stylus": "^0.54.5"
