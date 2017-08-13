@@ -5,7 +5,7 @@
 		<link rel="icon" type="image/png" href="logo.png">
 		<link rel="stylesheet" type="text/css" href="index.css">
 
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="format.js" defer></script>
 		<script src="demo.js" defer></script>
 
@@ -22,13 +22,28 @@
 			<a href="#stylint">Stylint compatibility</a>
 			<a href="#vscode">Visual Studio Code extension</a>
 			<a href="#atom">Atom package</a>
-			<a id="history" href="https://github.com/ThisIsManta/stylus-supremacy/releases">Release notes</a>
+			<a id="history" href="https://github.com/ThisIsManta/stylus-supremacy/releases">Releases</a>
 			<a id="issues" href="https://github.com/ThisIsManta/stylus-supremacy/issues">Issues</a>
 			<a id="repository" class="nofx" href="https://github.com/ThisIsManta/stylus-supremacy" title="View source code on GitHub"><img src="octocat.png"></a>
 		</nav>
 		<main>
 			<article>
 				<p><b>Stylus Supremacy</b> is a JavaScript library for formatting <a href="http://stylus-lang.com" target="_blank">Stylus</a> files. You may say this is a beautifier for Stylus language.</p>
+
+				<p id="version" style="visibility: hidden;">The latest version <a id="version-number">X.X.X</a> has been released since <span id="version-publish">D MMM YYYY</span>.</p>
+				<script>
+					// See https://developer.github.com/v3/repos/releases/#get-the-latest-release
+					$.get('https://api.github.com/repos/thisismanta/stylus-supremacy/releases/latest').then(function (data) {
+						$('#version-number')
+							.attr('href', data.html_url)
+							.text(data.tag_name.replace(/^v(\d+\.\d+\.\d+)/, '$1'))
+						var publishDate = new Date(data.published_at).toDateString().split(' ')
+						$('#version-publish')
+							.text(publishDate[2].replace(/^0/, '') + ' ' + publishDate[1] + ' ' + publishDate[3])
+						$('#version')
+							.css('visibility', 'visible')
+					})
+				</script>
 
 				<p style="text-align: center;">Available as...</p>
 				<div id="availability">
@@ -48,7 +63,7 @@
 
 				<p>Back in the days, there was <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a>, which it helped enforcing writing rules for Stylus language, but it did not provide auto-fix capabilities. Because of that, Stylus users needed to fix those linting errors manually, which it was a time-consuming process. And also, even Stylus language has been developed for years, it lacked of a decent formatter/beautifier tool. Hence, <b>Stylus Supremacy</b> was born.</p>
 
-				<p>This software was solely developed by <a href="mailto:thisismanta@outlook.com">Anantachai Saothong (Manta)</a>, who was working for <a href="https://www.taskworld.com" target="_blank">Taskworld</a>, as a part of software quality improvement process. Manta and the company are not responsible for any complications caused by this piece of software. You must use this software at your own risk under <a href="https://raw.githubusercontent.com/ThisIsManta/stylus-supremacy/master/LICENSE" target="_blank">MIT license</a>.</p>
+				<p>This software was solely developed by Anantachai Saothong (<a href="https://github.com/ThisIsManta">@ThisIsManta</a>) who was working for <a href="https://www.taskworld.com" target="_blank">Taskworld</a>, as a part of internal software quality improvements. He and the company are not responsible for any complications caused by this piece of software. You must use this software at your own risk under <a href="https://raw.githubusercontent.com/ThisIsManta/stylus-supremacy/master/LICENSE" target="_blank">MIT license</a>.</p>
 			</article>
 			<article id="demo">
 				<h1>Try it in your browser</h1>
@@ -380,7 +395,7 @@
 			<article id="vscode">
 				<h1>Visual Studio Code extension</h1>
 
-				<p><b>Stylus Supremacy</b> is available in Visual Studio Code as an extension. To install the extension, follow the instruction video below.</p>
+				<p><b>Stylus Supremacy</b> is available in Visual Studio Code as an extension. To install the extension, follow the instructions below or <a href="vscode:extension/thisismanta.stylus-supremacy">click here</a>.</p>
 
 				<img src="vscode.gif">
 
@@ -388,7 +403,7 @@
 
 				<p>You can find <b>Stylus Supremacy</b> section under Visual Studio Code settings. Note that <mark>tabStopChar</mark> and <mark>newLineChar</mark> will be detected automatically based on your current active Stylus file so they are not visible in the settings. Please see <a href="#options">formatting options</a> section for full details.</p>
 
-				<p>This extension also implements the Visual Studio Code built-in settings: <code>editor.formatOnType</code> and <code>editor.formatOnSave</code> as long as <code>files.autoSave</code> is off.</p>
+				<p>This extension also incorporates the built-in settings: <code>editor.formatOnType</code> and <code>editor.formatOnSave</code> as long as <code>files.autoSave</code> is off.</p>
 
 				<img src="vscode-format-on-save.gif">
 
@@ -397,7 +412,7 @@
 			<article id="atom">
 				<h1>Atom package</h1>
 
-				<p>Thanks to <a href="https://github.com/dekdekbaloo/atom-stylus-supremacy" target="_blank">dekdekbaloo</a>, <b>Stylus Supremacy</b> is now available as an Atom package. To install the package, follow the instruction video below.</p>
+				<p>Thanks to Jessada Trirongkit (<a href="https://github.com/dekdekbaloo" target="_blank">@dekdekbaloo</a>), <b>Stylus Supremacy</b> is now available as an Atom package. To install the package, follow the instructions below.</p>
 
 				<img src="atom.gif">
 
