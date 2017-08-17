@@ -4,6 +4,8 @@ const _ = require('lodash')
 
 const createFormattingOptions = require('./createFormattingOptions')
 const createStringBuffer = require('./createStringBuffer')
+const findParentNode = require('./findParentNode')
+const findChildNodes = require('./findChildNodes')
 
 function format(content, options = {}) {
 	// Stop processing if the input content is empty
@@ -1111,42 +1113,6 @@ function format(content, options = {}) {
 			}
 		}
 		return new Stylus.nodes.Comment(currentLine, false, false)
-	}
-
-	function findParentNode(inputNode, condition) {
-		const workingNode = inputNode && inputNode.parent
-		if (!workingNode) {
-			return null
-
-		} else if (condition(workingNode)) {
-			return workingNode
-
-		} else {
-			return findParentNode(workingNode, condition)
-		}
-	}
-
-	function findChildNodes(inputNode, condition, results = [] /* Internal */, visited = [] /* Internal */) {
-		if (inputNode && visited.includes(inputNode) === false) {
-			// Remember the visited nodes to prevent stack overflow
-			visited.push(inputNode)
-
-			if (condition(inputNode)) {
-				results.push(inputNode)
-			}
-
-			Object.getOwnPropertyNames(inputNode).forEach(name => {
-				const prop = inputNode[name]
-				if (_.isArray(prop)) {
-					_.forEach(prop, node => {
-						findChildNodes(node, condition, results, visited)
-					})
-				} else if (_.isObject(prop)) {
-					findChildNodes(prop, condition, results, visited)
-				}
-			})
-		}
-		return results
 	}
 
 	function getType(inputNode) {
