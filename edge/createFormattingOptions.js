@@ -117,6 +117,19 @@ const schema = {
 			`
 		}
 	},
+	insertParenthesisAfterNegation: {
+		description: 'Insert a pair of parentheses or a white-space after a negation operator. This does nothing if a pair of parentheses is already after the negation operator.',
+		type: 'boolean',
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				top - 10px
+				left -(10px)
+			`
+		}
+	},
 	insertParenthesisAroundIfCondition: {
 		description: 'Insert or remove a pair of parentheses around <code>if</code>-condition.',
 		type: 'boolean',
@@ -140,19 +153,6 @@ const schema = {
 				background red
 			else
 				background blue
-			`
-		}
-	},
-	insertParenthesisAroundNegatedVariable: {
-		description: 'Insert a pair of parentheses or a white-space around negated variables.',
-		type: 'boolean',
-		default: false,
-		example: {
-			values: [true, false],
-			code: `
-			length = 10px
-			.class1
-				margin - length
 			`
 		}
 	},
