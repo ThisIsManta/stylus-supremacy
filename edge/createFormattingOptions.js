@@ -39,22 +39,22 @@ const schema = {
 	},
 	insertNewLineAroundImports: {
 		description: 'Insert a new-line around a group of <code>@import</code>/<code>@require</code>(s).\nOnly apply to imports outside a block when set to <code>"root"</code>, or only apply to imports inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
-		oneOf: [true, false, 'root', 'nested'],
+		enum: [true, false, 'root', 'nested'],
 		default: true,
 	},
 	insertNewLineAroundBlocks: {
 		description: 'Insert a new-line around blocks.\nOnly apply to top-level blocks when set to <code>"root"</code>, or only apply to nested blocks when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
-		oneOf: [true, false, 'root', 'nested'],
+		enum: [true, false, 'root', 'nested'],
 		default: true,
 	},
 	insertNewLineAroundProperties: {
 		description: 'Insert a new-line around a group of CSS properties.\nUnlike <mark>insertNewLineAroundBlocks</mark> and <mark>insertNewLineAroundOthers</mark>, this option cannot be set to <code>"root"</code> nor <code>"nested"</code> because CSS properties cannot be placed at the top level.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
-		oneOf: [true, false],
+		type: 'boolean',
 		default: false,
 	},
 	insertNewLineAroundOthers: {
 		description: 'Insert a new-line around a group of non-properties, non-imports and non-blocks.\nOnly apply to others outside a block when set to <code>"root"</code>, or only apply to others inside a block when set to <code>"nested"</code>.\n<span class="no-vsce">Check the detailed examples <a href="#option-insert-newline-around-any">below</a>.</span>',
-		oneOf: [true, false, 'root', 'nested'],
+		enum: [true, false, 'root', 'nested'],
 		default: false,
 	},
 	insertNewLineBetweenSelectors: {
@@ -177,14 +177,14 @@ const schema = {
 	},
 	newLineChar: {
 		description: 'Represent a new-line character. You may want to change this to <code>"\\r\\n"</code> for Microsoft Windows.',
-		oneOf: ['\n', '\r\n'],
+		enum: ['\n', '\r\n'],
 		default: '\n',
 		hideInDemo: true,
 		hideInVSCE: true,
 	},
 	quoteChar: {
 		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.',
-		oneOf: ['\'', '"'],
+		enum: ['\'', '"'],
 		default: '\'',
 		example: {
 			values: ['\'', '"'],
@@ -197,9 +197,13 @@ const schema = {
 	sortProperties: {
 		description: 'Can be either <code>false</code> for doing nothing, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).',
 		oneOf: [
-			false,
-			'alphabetical',
-			'grouped',
+			{
+				enum: [
+					false,
+					'alphabetical',
+					'grouped',
+				]
+			},
 			{
 				type: 'array',
 				items: { type: 'string' },
@@ -332,7 +336,16 @@ function createFormattingOptions(options = {}) {
 }
 
 function verify(data, info) {
-	if (info.oneOf !== undefined) {
+	if (_.some(info.enum)) {
+		return _.some(info.enum, item => {
+			if (_.isObject(item)) {
+				return verify(data, item)
+			} else {
+				return data === item
+			}
+		})
+
+	} else if (info.oneOf !== undefined) {
 		const matchAnyValue = info.oneOf.some(item => {
 			if (_.isObject(item)) {
 				try {
@@ -371,7 +384,7 @@ function verify(data, info) {
 			throw new Error(`Expected ${data} to be null`)
 		}
 
-	} else if (info.type !== typeof data) {
+	} else if (info.type !== typeof data) { // 'boolean', 'string', 'number', 'object'
 		throw new Error(`Expected ${data} to be ${info.type}`)
 	}
 

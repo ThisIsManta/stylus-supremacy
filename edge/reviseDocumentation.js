@@ -49,20 +49,36 @@ function createFormattingTogglersForDemo() {
 					`</label>`
 				)
 
-			} else if (_.some(item.oneOf)) {
+			} else if (item.enum !== undefined) {
 				return (
 					`<label for="demo-${name}">` +
 					`<span>${name}</span>` +
 					`<select id="demo-${name}" value="${getType(item.default)}">` +
-					item.oneOf.map(stub => `<option value="${getType(stub)}" ${_.isObject(stub) ? 'disabled' : ''}>${getType(stub)}</option>`) +
+					_enum(item) +
+					`</select>` +
+					`</label>`
+				)
+
+			} else if (item.oneOf !== undefined) {
+				return (
+					`<label for="demo-${name}">` +
+					`<span>${name}</span>` +
+					`<select id="demo-${name}" value="${getType(item.default)}">` +
+					item.oneOf.map(stub => stub.enum
+						? _enum(stub)
+						: `<option value="${getType(stub)}" ${_.isObject(stub) ? 'disabled' : ''}>${getType(stub)}</option>`
+					) +
 					`</select>` +
 					`</label>`
 				)
 			}
 		})
-		.compact()
 		.join('')
 		.value()
+
+	function _enum(item) {
+		return item.enum.map(stub => `<option value="${getType(stub)}">${getType(stub)}</option>`).join('')
+	}
 }
 
 function createFormattingDescription() {
@@ -135,7 +151,7 @@ function getType(item) {
 		if (item.type) {
 			return item.type + (item.items ? ('&lt;' + getType(item.items) + '&gt;') : '')
 		} else {
-			return item.oneOf.map(getType).join(' | ')
+			return (item.enum || item.oneOf).map(item => getType(item)).join(' | ')
 		}
 	} else {
 		return _.escape(JSON.stringify(item))
