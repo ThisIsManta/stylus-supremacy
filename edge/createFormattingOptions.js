@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const sortedProperties = require('./createSortedProperties')()
 
 const schema = {
 	insertColons: {
@@ -195,7 +196,8 @@ const schema = {
 		}
 	},
 	sortProperties: {
-		description: 'Can be either <code>false</code> for doing nothing, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json">Stylint</a>, or an array of property names that defines the property order (for example, <code>["color", "background", "display"]</code>).',
+		description: 'Can be either <code>false</code> for not sorting, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json" target="_blank">Stylint</a> and <a href="https://github.com/tj/nib/blob/master/docs/README.md" target="_blank">nib</a><span class="no-vsce"> -- <a href="#option-sort-properties-grouped" onclick="$(\'#option-sort-properties-grouped\').toggle()">click here to show the full list of sorted properties</a></span>, or an array of property names that defines the property order, for example <code>["color", "background", "display"]</code>.\n' +
+		'<table id="option-sort-properties-grouped" class="no-vsce" style="display: none;"><tr><th>Sorted properties for "grouped"</th></tr>' + sortedProperties.map(prop => `<tr><td>${prop}</td></tr>`).join('') + '</table>',
 		oneOf: [
 			{
 				enum: [

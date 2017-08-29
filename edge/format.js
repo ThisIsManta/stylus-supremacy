@@ -1,9 +1,9 @@
 const Stylus = require('stylus')
-const ordering = require('stylint/src/data/ordering.json')
 const _ = require('lodash')
 
 const createFormattingOptions = require('./createFormattingOptions')
 const createStringBuffer = require('./createStringBuffer')
+const sortedProperties = require('./createSortedProperties')()
 const findParentNode = require('./findParentNode')
 const findChildNodes = require('./findChildNodes')
 
@@ -164,10 +164,9 @@ function format(content, options = {}) {
 						})
 
 					} else if (options.sortProperties === 'grouped') {
-						// See also https://github.com/SimenB/stylint/blob/master/src/data/ordering.json
 						return _.sortBy(nodes, node => {
 							const propertyName = node.segments.map(segment => segment.name).join('')
-							const propertyRank = ordering.grouped.indexOf(propertyName)
+							const propertyRank = sortedProperties.indexOf(propertyName)
 							if (propertyRank >= 0) {
 								return propertyRank
 							} else {
