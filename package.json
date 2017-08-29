@@ -13,6 +13,11 @@
     "pretty",
     "beautify"
   ],
+  "homepage": "https://thisismanta.github.io/stylus-supremacy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThisIsManta/vscode-stylus-supremacy.git"
+  },
   "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
   "bin": "./edge/commandLineInterface.js",
   "main": "./edge/index.js",
