@@ -36,6 +36,7 @@
     "uglifyjs": "~2.4.11"
   },
   "dependencies": {
+    "comment-json": "^1.1.3",
     "glob": "^7.1.2",
     "lodash": "^4.17.4",
     "stylint": "^1.5.9",

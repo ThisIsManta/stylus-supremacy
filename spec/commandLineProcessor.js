@@ -3,9 +3,9 @@ const fs = require('fs')
 const process = require('../edge/commandLineProcessor')
 const createCodeForFormatting = require('../edge/createCodeForFormatting')
 
-const inputTempFile = 'commandLineProcessorInput.styl'
-const optionTempFile = 'formattingOptions.json'
-const outputTempFile = 'commandLineProcessorOutput.styl'
+const inputTempFile = '__commandLineProcessorInput.styl'
+const optionTempFile = '__formattingOptions.json'
+const outputTempFile = '__commandLineProcessorOutput.styl'
 
 describe('commandLineProcessor', () => {
 	let Console
@@ -70,9 +70,10 @@ describe('commandLineProcessor', () => {
 			  display none
 			`)
 
-			const formattingOptions = {
-				insertColons: false,
-			}
+			const formattingOptions = `{
+				// Comments are acceptable because parsing JSON is being done by https://www.npmjs.com/package/comment-json
+				"insertColons": false
+			}`
 
 			const expectContent = createCodeForFormatting(`
 			body {
@@ -81,7 +82,7 @@ describe('commandLineProcessor', () => {
 			`)
 
 			fs.writeFileSync(inputTempFile, inputContent)
-			fs.writeFileSync(optionTempFile, JSON.stringify(formattingOptions, null, '\t'))
+			fs.writeFileSync(optionTempFile, formattingOptions)
 			process('format', [inputTempFile, param, optionTempFile], Console)
 			const outputContent = Console._log[0][0]
 

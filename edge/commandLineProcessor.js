@@ -1,7 +1,8 @@
 const fs = require('fs')
-const pt = require('path')
+const fp = require('path')
 const glob = require('glob')
 const _ = require('lodash')
+const JSONWithComments = require('comment-json')
 
 const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -29,15 +30,20 @@ function process(command, params = [], Console = console) {
 
 		let formattingOptions = {}
 		if (optionFilePathParams.length > 0) {
-			if (fs.existsSync(optionFilePathParams[1])) {
-				formattingOptions = JSON.parse(fs.readFileSync(optionFilePathParams[1], 'utf8'))
-				if (pt.basename(optionFilePathParams[1]).startsWith('.stylintrc')) {
-					formattingOptions = createFormattingOptionsFromStylint(formattingOptions)
-				} else {
-					formattingOptions = createFormattingOptions(formattingOptions)
-				}
+			if (fs.existsSync(optionFilePathParams[1]) === false) {
+				throw new Error('The given option file path did not exist.')
+			}
+
+			try {
+				formattingOptions = JSONWithComments.parse(fs.readFileSync(optionFilePathParams[1], 'utf8'), null, true)
+			} catch (ex) {
+				throw new Error('The given option file could not be parsed as JSON.')
+			}
+
+			if (fp.basename(optionFilePathParams[1]).startsWith('.stylintrc')) {
+				formattingOptions = createFormattingOptionsFromStylint(formattingOptions)
 			} else {
-				throw new Error('Option file did not exist.')
+				formattingOptions = createFormattingOptions(formattingOptions)
 			}
 		}
 
@@ -60,11 +66,11 @@ function process(command, params = [], Console = console) {
 						// Do nothing
 
 					} else if (outputDirectoryParams.length > 0) {
-						if (fs.existsSync(pt.resolve(outputDirectoryParams[1])) === false) {
-							fs.mkdirSync(pt.resolve(outputDirectoryParams[1]))
+						if (fs.existsSync(fp.resolve(outputDirectoryParams[1])) === false) {
+							fs.mkdirSync(fp.resolve(outputDirectoryParams[1]))
 						}
 
-						fs.writeFileSync(pt.resolve(outputDirectoryParams[1], pt.basename(path)), outputContent)
+						fs.writeFileSync(fp.resolve(outputDirectoryParams[1], fp.basename(path)), outputContent)
 
 					} else if (replaceOriginalParams.length > 0) {
 						if (inputContent !== outputContent) {
