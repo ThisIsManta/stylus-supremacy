@@ -3,7 +3,7 @@ const createFormattingOptions = require('../edge/createFormattingOptionsFromStyl
 const defaultStylintOptions = require('stylint/src/core/config')
 
 describe('createFormattingOptionsFromStylint', () => {
-	it('represents the default formatting options', () => {
+	it('returns the default formatting options', () => {
 		const formattingOptions = {
 			insertBraces: false,
 			insertColons: true,
