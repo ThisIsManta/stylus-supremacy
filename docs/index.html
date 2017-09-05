@@ -360,6 +360,14 @@
 				<p>If you are using <a href="https://www.npmjs.com/package/stylint" target="_blank">Stylint</a> as a Stylus linter and wanting to use <mark class="alt">.stylintrc</mark> file as formatting options, simply pass the <mark class="alt">.stylintrc</mark> file via <mark class="no-break">--options</mark> command-line parameter.</p>
 				<code>stylus-supremacy format ./path/to/your/file.styl <br>&nbsp;&nbsp;--options ./path/to/your/.stylintrc</code>
  
+				<p>The below is the default example of <mark class="alt">.stylintrc</mark> file. Note that the content of the file must be in JSON even though it does not have any file extension.</p>
+
+				<code>
+					{<br>
+						&nbsp;&nbsp;"blocks": false,<br>&nbsp;&nbsp;"brackets": "never",<br>&nbsp;&nbsp;"colons": "always",<br>&nbsp;&nbsp;"colors": "always",<br>&nbsp;&nbsp;"commaSpace": "always",<br>&nbsp;&nbsp;"commentSpace": "always",<br>&nbsp;&nbsp;"cssLiteral": "never",<br>&nbsp;&nbsp;"customProperties": [],<br>&nbsp;&nbsp;"depthLimit": false,<br>&nbsp;&nbsp;"duplicates": true,<br>&nbsp;&nbsp;"efficient": "always",<br>&nbsp;&nbsp;"exclude": [],<br>&nbsp;&nbsp;"extendPref": false,<br>&nbsp;&nbsp;"globalDupe": false,<br>&nbsp;&nbsp;"groupOutputByFile": true,<br>&nbsp;&nbsp;"indentPref": false,<br>&nbsp;&nbsp;"leadingZero": "never",<br>&nbsp;&nbsp;"maxErrors": false,<br>&nbsp;&nbsp;"maxWarnings": false,<br>&nbsp;&nbsp;"mixed": false,<br>&nbsp;&nbsp;"mixins": [],<br>&nbsp;&nbsp;"namingConvention": false,<br>&nbsp;&nbsp;"namingConventionStrict": false,<br>&nbsp;&nbsp;"none": "never",<br>&nbsp;&nbsp;"noImportant": true,<br>&nbsp;&nbsp;"parenSpace": false,<br>&nbsp;&nbsp;"placeholders": "always",<br>&nbsp;&nbsp;"prefixVarsWithDollar": "always",<br>&nbsp;&nbsp;"quotePref": false,<br>&nbsp;&nbsp;"reporterOptions": {<br>&nbsp;&nbsp;"columns": ["lineData", "severity", "description", "rule"],<br>&nbsp;&nbsp;"columnSplitter": "  ",<br>&nbsp;&nbsp;"showHeaders": false,<br>&nbsp;&nbsp;"truncate": true<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"semicolons": "never",<br>&nbsp;&nbsp;"sortOrder": "alphabetical",<br>&nbsp;&nbsp;"stackedProperties": "never",<br>&nbsp;&nbsp;"trailingWhitespace": "never",<br>&nbsp;&nbsp;"universal": false,<br>&nbsp;&nbsp;"valid": true,<br>&nbsp;&nbsp;"zeroUnits": "never",<br>&nbsp;&nbsp;"zIndexNormalize": false<br>
+					}
+				</code>
+
 				<p>Programmatically, starting from <b>Stylus Supremacy</b> version 1.0.0, the <mark>format</mark> function does not recognize Stylint rules, but you can convert them to formatting options by calling <mark>createFormattingOptionsFromStylint</mark> function.</p>
 				<code>
 					const stylusSupremacy = require('stylus-supremacy')<br>
@@ -429,7 +437,7 @@
 
 				<p>Once you have this package installed on your Atom, you can simply open a Stylus file, right click on the document editing space, then choose <mark class="nobr">Format Stylus</mark> command, or press Control+Shift+P on your keyboard and run "Format Stylus" command.</p>
 
-				<p>Currently, this package only supports reading rules from <mark class="alt">.stylintrc</mark> file and in-package <mark>Format on Save</mark> setting.</p>
+				<p>This package only supports reading formatting options from <mark class="alt">.stylintrc</mark> file and in-package <mark>Format on Save</mark> setting. Please find an example of <mark class="alt">.stylintrc</mark> file in <a href="#stylint">Stylint compatibility</a> section.</p>			
 			</article>
 		</main>
 	</body>
