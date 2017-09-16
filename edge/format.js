@@ -315,7 +315,7 @@ function format(content, options = {}) {
 				const commentsOnTheRight = _.chain(inputNode.expr.nodes).clone().reverse().takeWhile(node => node instanceof Stylus.nodes.Comment).reverse().value()
 				const nodesExcludingCommentsOnTheRight = inputNode.expr.nodes.slice(0, inputNode.expr.nodes.length - commentsOnTheRight.length)
 
-				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode, node, indentLevel, true))
+				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode.expr, node, indentLevel, true))
 
 				// Reduce the redundant margin/padding values
 				// For example,
@@ -362,7 +362,15 @@ function format(content, options = {}) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Literal) {
-			if (_.isObject(inputNode.parent) && (inputNode.parent instanceof Stylus.nodes.Root || inputNode.parent instanceof Stylus.nodes.Block)) { // In case of @css
+			if (_.isObject(inputNode.parent) && inputNode.parent instanceof Stylus.nodes.Expression && inputNode.parent.nodes.length === 1) { // In case of @css property
+				// Note that it must be wrapped inside a pair of braces
+				outputBuffer.append('@css {')
+				if (inputNode.val.trim().length > 0) {
+					outputBuffer.append(' ' + inputNode.val.trim() + ' ')
+				}
+				outputBuffer.append('}')
+
+			} else if (_.isObject(inputNode.parent) && (inputNode.parent instanceof Stylus.nodes.Root || inputNode.parent instanceof Stylus.nodes.Block)) { // In case of @css block
 				// Note that it must be wrapped inside a pair of braces
 				outputBuffer.append('@css {' + options.newLineChar)
 
@@ -488,7 +496,7 @@ function format(content, options = {}) {
 
 			if (inputNode.name === 'url' && inputNode.args.nodes.length === 1 && inputNode.args.nodes[0] instanceof Stylus.nodes.Expression && inputNode.args.nodes[0].nodes.length > 1) { // In case of `url(non-string)`
 				const modifiedArgument = new Stylus.nodes.Arguments()
-				modifiedArgument.nodes = [new Stylus.nodes.String(inputNode.args.nodes[0].nodes.map(node => travel(inputNode.args, node, indentLevel, true)).join(''))]
+				modifiedArgument.nodes = [new Stylus.nodes.String(inputNode.args.nodes[0].nodes.map(node => travel(inputNode.args.nodes[0], node, indentLevel, true)).join(''))]
 				outputBuffer.append(travel(inputNode, modifiedArgument, indentLevel, true))
 
 			} else {
