@@ -1,3 +1,5 @@
+$base = (1 / 24) * 100
+
 body
   display !0
   visibility not true is false
@@ -6,7 +8,8 @@ body
   color 1 in list
   item = list[-1]
   range = 1...5
-  math = 1+2- 3*(4/5) %6**7
+  font 14px/1.5
+  math = 1+2- 3*(4/5) **6
   color = color is defined ? unit(num,'px') : white
   color := white
   color ?= white
@@ -16,4 +19,5 @@ body
   lookup('light-'+name)
   font-size (num)em
   width 'calc(100% - %s)' % 40px
+  height ($base * 4)rem
   fonts = proxima-nova-regular, Proxima Nova, Hiragino Kaku Gothic Pro, Helvetica, 'Microsoft YaHei New'

@@ -6,8 +6,10 @@ for key,value in obj
   {key}:value
 
 sum(nums)
-  sum = 0
-  sum += n for n in nums
+  val = 0
+  val += n for n in nums
+  val += (n+1) for n in nums
 
 get(hash,key)
   return pair[1] if pair[0] == key for pair in hash
+  return (pair[1]) if pair[0] == key for pair in hash

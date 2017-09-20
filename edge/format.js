@@ -451,7 +451,7 @@ function format(content, options = {}) {
 
 			} else if (inputNode.val instanceof Stylus.nodes.BinOp && inputNode.val.left instanceof Stylus.nodes.Ident && inputNode.val.left.name === inputNode.name && inputNode.val.right) { // In case of self-assignments
 				outputBuffer.append(' ' + inputNode.val.op + '= ')
-				outputBuffer.append(travel(inputNode.val, inputNode.val.right, indentLevel, true))
+				outputBuffer.append(travel(inputNode, inputNode.val.right, indentLevel, true))
 			}
 
 			const currentHasChildOfAnonymousFunc = inputNode.val instanceof Stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof Stylus.nodes.Ident && inputNode.val.nodes[0].val instanceof Stylus.nodes.Function && inputNode.val.nodes[0].val.name === 'anonymous'
@@ -544,8 +544,28 @@ function format(content, options = {}) {
 				outputBuffer.append('{')
 			}
 
-			const parentIsArithmeticOperator = inputNode.parent instanceof Stylus.nodes.UnaryOp || inputNode.parent instanceof Stylus.nodes.BinOp && inputNode.parent.left === inputNode
-			if (parentIsArithmeticOperator) {
+			const parentIsArithmeticOperator =
+				inputNode.parent instanceof Stylus.nodes.UnaryOp ||
+				(
+					inputNode.nodes.length === 1 &&
+					inputNode.parent instanceof Stylus.nodes.BinOp &&
+					inputNode.parent.op !== '[]' &&
+					inputNode.parent.op !== '[]='
+				)
+			const parentIsContainingExpression =
+				inputNode.nodes.length === 1 &&
+				inputNode.parent &&
+				inputNode.parent instanceof Stylus.nodes.Expression &&
+				(inputNode.parent instanceof Stylus.nodes.Arguments) === false && // Note that `Arguments` type inherits `Expression` type
+				inputNode.parent.parent &&
+				(
+					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
+					inputNode.parent.parent instanceof Stylus.nodes.If ||
+					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
+					inputNode.parent.parent instanceof Stylus.nodes.Return
+				) === false
+			const currentHasParenthesis = parentIsArithmeticOperator || parentIsContainingExpression
+			if (currentHasParenthesis) {
 				outputBuffer.append(openParen)
 			}
 
@@ -579,7 +599,7 @@ function format(content, options = {}) {
 				outputBuffer.append('}')
 			}
 
-			if (parentIsArithmeticOperator) {
+			if (currentHasParenthesis) {
 				outputBuffer.append(closeParen)
 			}
 
@@ -651,18 +671,27 @@ function format(content, options = {}) {
 				}
 
 			} else {
-				const escapeDivider = inputNode.op === '/'
-				if (escapeDivider) {
+				const operatorIsDivider = 0//inputNode.op === '/'
+				if (operatorIsDivider) {
 					outputBuffer.append(openParen)
 				}
 
+				const leftSideHasParenthesis = 0//inputNode.left instanceof Stylus.nodes.Expression && inputNode.left.nodes.length === 1
+				if (leftSideHasParenthesis) {
+					outputBuffer.append(openParen)
+				}
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
+				if (leftSideHasParenthesis) {
+					outputBuffer.append(closeParen)
+				}
+
 				outputBuffer.append(' ' + inputNode.op)
+
 				if (inputNode.right) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
 				}
 
-				if (escapeDivider) {
+				if (operatorIsDivider) {
 					outputBuffer.append(closeParen)
 				}
 			}
@@ -677,7 +706,7 @@ function format(content, options = {}) {
 
 				outputBuffer.append(inputNode.cond.left.name)
 				outputBuffer.append(' ?= ')
-				outputBuffer.append(travel(inputNode.cond, inputNode.cond.left.val, indentLevel, true))
+				outputBuffer.append(travel(inputNode.cond.left, inputNode.cond.left.val, indentLevel, true))
 
 			} else {
 				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
