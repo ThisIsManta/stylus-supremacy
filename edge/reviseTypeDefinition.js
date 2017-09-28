@@ -3,23 +3,28 @@ const _ = require('lodash')
 
 const createFormattingOptions = require('./createFormattingOptions')
 
-let definition = fs.readFileSync('edge/index.d.ts', 'utf-8')
+const filePath = 'edge/index.d.ts'
+let content = fs.readFileSync(filePath, 'utf-8')
 
-const lines = definition.split('\n')
-const begin = _.findIndex(lines, line => line.startsWith('declare interface FormattingOptions {'))
-const final = _.findIndex(lines, line => line === '}', begin + 1)
+const lines = content.split('\n')
+const begin = _.findIndex(lines, line => line === '\texport interface FormattingOptions {')
+const final = _.findIndex(lines, line => line === '\t}', begin + 1)
+
+if (begin === -1 || final === -1) {
+	throw new Error(`Could not find "FormattingOptions" interface in ${filePath}.`)
+}
 
 const formattingOptionDefinition = _.chain(createFormattingOptions.schema)
-	.map((info, name) => '\t' + name + '?: ' + getType(info))
+	.map((info, name) => '\t\t' + name + '?: ' + getType(info))
 	.value()
 
-definition = _.concat(
+content = _.concat(
 	lines.slice(0, begin + 1),
 	formattingOptionDefinition,
 	lines.slice(final)
 ).join('\n')
 
-fs.writeFileSync('edge/index.d.ts', definition)
+fs.writeFileSync(filePath, content)
 
 function getType(info) {
 	if (info.type === 'integer') {
