@@ -423,6 +423,21 @@ label, input[type=checkbox] {
 	padding: 0;
 }
 
+#go-to-menu {
+	display: none;
+	position: fixed;
+	background: #D50000;
+	bottom: 28px;
+	right: 28px;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+    align-items: center;
+	justify-content: center;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+	cursor: pointer;
+}
+
 @media only screen and (min-device-width: 320px) and (max-device-width: 568px) and (-webkit-min-device-pixel-ratio: 2) {
 	main {
 		padding-bottom: 2rem;
@@ -447,5 +462,9 @@ label, input[type=checkbox] {
 	.table-head > *, .table-body > * {
 		display: block;
 		width: auto;
+	}
+
+	#go-to-menu {
+    	display: flex;
 	}
 }

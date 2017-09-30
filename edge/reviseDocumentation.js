@@ -88,7 +88,7 @@ function createFormattingDescription() {
 		'<code>' +
 		defaultOptionJSON
 			.replace(/<br>/g, '\n')
-			.replace(/^&nbsp;&nbsp;&quot;(\w+)&quot;/gm, (full, part) => full.replace(part, `<a href="#option-${_.kebabCase(part)}">${createBreakableWords('stylusSupremacy.' + part)}</a>`))
+			.replace(/^&nbsp;&nbsp;&quot;(\w+)&quot;/gm, (full, part) => full.replace(part, `<a href="#option-${_.kebabCase(part)}">stylusSupremacy.${createBreakableWords(part)}</a>`))
 			.replace(/\n/g, '<br>') +
 		'</code>'
 	)
