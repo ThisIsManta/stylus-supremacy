@@ -323,11 +323,14 @@ function createFormattingOptions(options = {}) {
 	} else {
 		return _.reduce(schema, (hash, info, name) => {
 			try {
-				if (options[name] === undefined) {
+				// Support "stylusSupremacy." prefix for Visual Studio Code setting compatibility since v2.4
+				const data = options['stylusSupremacy.' + name] !== undefined ? options['stylusSupremacy.' + name] : options[name]
+
+				if (data === undefined) {
 					hash[name] = info.default
 
-				} else if (verify(options[name], info)) {
-					hash[name] = options[name]
+				} else if (verify(data, info)) {
+					hash[name] = data
 				}
 			} catch (ex) {
 				throw new Error(ex.message + ` at "${name}".`)
