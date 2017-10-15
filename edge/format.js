@@ -564,7 +564,12 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
 					inputNode.parent.parent instanceof Stylus.nodes.Return
 				) === false
-			const currentHasParenthesis = parentIsArithmeticOperator || parentIsContainingExpression
+			const currentIsContainingDivision = (
+				inputNode.nodes.length === 1 &&
+				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
+				inputNode.nodes[0].op === '/'
+			)
+			const currentHasParenthesis = parentIsArithmeticOperator || parentIsContainingExpression || currentIsContainingDivision
 			if (currentHasParenthesis) {
 				outputBuffer.append(openParen)
 			}
@@ -671,28 +676,12 @@ function format(content, options = {}) {
 				}
 
 			} else {
-				const operatorIsDivider = 0//inputNode.op === '/'
-				if (operatorIsDivider) {
-					outputBuffer.append(openParen)
-				}
-
-				const leftSideHasParenthesis = 0//inputNode.left instanceof Stylus.nodes.Expression && inputNode.left.nodes.length === 1
-				if (leftSideHasParenthesis) {
-					outputBuffer.append(openParen)
-				}
 				outputBuffer.append(travel(inputNode, inputNode.left, indentLevel, true))
-				if (leftSideHasParenthesis) {
-					outputBuffer.append(closeParen)
-				}
 
 				outputBuffer.append(' ' + inputNode.op)
 
 				if (inputNode.right) {
 					outputBuffer.append(' ' + travel(inputNode, inputNode.right, indentLevel, true))
-				}
-
-				if (operatorIsDivider) {
-					outputBuffer.append(closeParen)
 				}
 			}
 
