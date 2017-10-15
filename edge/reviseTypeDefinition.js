@@ -1,6 +1,7 @@
 const fs = require('fs')
 const _ = require('lodash')
 
+const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
 
 const filePath = 'edge/index.d.ts'
@@ -14,7 +15,7 @@ if (begin === -1 || final === -1) {
 	throw new Error(`Could not find "FormattingOptions" interface in ${filePath}.`)
 }
 
-const formattingOptionDefinition = _.chain(createFormattingOptions.schema)
+const formattingOptionDefinition = _.chain(schema)
 	.map((info, name) => '\t\t' + name + '?: ' + getType(info))
 	.value()
 

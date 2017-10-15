@@ -2,6 +2,7 @@ export = StylusSupremacy
 
 declare namespace StylusSupremacy {
 	export function format(content: string, options: FormattingOptions): string
+	export const schema: any
 	export function createFormattingOptions(options: any): FormattingOptions
 	export function createFormattingOptionsFromStylint(options: any): FormattingOptions
 

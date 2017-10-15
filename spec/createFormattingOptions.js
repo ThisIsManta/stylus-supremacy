@@ -1,12 +1,13 @@
+const schema = require('../edge/schema')
 const createFormattingOptions = require('../edge/createFormattingOptions')
 
 describe('createFormattingOptions', () => {
 	it('returns the default formatting options given an empty object', () => {
-		expect(Object.keys(createFormattingOptions())).toEqual(Object.keys(createFormattingOptions.schema))
+		expect(Object.keys(createFormattingOptions())).toEqual(Object.keys(schema))
 	})
 
 	it('returns the default value given `undefined`', () => {
-		expect(createFormattingOptions().insertColons).toBe(createFormattingOptions.schema.insertColons.default)
+		expect(createFormattingOptions().insertColons).toBe(schema.insertColons.default)
 	})
 
 	it('returns the same value given a valid value', () => {

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const _ = require('lodash')
 
+const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const format = require('./format')
@@ -22,7 +23,7 @@ function updateDocument(document, placeholder, worker) {
 }
 
 function createFormattingTogglersForDemo() {
-	return _.chain(createFormattingOptions.schema)
+	return _.chain(schema)
 		.omitBy(item => item.hideInDemo === true)
 		.map((item, name) => {
 			if (item.type === 'boolean') {
@@ -93,7 +94,7 @@ function createFormattingDescription() {
 		'</code>'
 	)
 
-	const formattingOptionDescription = _.chain(createFormattingOptions.schema)
+	const formattingOptionDescription = _.chain(schema)
 		.map((item, name) => [
 			`<section id="option-${_.kebabCase(name)}">`,
 			`<h2>`,
@@ -122,7 +123,7 @@ function createFormattingDescription() {
 }
 
 function createStylintConversionTable() {
-	const validFormattingOptionNames = Object.keys(createFormattingOptions.schema)
+	const validFormattingOptionNames = Object.keys(schema)
 
 	const stylintOptionMap = _.toPairs(createFormattingOptionsFromStylint.map)
 		.reduce((temp, pair) => {
