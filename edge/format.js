@@ -137,6 +137,12 @@ function format(content, options = {}) {
 
 			outputBuffer.append(options.newLineChar)
 
+			// Insert single-comments for an empty block
+			if (inputNode.nodes.length === 0) {
+				const commentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(inputNode)
+				outputBuffer.append(commentNodes.map(node => travel(inputNode, node, childIndentLevel)).join(''))
+			}
+
 			// Filter multi-line comment(s)
 			const commentNodes = inputNode.nodes.filter(node => node instanceof Stylus.nodes.Comment)
 			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
@@ -1049,8 +1055,14 @@ function format(content, options = {}) {
 			zeroBasedLineIndex = inputNode.lineno - 1
 		}
 
+		if (modifiedLines[zeroBasedLineIndex] === undefined) {
+			return []
+		}
+
+		const referenceNodeIndent = getIndent(modifiedLines[zeroBasedLineIndex])
+
 		let commentNodes = []
-		while (--zeroBasedLineIndex >= 0 && modifiedLines[zeroBasedLineIndex] !== undefined) {
+		while (--zeroBasedLineIndex >= 0) {
 			const text = modifiedLines[zeroBasedLineIndex].trim()
 			if (text === '') {
 				if (commentNodes.length > 0) {
@@ -1058,6 +1070,9 @@ function format(content, options = {}) {
 				}
 
 			} else if (text.startsWith('//') === false) {
+				break
+
+			} else if (referenceNodeIndent !== getIndent(modifiedLines[zeroBasedLineIndex])) {
 				break
 
 			} else if (!usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
@@ -1090,9 +1105,10 @@ function format(content, options = {}) {
 			return null
 		}
 
+		const referenceNodeIndent = getIndent(modifiedLines[zeroBasedLineIndex])
+
 		const commentNodes = []
-		const sourceNodeIndent = modifiedLines[zeroBasedLineIndex].substring(0, modifiedLines[zeroBasedLineIndex].length - _.trimStart(modifiedLines[zeroBasedLineIndex]).length)
-		while (++zeroBasedLineIndex < modifiedLines.length && modifiedLines[zeroBasedLineIndex].trim().startsWith('//') && modifiedLines[zeroBasedLineIndex].startsWith(sourceNodeIndent)) {
+		while (++zeroBasedLineIndex < modifiedLines.length && modifiedLines[zeroBasedLineIndex].trim().startsWith('//') && modifiedLines[zeroBasedLineIndex].startsWith(referenceNodeIndent)) {
 			if (usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
 				break
 			} else {
@@ -1236,6 +1252,10 @@ function format(content, options = {}) {
 
 function checkIfMixin(node) {
 	return node instanceof Stylus.nodes.Ident && node.val instanceof Stylus.nodes.Function
+}
+
+function getIndent(line) {
+	return line.substring(0, line.length - _.trimStart(line).length)
 }
 
 module.exports = format
