@@ -126,6 +126,10 @@ function format(content, options = {}) {
 				outputBuffer.append(' {')
 			}
 
+			// Filter multi-line comment(s)
+			const commentNodes = inputNode.nodes.filter(node => node instanceof Stylus.nodes.Comment)
+			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
+
 			// Insert a comment on the right of the last selector
 			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock)
 			if (sideCommentNode) {
@@ -133,6 +137,12 @@ function format(content, options = {}) {
 					outputBuffer.append(' ')
 				}
 				outputBuffer.append(travel(inputNode.parent, sideCommentNode, indentLevel, true))
+
+				// Remove the duplicate multi-line comment, which it is the same as `sideCommentNode` above
+				const duplicateCommentNode = inputNode.nodes.length > 0 && inputNode.nodes[0] instanceof Stylus.nodes.Comment && inputNode.nodes[0].lineno === inputNode.lineno ? inputNode.nodes[0] : null
+				if (duplicateCommentNode && sideCommentNode.str === duplicateCommentNode.str) {
+					commentNodes.splice(0, 1)
+				}
 			}
 
 			outputBuffer.append(options.newLineChar)
@@ -142,10 +152,6 @@ function format(content, options = {}) {
 				const commentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(inputNode)
 				outputBuffer.append(commentNodes.map(node => travel(inputNode, node, childIndentLevel)).join(''))
 			}
-
-			// Filter multi-line comment(s)
-			const commentNodes = inputNode.nodes.filter(node => node instanceof Stylus.nodes.Comment)
-			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
 
 			const groupOfUnsortedNonCommentNodes = []
 			unsortedNonCommentNodes.forEach((node, rank, list) => {
@@ -568,7 +574,8 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
 					inputNode.parent.parent instanceof Stylus.nodes.If ||
 					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
-					inputNode.parent.parent instanceof Stylus.nodes.Return
+					inputNode.parent.parent instanceof Stylus.nodes.Return ||
+					inputNode.parent.parent instanceof Stylus.nodes.Arguments
 				) === false
 			const currentIsContainingDivision = (
 				inputNode.nodes.length === 1 &&
@@ -766,11 +773,11 @@ function format(content, options = {}) {
 				outputBuffer.append(' ' + operation + ' ')
 
 				// Insert the `if` condition
-				if (options.insertParenthesisAroundIfCondition) {
+				if (checkForParenthesis(inputNode, options)) {
 					outputBuffer.append(openParen)
 				}
 				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
-				if (options.insertParenthesisAroundIfCondition) {
+				if (checkForParenthesis(inputNode, options)) {
 					outputBuffer.append(closeParen)
 				}
 
@@ -788,11 +795,11 @@ function format(content, options = {}) {
 
 				// Insert the `if` condition
 				outputBuffer.append(operation + ' ')
-				if (options.insertParenthesisAroundIfCondition) {
+				if (checkForParenthesis(inputNode, options)) {
 					outputBuffer.append(openParen)
 				}
 				outputBuffer.append(travel(inputNode, inputNode.cond, indentLevel, true))
-				if (options.insertParenthesisAroundIfCondition) {
+				if (checkForParenthesis(inputNode, options)) {
 					outputBuffer.append(closeParen)
 				}
 
@@ -913,6 +920,7 @@ function format(content, options = {}) {
 			if (_.some(inputNode.segments)) {
 				outputBuffer.append(' ')
 				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+				outputBuffer.remove(' ')
 			}
 			if (inputNode.block) {
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
@@ -1252,6 +1260,23 @@ function format(content, options = {}) {
 
 function checkIfMixin(node) {
 	return node instanceof Stylus.nodes.Ident && node.val instanceof Stylus.nodes.Function
+}
+
+function checkForParenthesis(node, options) {
+	// Note that `Arguments` type inherits `Expression` type
+	return (
+		node instanceof Stylus.nodes.If &&
+		options.insertParenthesisAroundIfCondition &&
+		node.cond instanceof Stylus.nodes.Expression &&
+		node.cond.nodes.length === 1 &&
+		checkForParenthesis(node.cond.nodes[0], options) === false
+	) || (
+		node instanceof Stylus.nodes.Expression &&
+		node instanceof Stylus.nodes.Arguments === false &&
+		node.nodes.length === 1 &&
+		node.nodes[0] instanceof Stylus.nodes.Expression &&
+		node.nodes[0] instanceof Stylus.nodes.Arguments === false
+	)
 }
 
 function getIndent(line) {
