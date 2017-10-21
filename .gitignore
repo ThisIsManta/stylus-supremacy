@@ -1,4 +1,4 @@
 node_modules
-spec/**/debugging.json
-spec/**/actual.styl
+spec/**/*-debugging.json
+spec/**/*-formatted.styl
 *.log
