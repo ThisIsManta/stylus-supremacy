@@ -113,13 +113,13 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 			return null
 		}
 
-		/* xit('can be re-parsed', () => {
+		it('can be re-parsed', () => {
 			try {
 				new Stylus.Parser(outputContent).parse()
 			} catch (ex) {
 				fail(ex)
 			}
-		}) */
+		})
 
 		it('can be re-formatted', () => {
 			const actualContent = format(outputContent, formattingOptions)

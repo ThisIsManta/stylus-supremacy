@@ -327,7 +327,7 @@ function format(content, options = {}) {
 				const commentsOnTheRight = _.chain(inputNode.expr.nodes).clone().reverse().takeWhile(node => node instanceof Stylus.nodes.Comment).reverse().value()
 				const nodesExcludingCommentsOnTheRight = inputNode.expr.nodes.slice(0, inputNode.expr.nodes.length - commentsOnTheRight.length)
 
-				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode.expr, node, indentLevel, true))
+				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode, node, indentLevel, true))
 
 				// Reduce the redundant margin/padding values
 				// For example,
@@ -374,7 +374,7 @@ function format(content, options = {}) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Literal) {
-			if (_.isObject(inputNode.parent) && inputNode.parent instanceof Stylus.nodes.Expression && inputNode.parent.nodes.length === 1) { // In case of @css property
+			if (inputNode.parent instanceof Stylus.nodes.Property && inputNode.parent.expr.nodes.length === 1) { // In case of @css property
 				// Note that it must be wrapped inside a pair of braces
 				outputBuffer.append('@css {')
 				if (inputNode.val.trim().length > 0) {
@@ -382,7 +382,7 @@ function format(content, options = {}) {
 				}
 				outputBuffer.append('}')
 
-			} else if (_.isObject(inputNode.parent) && (inputNode.parent instanceof Stylus.nodes.Root || inputNode.parent instanceof Stylus.nodes.Block)) { // In case of @css block
+			} else if (inputNode.parent instanceof Stylus.nodes.Root || inputNode.parent instanceof Stylus.nodes.Block) { // In case of @css block
 				// Note that it must be wrapped inside a pair of braces
 				outputBuffer.append('@css {' + options.newLineChar)
 
@@ -564,9 +564,8 @@ function format(content, options = {}) {
 					inputNode.parent.op !== '[]' &&
 					inputNode.parent.op !== '[]='
 				)
-			const parentIsContainingExpression =
+			const parentIsNestedExpression =
 				inputNode.nodes.length === 1 &&
-				inputNode.parent &&
 				inputNode.parent instanceof Stylus.nodes.Expression &&
 				(inputNode.parent instanceof Stylus.nodes.Arguments) === false && // Note that `Arguments` type inherits `Expression` type
 				inputNode.parent.parent &&
@@ -577,13 +576,19 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Return ||
 					inputNode.parent.parent instanceof Stylus.nodes.Arguments
 				) === false
-			const currentIsContainingDivision = (
+			const currentIsDivision =
 				inputNode.nodes.length === 1 &&
 				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
 				inputNode.nodes[0].op === '/'
-			)
-			const currentHasParenthesis = parentIsArithmeticOperator || parentIsContainingExpression || currentIsContainingDivision
-			if (currentHasParenthesis) {
+			const currentHasUnitSuffix =
+				inputNode.nodes.length === 2 &&
+				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
+				inputNode.nodes[1] instanceof Stylus.nodes.Ident
+			const currentHasParenthesis =
+				parentIsArithmeticOperator ||
+				parentIsNestedExpression ||
+				currentIsDivision
+			if (currentHasParenthesis || currentHasUnitSuffix) {
 				outputBuffer.append(openParen)
 			}
 
@@ -591,7 +596,7 @@ function format(content, options = {}) {
 
 			const currentIsPartOfKeyframes = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Keyframes && node.segments.includes(inputNode))
 
-			outputBuffer.append(inputNode.nodes.map((node, rank) => {
+			outputBuffer.append(inputNode.nodes.map((node, rank, list) => {
 				// Use either a white-space or a comma as a separator
 				let separator
 				if (rank === 0) {
@@ -606,8 +611,12 @@ function format(content, options = {}) {
 					}
 				}
 
-				if (node instanceof Stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
+				if (currentHasUnitSuffix && node === _.last(list)) {
+					return closeParen + travel(inputNode, node, indentLevel, true)
+
+				} else if (node instanceof Stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
 					return separator + '{' + travel(inputNode, node, indentLevel, true) + '}'
+
 				} else {
 					return separator + travel(inputNode, node, indentLevel, true)
 				}
@@ -1271,12 +1280,12 @@ function checkForParenthesis(node, options) {
 		node.cond.nodes.length === 1 &&
 		checkForParenthesis(node.cond.nodes[0], options) === false
 	) || (
-		node instanceof Stylus.nodes.Expression &&
-		node instanceof Stylus.nodes.Arguments === false &&
-		node.nodes.length === 1 &&
-		node.nodes[0] instanceof Stylus.nodes.Expression &&
-		node.nodes[0] instanceof Stylus.nodes.Arguments === false
-	)
+			node instanceof Stylus.nodes.Expression &&
+			node instanceof Stylus.nodes.Arguments === false &&
+			node.nodes.length === 1 &&
+			node.nodes[0] instanceof Stylus.nodes.Expression &&
+			node.nodes[0] instanceof Stylus.nodes.Arguments === false
+		)
 }
 
 function getIndent(line) {
