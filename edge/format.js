@@ -598,17 +598,11 @@ function format(content, options = {}) {
 
 			outputBuffer.append(inputNode.nodes.map((node, rank, list) => {
 				// Use either a white-space or a comma as a separator
-				let separator
+				let separator = ' '
 				if (rank === 0) {
 					separator = ''
-				} else {
-					separator = ' '
-					if (node.lineno > 0 && node.column > 0) {
-						const currentLine = modifiedLines[node.lineno - 1]
-						if (typeof currentLine === 'string' && _.last(_.trimEnd(currentLine.substring(0, node.column - 1))) === ',') {
-							separator = comma
-						}
-					}
+				} else if (node instanceof Stylus.nodes.Expression) {
+					separator = comma
 				}
 
 				if (currentHasUnitSuffix && node === _.last(list)) {
