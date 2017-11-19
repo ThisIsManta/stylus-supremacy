@@ -560,6 +560,7 @@ function format(content, options = {}) {
 				inputNode.parent instanceof Stylus.nodes.UnaryOp ||
 				(
 					inputNode.nodes.length === 1 &&
+					inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
 					inputNode.parent instanceof Stylus.nodes.BinOp &&
 					inputNode.parent.op !== '[]' &&
 					inputNode.parent.op !== '[]='
@@ -567,7 +568,7 @@ function format(content, options = {}) {
 			const parentIsNestedExpression =
 				inputNode.nodes.length === 1 &&
 				inputNode.parent instanceof Stylus.nodes.Expression &&
-				(inputNode.parent instanceof Stylus.nodes.Arguments) === false && // Note that `Arguments` type inherits `Expression` type
+				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
 				inputNode.parent.parent &&
 				(
 					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
