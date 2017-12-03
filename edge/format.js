@@ -621,7 +621,7 @@ function format(content, options = {}) {
 				let separator = ' '
 				if (rank === 0) {
 					separator = ''
-				} else if (node instanceof Stylus.nodes.Expression) {
+				} else if (inputNode.isList) {
 					separator = comma
 				}
 
