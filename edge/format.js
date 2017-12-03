@@ -1,6 +1,7 @@
 const Stylus = require('stylus')
 const _ = require('lodash')
 
+const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
 const createStringBuffer = require('./createStringBuffer')
 const sortedProperties = require('./createSortedProperties')()
@@ -429,9 +430,26 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.String) {
-			outputBuffer.append(options.quoteChar)
-			outputBuffer.append(inputNode.val)
-			outputBuffer.append(options.quoteChar)
+			if (inputNode.val.includes(options.quoteChar)) {
+				if (inputNode.val.startsWith('data:image/svg+xml;utf8,')) { // In case of SVG data-URL
+					const counterQuoteChar = schema.quoteChar.enum.find(item => item !== options.quoteChar)
+
+					// Convert single/double quotes
+					outputBuffer.append(options.quoteChar)
+					outputBuffer.append(inputNode.val.replace(new RegExp(options.quoteChar, 'g'), counterQuoteChar))
+					outputBuffer.append(options.quoteChar)
+
+				} else { // Use the existing quote character as Stylus does not support escaping quote characters
+					outputBuffer.append(inputNode.quote)
+					outputBuffer.append(inputNode.val)
+					outputBuffer.append(inputNode.quote)
+				}
+
+			} else {
+				outputBuffer.append(options.quoteChar)
+				outputBuffer.append(inputNode.val)
+				outputBuffer.append(options.quoteChar)
+			}
 
 		} else if (inputNode instanceof Stylus.nodes.Ident) {
 			if (insideExpression === false) {
