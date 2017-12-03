@@ -140,6 +140,7 @@ main {
 	margin-left: 200px;
 	padding: 2rem 0 80vh 0;
 	line-height: 1.5rem;
+	position: relative;
 }
 
 main > *:first-child {
@@ -214,26 +215,31 @@ section > *:last-child {
 	width: 144px;
 }
 
-#demo-input, #demo-output {
-	display: block;
+#demo-container, #demo-input, #demo-output {
 	height: 50vh;
 	min-height: 300px;
+}
+
+#demo-input, #demo-output {
+	position: absolute;
+	width: 50%;
+	display: block;
 	padding: 5px 10px;
 	font-family: 'Roboto Mono', monospace;
 	font-size: 1rem;
 }
 
 @media (min-height: 800px) {
-	#demo-input, #demo-output {
+	#demo-container, #demo-input, #demo-output {
 		height: 60vh;
 	}
 }
 
 #demo-input {
-	width: 100%;
 	border: none;
 	background: #EEEEEE;
 	outline: none;
+	left: 0;
 }
 
 #demo-output {
@@ -243,6 +249,7 @@ section > *:last-child {
 	word-wrap: break-word;
 	box-sizing: border-box;
 	overflow: auto;
+	right: 0;
 }
 
 #demo-output.error {
@@ -445,6 +452,20 @@ label, input[type=checkbox] {
 
 	#availability {
 		padding: 0;
+	}
+
+	#demo-container {
+		height: 100vh;
+		min-height: auto;
+	}
+
+	#demo-input, #demo-output {
+		width: 100%;
+		height: 50vh;
+	}
+
+	#demo-output {
+		margin-top: 50vh;
 	}
 
 	.table.responsive {
