@@ -183,7 +183,8 @@ module.exports = {
 		hideInVSCE: true,
 	},
 	quoteChar: {
-		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.',
+		description: 'Represent a quote character that is used to begin and terminate a string. You must choose either a single-quote or a double-quote.\n' +
+			'This replaces the original quote characters with the given one, unless the string contains the given quote character (see <code>font-family</code> in <code>.class2</code>.) However, if the string starts with <code>data:image/svg+xml;utf8,</code>, the given quote character will be used, and the quote characters in the string will be escaped (see <code>background-image</code> in <code>.class2</code>.)',
 		enum: ['\'', '"'],
 		default: '\'',
 		example: {
@@ -191,6 +192,9 @@ module.exports = {
 			code: `
 			.class1
 				font-family 'Open Sans'
+			.class2
+				font-family "Manta's Nite"
+				background-image url('data:image/svg+xml;utf8,<svg fill="red"></svg>')
 			`
 		}
 	},
