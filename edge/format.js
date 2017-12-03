@@ -554,14 +554,15 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Arguments) {
 			outputBuffer.append(openParen)
-			if (_.some(inputNode.map)) { // In case of named-arguments
-				outputBuffer.append(_.toPairs(inputNode.map).map(pair =>
-					pair[0] + ': ' + travel(inputNode, pair[1], indentLevel, true)
-				).join(comma))
 
-			} else {
-				outputBuffer.append(inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(comma))
-			}
+			outputBuffer.append(_.concat(
+				// In case of ordinal-arguments
+				inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)),
+
+				// In case of named-arguments
+				_.toPairs(inputNode.map || {}).map(pair => pair[0] + ': ' + travel(inputNode, pair[1], indentLevel, true)),
+			).join(comma))
+
 			outputBuffer.append(closeParen)
 
 		} else if (inputNode instanceof Stylus.nodes.Expression) {

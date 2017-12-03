@@ -1,10 +1,15 @@
-mixin(n) {
+mixin1(n) {
 	-webkit-border-radius: n;
 }
 
+mixin2(m = 1px, n = 2px, o = 3px, p = 4px) {
+	margin: m n o p;
+}
+
 button {
-	mixin(5px);
-	mixin: 5px;
+	mixin1(5px);
+	mixin1: 5px;
+	mixin2(5px, p: 6px);
 }
 
 foo() {
