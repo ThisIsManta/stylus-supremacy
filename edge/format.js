@@ -304,7 +304,7 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Selector) {
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join('').trim())
+			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join('').trim())
 
 			if (inputNode.optional === true) {
 				outputBuffer.append(' !optional')
@@ -312,7 +312,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Property) {
 			// Insert the property name
-			const propertyName = inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join('')
+			const propertyName = travelThroughSegments(inputNode, indentLevel).join('')
 			outputBuffer.append(indent + propertyName)
 
 			if (options.insertColons) {
@@ -570,11 +570,6 @@ function format(content, options = {}) {
 				outputBuffer.append(indent)
 			}
 
-			const parentIsSelector = inputNode.parent instanceof Stylus.nodes.Selector
-			if (parentIsSelector) {
-				outputBuffer.append('{')
-			}
-
 			const parentIsArithmeticOperator =
 				inputNode.parent instanceof Stylus.nodes.UnaryOp ||
 				(
@@ -600,7 +595,8 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.If ||
 					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
 					inputNode.parent.parent instanceof Stylus.nodes.Return ||
-					inputNode.parent.parent instanceof Stylus.nodes.Arguments
+					inputNode.parent.parent instanceof Stylus.nodes.Arguments ||
+					inputNode.parent.parent instanceof Stylus.nodes.BinOp && inputNode.parent.parent.op === '[]'
 				) === false
 			const currentIsEmpty = (
 				inputNode.nodes.length === 0 &&
@@ -626,10 +622,6 @@ function format(content, options = {}) {
 				outputBuffer.append(openParen)
 			}
 
-			const currentIsPartOfPropertyNames = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Property && node.segments.includes(inputNode))
-
-			const currentIsPartOfKeyframes = !!findParentNode(inputNode, node => node instanceof Stylus.nodes.Keyframes && node.segments.includes(inputNode))
-
 			outputBuffer.append(inputNode.nodes.map((node, rank, list) => {
 				// Use either a white-space or a comma as a separator
 				let separator = ' '
@@ -642,17 +634,13 @@ function format(content, options = {}) {
 				if (currentHasUnitSuffix && node === _.last(list)) {
 					return closeParen + travel(inputNode, node, indentLevel, true)
 
-				} else if (node instanceof Stylus.nodes.Ident && (currentIsPartOfPropertyNames || currentIsPartOfKeyframes || insideExpression === false) || node.mixin === true) {
+				} else if (node instanceof Stylus.nodes.Ident && insideExpression === false) {
 					return separator + '{' + travel(inputNode, node, indentLevel, true) + '}'
 
 				} else {
 					return separator + travel(inputNode, node, indentLevel, true)
 				}
 			}).join(''))
-
-			if (parentIsSelector) {
-				outputBuffer.append('}')
-			}
 
 			if (currentHasParenthesis) {
 				outputBuffer.append(closeParen)
@@ -906,7 +894,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Keyframes) {
 			outputBuffer.append(indent + '@keyframes ')
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).filter(text => text.trim().length > 0).join(comma))
+			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).filter(text => text.trim().length > 0).join(comma))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof Stylus.nodes.QueryList) {
@@ -928,7 +916,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Feature) {
 			outputBuffer.append(openParen)
-			outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
 			outputBuffer.append(': ')
 			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 			outputBuffer.append(closeParen)
@@ -956,7 +944,7 @@ function format(content, options = {}) {
 			outputBuffer.append(indent + '@' + inputNode.type)
 			if (_.some(inputNode.segments)) {
 				outputBuffer.append(' ')
-				outputBuffer.append(inputNode.segments.map(segment => travel(inputNode, segment, indentLevel, true)).join(''))
+				outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
 				outputBuffer.remove(' ')
 			}
 			if (inputNode.block) {
@@ -1076,6 +1064,19 @@ function format(content, options = {}) {
 		}
 
 		return outputBuffer.toString()
+	}
+
+	function travelThroughSegments(inputNode, indentLevel) {
+		return inputNode.segments.map(segment => {
+			if (segment instanceof Stylus.nodes.Expression) {
+				if (segment.nodes.length === 1 && segment.nodes[0] instanceof Stylus.nodes.Expression) {
+					segment = segment.nodes[0]
+				}
+				return '{' + travel(inputNode, segment, indentLevel, true) + '}'
+			} else {
+				return travel(inputNode, segment, indentLevel, true)
+			}
+		})
 	}
 
 	// Store the line indexes of single-line comments that have been processed
