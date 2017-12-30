@@ -602,6 +602,12 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Return ||
 					inputNode.parent.parent instanceof Stylus.nodes.Arguments
 				) === false
+			const currentIsEmpty = (
+				inputNode.nodes.length === 0 &&
+				inputNode.parent instanceof Stylus.nodes.Expression &&
+				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
+				inputNode.parent.nodes.length === 1
+			)
 			const currentIsDivision =
 				inputNode.nodes.length === 1 &&
 				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
@@ -614,6 +620,7 @@ function format(content, options = {}) {
 				parentIsArithmeticOperator ||
 				parentIsStringInterpolation ||
 				parentIsNestedExpression ||
+				currentIsEmpty ||
 				currentIsDivision
 			if (currentHasParenthesis || currentHasUnitSuffix) {
 				outputBuffer.append(openParen)
