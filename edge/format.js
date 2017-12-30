@@ -584,6 +584,12 @@ function format(content, options = {}) {
 					inputNode.parent.op !== '[]' &&
 					inputNode.parent.op !== '[]='
 				)
+			const parentIsStringInterpolation = (
+				inputNode.parent instanceof Stylus.nodes.BinOp &&
+				inputNode.parent.op === '%' &&
+				inputNode.parent.right === inputNode &&
+				inputNode.nodes.length > 1
+			)
 			const parentIsNestedExpression =
 				inputNode.nodes.length === 1 &&
 				inputNode.parent instanceof Stylus.nodes.Expression &&
@@ -606,6 +612,7 @@ function format(content, options = {}) {
 				inputNode.nodes[1] instanceof Stylus.nodes.Ident
 			const currentHasParenthesis =
 				parentIsArithmeticOperator ||
+				parentIsStringInterpolation ||
 				parentIsNestedExpression ||
 				currentIsDivision
 			if (currentHasParenthesis || currentHasUnitSuffix) {

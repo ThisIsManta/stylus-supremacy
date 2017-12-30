@@ -9,3 +9,6 @@ div:nth-child({row})
 mySelectors='#foo,#bar,.class1'
 {mySelectors+'.class2'}
   display none
+
+.class3
+  height 'calc(%s - %s)' % (a b)
