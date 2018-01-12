@@ -1097,6 +1097,8 @@ function format(content, options = {}) {
 		let zeroBasedLineIndex
 		if (inputNode instanceof Stylus.nodes.Group && _.some(inputNode.nodes)) {
 			zeroBasedLineIndex = inputNode.nodes[0].lineno - 1
+		} else if (checkIfTernary(inputNode) && inputNode.cond.left.val.lineno < inputNode.lineno) {
+			zeroBasedLineIndex = inputNode.cond.left.val.lineno - 1
 		} else {
 			zeroBasedLineIndex = inputNode.lineno - 1
 		}
@@ -1297,7 +1299,20 @@ function format(content, options = {}) {
 }
 
 function checkIfMixin(node) {
-	return node instanceof Stylus.nodes.Ident && node.val instanceof Stylus.nodes.Function
+	return (
+		node instanceof Stylus.nodes.Ident &&
+		node.val instanceof Stylus.nodes.Function
+	)
+}
+
+function checkIfTernary(node) {
+	return (
+		node instanceof Stylus.nodes.Ternary &&
+		node.cond instanceof Stylus.nodes.BinOp &&
+		node.cond.op === 'is defined' &&
+		node.cond.left instanceof Stylus.nodes.Ident &&
+		node.cond.left.val instanceof Stylus.nodes.Expression
+	)
 }
 
 function checkForParenthesis(node, options) {
