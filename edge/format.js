@@ -1003,11 +1003,11 @@ function format(content, options = {}) {
 				commentLines[0] = '/*' + spaceAfterComment + commentLines[0].substring(2, commentLines[0].length - 2).trim() + spaceAfterComment + '*/'
 
 			} else { // In case of multiple lines
-				const documenting = _.first(commentLines).startsWith('/**')
+				const documenting = commentLines[0].startsWith('/*') && commentLines.slice(1).every(line => line.trim().startsWith('*'))
 
 				// Add a white-space after /*
-				if (_.first(commentLines) !== '/*' && documenting === false) {
-					commentLines[0] = '/*' + spaceAfterComment + _.first(commentLines).substring(2).trim()
+				if (commentLines[0] !== '/**') {
+					commentLines[0] = ('/*' + spaceAfterComment + commentLines[0].substring(2).trim()).trim()
 				}
 
 				// Add indentation to in-between lines
