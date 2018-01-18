@@ -18,3 +18,8 @@ body
   // Must have a colon because of the bug in Stylus itself; See https://github.com/stylus/stylus/issues/2239
   margin: bar['a2'].c1[zot]
   padding: bar.a2.c1.d1
+
+$abc[three] = $abc.one + 2
+$abc.four = $abc[two] + 2
+$abc[five] = 2 + 3
+$abc.six = 6
