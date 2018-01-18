@@ -704,6 +704,9 @@ function format(content, options = {}) {
 				outputBuffer.append('[')
 				outputBuffer.append(travel(inputNode, inputNode.right, indentLevel, true))
 				outputBuffer.append('] = ')
+				if (inputNode.val instanceof Stylus.nodes.Expression && inputNode.val.nodes.length === 1 && inputNode.val.nodes[0] instanceof Stylus.nodes.Expression) {
+					inputNode.val = inputNode.val.nodes[0]
+				}
 				outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
 
 				if (insideExpression === false) {
