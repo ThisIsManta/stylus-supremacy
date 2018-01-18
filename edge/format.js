@@ -915,11 +915,16 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Feature) {
-			outputBuffer.append(openParen)
-			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
-			outputBuffer.append(': ')
-			outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
-			outputBuffer.append(closeParen)
+			if (inputNode.expr) {
+				outputBuffer.append(openParen)
+				outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
+				outputBuffer.append(': ')
+				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
+				outputBuffer.append(closeParen)
+
+			} else {
+				outputBuffer.append(travel(inputNode, inputNode.segments[0], indentLevel, true))
+			}
 
 		} else if (inputNode instanceof Stylus.nodes.Supports) {
 			outputBuffer.append(indent + '@supports ')

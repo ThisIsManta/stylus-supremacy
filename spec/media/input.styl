@@ -4,4 +4,11 @@
   display none
 @media only screen and (min-width: 0px) and (max-width: 679px)
   display none
- 
+
+$display-breakpoints = {
+  md-and-up: 'screen and (min-width: 600px)'
+}
+
+@media $display-breakpoints.md-and-up
+  .widget
+    display: none
