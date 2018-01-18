@@ -5,7 +5,10 @@
 			"type": "node",
 			"request": "launch",
 			"name": "Run all specs",
-			"program": "${workspaceRoot}\\test\\runner.js"
+			"program": "${workspaceRoot}\\test\\runner.js",
+			"args": [
+				"comment-single-line"
+			]
 		}
 	]
 }

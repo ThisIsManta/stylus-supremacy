@@ -64,6 +64,11 @@ function format(content, options = {}) {
 	// For example, a single-line comment
 	const modifiedLines = modifiedContent.split(/\r?\n/)
 
+	const singleLineComments = _.chain(modifiedLines)
+		.map((line, rank) => line.includes('//') && { text: line.substring(line.indexOf('//')), rank: rank + 1 })
+		.compact()
+		.value()
+
 	// Store the Stylus parsed tree
 	const rootNode = new Stylus.Parser(modifiedContent).parse()
 
@@ -91,9 +96,13 @@ function format(content, options = {}) {
 		const outputBuffer = createStringBuffer()
 
 		// Insert sticky comment(s) before the current node
-		if (inputNode.commentsOnTop) {
-			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
+		while (singleLineComments.length > 0 && singleLineComments[0].rank < inputNode.lineno && (inputNode instanceof Stylus.nodes.Root === false)) {
+			outputBuffer.append(singleLineComments.shift().text)
+			outputBuffer.append(options.newLineChar)
 		}
+		/* if (inputNode.commentsOnTop) {
+			outputBuffer.append(inputNode.commentsOnTop.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
+		} */
 
 		if (inputNode instanceof Stylus.nodes.Import) {
 			outputBuffer.append(indent)
@@ -109,10 +118,10 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Group) {
 			// Insert single-line comment(s)
-			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
+			/* const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
 			if (topCommentNodes.length > 0) {
 				outputBuffer.append(topCommentNodes.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
-			}
+			} */
 
 			// Insert CSS selector(s)
 			const separator = ',' + (options.insertNewLineBetweenSelectors ? (options.newLineChar + indent) : ' ')
@@ -132,7 +141,7 @@ function format(content, options = {}) {
 			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
 
 			// Insert a comment on the right of the last selector
-			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock)
+			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) /* || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) */
 			if (sideCommentNode) {
 				if (options.insertSpaceBeforeComment) {
 					outputBuffer.append(' ')
@@ -149,10 +158,10 @@ function format(content, options = {}) {
 			outputBuffer.append(options.newLineChar)
 
 			// Insert single-comments for an empty block
-			if (inputNode.nodes.length === 0) {
+			/* if (inputNode.nodes.length === 0) {
 				const commentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(inputNode)
 				outputBuffer.append(commentNodes.map(node => travel(inputNode, node, childIndentLevel)).join(''))
-			}
+			} */
 
 			const groupOfUnsortedNonCommentNodes = []
 			unsortedNonCommentNodes.forEach((node, rank, list) => {
@@ -207,7 +216,7 @@ function format(content, options = {}) {
 			const sortedNonCommentNodes = _.flatten(groupOfSortedNonCommentNodes)
 
 			// Put single-line comment(s) to the relevant node
-			sortedNonCommentNodes.forEach(node => {
+			/* sortedNonCommentNodes.forEach(node => {
 				node.commentsOnTop = tryGetSingleLineCommentNodesOnTheTopOf(node)
 
 				const rightCommentNode = tryGetSingleLineCommentNodeOnTheRightOf(node)
@@ -217,7 +226,7 @@ function format(content, options = {}) {
 					}
 					node.commentsOnRight.push(rightCommentNode)
 				}
-			})
+			}) */
 
 			// Put a sticky multi-line comment to the relevant node
 			_.orderBy(commentNodes, ['lineno', 'column'], ['desc', 'asc']).forEach(comment => {
@@ -293,10 +302,10 @@ function format(content, options = {}) {
 			)
 
 			// Insert the bottom comment(s)
-			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(unsortedNonCommentNodes))
+			/* const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(unsortedNonCommentNodes))
 			if (bottomCommentNodes) {
 				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)).join(''))
-			}
+			} */
 
 			if (inputNode instanceof Stylus.nodes.Block && (parentNode instanceof Stylus.nodes.Atblock ? options.alwaysUseAtBlock : options.insertBraces)) {
 				outputBuffer.append(indent + '}')
@@ -1065,6 +1074,14 @@ function format(content, options = {}) {
 				outputBuffer.append(' ')
 			}
 			outputBuffer.append(inputNode.commentsOnRight.map(node => travel(inputNode.parent, node, indentLevel, true)).join(''))
+			outputBuffer.append(options.newLineChar)
+		}
+		if (singleLineComments.length > 0 && singleLineComments[0].rank === inputNode.lineno) {
+			outputBuffer.remove(options.newLineChar)
+			if (options.insertSpaceBeforeComment) {
+				outputBuffer.append(' ')
+			}
+			outputBuffer.append(singleLineComments.shift().text)
 			outputBuffer.append(options.newLineChar)
 		}
 
