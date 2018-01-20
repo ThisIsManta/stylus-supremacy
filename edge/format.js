@@ -102,10 +102,12 @@ function format(content, options = {}) {
 			outputBuffer.append(' ')
 			outputBuffer.append(travel(inputNode, inputNode.path, indentLevel, true))
 
-			if (options.insertSemicolons) {
-				outputBuffer.append(';')
+			if (insideExpression === false) {
+				if (options.insertSemicolons) {
+					outputBuffer.append(';')
+				}
+				outputBuffer.append(options.newLineChar)
 			}
-			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Group) {
 			// Insert single-line comment(s)
