@@ -117,7 +117,12 @@ function format(content, options = {}) {
 			}
 
 			// Insert CSS selector(s)
-			const separator = ',' + (options.insertNewLineBetweenSelectors ? (options.newLineChar + indent) : ' ')
+			let separator = options.selectorSeparator
+			if (options.insertNewLineBetweenSelectors && separator.includes('\n') === false) {
+				separator = separator.trim() + '\n'
+			}
+			separator = separator.replace(/\r?\n/, options.newLineChar + indent)
+
 			outputBuffer.append(indent + inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(separator).trim())
 
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.nodes) }))

@@ -58,16 +58,11 @@ module.exports = {
 		default: false,
 	},
 	insertNewLineBetweenSelectors: {
-		description: 'Insert or remove a new-line between selectors.',
+		deprecated: true,
+		description: 'Insert or remove a new-line between selectors.\nPlease use <a href="#option-selector-separator">selectorSeparator</a> option instead.',
 		type: 'boolean',
 		default: false,
-		example: {
-			values: [true, false],
-			code: `
-			.class1, .class2
-				background red
-			`
-		}
+		hideInDemo: true
 	},
 	insertSpaceBeforeComment: {
 		description: 'Insert or remove a white-space before a comment.',
@@ -168,6 +163,18 @@ module.exports = {
 			`
 		}
 	},
+	selectorSeparator: {
+		description: 'Represent a separator between selectors.\nIf the option <a href="#option-insert-new-line-between-selectors">insertNewLineBetweenSelectors</a> is set to <code>true</code>, then <code>,\\n</code> or <code>\\n</code> will be used. Also <code>\\r\\n</code> may be used in place of <code>\\n</code> according to <a href="#option-new-line-char">newLineChar</a> option.',
+		enum: [',', ', ', ',\n', '\n'],
+		default: ', ',
+		example: {
+			values: [',', ', ', ',\n', '\n'],
+			code: `
+			.class1, .class2
+				background red
+			`
+		}
+	},
 	tabStopChar: {
 		description: 'Represent an indentation. You may change this to any sequence of white-spaces.',
 		type: 'string',
@@ -200,7 +207,7 @@ module.exports = {
 	},
 	sortProperties: {
 		description: 'Can be either <code>false</code> for not sorting, <code>"alphabetical"</code> for sorting CSS properties from A to Z, <code>"grouped"</code> for sorting CSS properties according to <a href="https://github.com/SimenB/stylint/blob/master/src/data/ordering.json" target="_blank">Stylint</a> and <a href="https://github.com/tj/nib/blob/master/docs/README.md" target="_blank">nib</a><span class="no-vsce"> -- <a href="#option-sort-properties-grouped" onclick="$(\'#option-sort-properties-grouped\').toggle()">click here to show the full list of sorted properties</a></span>, or an array of property names that defines the property order, for example <code>["color", "background", "display"]</code>.\n' +
-		'<table id="option-sort-properties-grouped" class="no-vsce" style="display: none;"><tr><th>Sorted properties for "grouped"</th></tr>' + sortedProperties.map(prop => `<tr><td>${prop}</td></tr>`).join('') + '</table>',
+			'<table id="option-sort-properties-grouped" class="no-vsce" style="display: none;"><tr><th>Sorted properties for "grouped"</th></tr>' + sortedProperties.map(prop => `<tr><td>${prop}</td></tr>`).join('') + '</table>',
 		oneOf: [
 			{
 				enum: [
