@@ -83,7 +83,7 @@ function createFormattingTogglersForDemo() {
 }
 
 function createFormattingDescription() {
-	const defaultOptionJSON = createCodeForHTML(JSON.stringify(createFormattingOptions(), null, '  '))
+	const defaultOptionJSON = createCodeForHTML(JSON.stringify(_.omitBy(createFormattingOptions(), (item, name) => schema[name].deprecated), null, '  '))
 
 	const defaultOptionHTML = (
 		'<code>' +
@@ -97,7 +97,8 @@ function createFormattingDescription() {
 	const formattingOptionDescription = _.chain(schema)
 		.map((item, name) => [
 			`<section id="option-${_.kebabCase(name)}">`,
-			`<h2>`,
+			`<h2 class="${item.deprecated ? 'deprecated' : ''}">`,
+			item.deprecated && '<b>DEPRECATED </b>',
 			`<mark>${createBreakableWords(name)}</mark>`,
 			`<wbr>`,
 			`<code class="default-value">${createNonBreakableForFirstWord('= ', JSON.stringify(item.default))}</code>`,

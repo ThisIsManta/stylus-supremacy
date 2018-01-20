@@ -64,6 +64,24 @@ h2 {
 	line-height: calc(2rem + 2px);
 }
 
+.deprecated b {
+	color: #607D8B;
+}
+
+.deprecated mark {
+	background: #607D8B;
+	text-decoration: line-through;
+	text-decoration-color: white;
+}
+
+.deprecated code.default-value {
+	background: #B0BEC6;
+}
+
+.deprecated code {
+	background: #CFD8DC;
+}
+
 p {
 	margin: 2rem 0 1rem 0;
 	text-align: justify;
