@@ -25,6 +25,7 @@ declare namespace StylusSupremacy {
 		insertParenthesisAroundIfCondition?: boolean
 		insertNewLineBeforeElse?: boolean
 		insertLeadingZeroBeforeFraction?: boolean
+		selectorSeparator?: string
 		tabStopChar?: string
 		newLineChar?: string
 		quoteChar?: string
