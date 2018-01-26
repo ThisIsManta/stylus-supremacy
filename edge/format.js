@@ -1013,6 +1013,10 @@ function format(content, options = {}) {
 			outputBuffer.append(inputNode.str.substring(2).trim())
 			if (insideExpression === false) {
 				outputBuffer.append(options.newLineChar)
+
+				if (inputNode.insertNewLineBelow) {
+					outputBuffer.append(options.newLineChar)
+				}
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Comment && inputNode.str.startsWith('/*')) { // In case of multi-line comments
@@ -1148,12 +1152,15 @@ function format(content, options = {}) {
 
 			} else if (!usedStandaloneSingleLineComments[zeroBasedLineIndex]) {
 				usedStandaloneSingleLineComments[zeroBasedLineIndex] = true
-				commentNodes.unshift(new Stylus.nodes.Comment(text, false, false))
+				const newComment = new Stylus.nodes.Comment(text, false, false)
+				commentNodes.unshift(newComment)
+				newComment.lineno = zeroBasedLineIndex
 			}
 		}
 
-		if (commentNodes.length > 0) {
-			commentNodes[0].insertNewLineAbove = false
+		const lastCommentNode = _.last(commentNodes)
+		if (commentNodes.length > 0 && lastCommentNode.lineno < modifiedLines.length && modifiedLines[lastCommentNode.lineno + 1].trim() === '') {
+			lastCommentNode.insertNewLineBelow = true
 		}
 
 		return commentNodes
@@ -1318,7 +1325,7 @@ function format(content, options = {}) {
 		outputLines.push('')
 	}
 
-	return outputLines.join(options.newLineChar)
+	return outputLines.join(options.newLineChar).replace(new RegExp(_.escapeRegExp(options.newLineChar + options.newLineChar + options.newLineChar), 'g'), options.newLineChar + options.newLineChar)
 }
 
 function checkIfMixin(node) {
@@ -1339,7 +1346,7 @@ function checkIfTernary(node) {
 }
 
 function checkForParenthesis(node, options) {
-	// Note that `Arguments` type inherits `Expression` type
+	// Note that `Arguments` type inherits  `Expression` type
 	return (
 		node instanceof Stylus.nodes.If &&
 		options.insertParenthesisAroundIfCondition &&
