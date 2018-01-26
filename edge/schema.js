@@ -164,7 +164,7 @@ module.exports = {
 		}
 	},
 	selectorSeparator: {
-		description: 'Represent a separator between selectors.\nIf the option <a href="#option-insert-new-line-between-selectors">insertNewLineBetweenSelectors</a> is set to <code>true</code>, then <code>,\\n</code> or <code>\\n</code> will be used. Also <code>\\r\\n</code> may be used in place of <code>\\n</code> according to <a href="#option-new-line-char">newLineChar</a> option.',
+		description: 'Represent a separator between selectors.\nIf the option <a href="#option-insert-new-line-between-selectors">insertNewLineBetweenSelectors</a> is set to <code>true</code>, then <code>",\\n"</code> or <code>"\\n"</code> will be used. Also <code>\\r\\n</code> may be used in place of <code>\\n</code> according to <a href="#option-new-line-char">newLineChar</a> option.',
 		enum: [',', ', ', ',\n', '\n'],
 		default: ', ',
 		example: {
