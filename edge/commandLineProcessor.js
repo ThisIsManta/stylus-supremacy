@@ -1,5 +1,6 @@
 const fs = require('fs')
 const fp = require('path')
+const ps = require('process')
 const glob = require('glob')
 const _ = require('lodash')
 const JSONWithComments = require('comment-json')
@@ -7,6 +8,7 @@ const JSONWithComments = require('comment-json')
 const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
+const checkIfFilePathIsIgnored = require('./checkIfFilePathIsIgnored')
 
 function process(command, params = [], Console = console) {
 	if (command === '--version' || command === '-v') {
@@ -52,6 +54,7 @@ function process(command, params = [], Console = console) {
 		}
 
 		return _.chain(inputFiles)
+			.reject(path => checkIfFilePathIsIgnored(path, ps.cwd(), formattingOptions))
 			.map(path => {
 				if (inputFiles.length > 1) {
 					Console.log()

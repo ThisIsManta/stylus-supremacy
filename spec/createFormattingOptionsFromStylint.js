@@ -55,4 +55,8 @@ describe('createFormattingOptionsFromStylint', () => {
 		expect(createFormattingOptions({ zeroUnits: 'always' })).toEqual(jasmine.objectContaining({ alwaysUseZeroWithoutUnit: false }))
 		expect(createFormattingOptions({ zeroUnits: 'never' })).toEqual(jasmine.objectContaining({ alwaysUseZeroWithoutUnit: true }))
 	})
+
+	it('returns the same value for `exclude`', () => {
+		expect(createFormattingOptions({ exclude: ['test'] })).toEqual(jasmine.objectContaining({ ignoreFiles: ['test'] }))
+	})
 })

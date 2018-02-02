@@ -320,5 +320,12 @@ module.exports = {
 				padding 0px 5px 0px 5px
 			`
 		}
+	},
+	ignoreFiles: {
+		description: 'Do not format the files that match the given <a href="https://www.npmjs.com/package/glob#glob-primer" target="_blank">Glob</a> patterns.\nFor example, <code>ignoreFiles: ["bin/**", "src/vendors/**"]</code>',
+		type: 'array',
+		items: { type: 'string' },
+		default: [],
+		hideInDemo: true
 	}
 }

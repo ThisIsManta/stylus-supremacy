@@ -124,7 +124,7 @@ function createFormattingDescription() {
 }
 
 function createStylintConversionTable() {
-	const validFormattingOptionNames = Object.keys(schema)
+	const validFormattingOptionNames = _.keys(schema)
 
 	const stylintOptionMap = _.toPairs(createFormattingOptionsFromStylint.map)
 		.reduce((temp, pair) => {
@@ -137,7 +137,7 @@ function createStylintConversionTable() {
 			return temp
 		}, {})
 
-	return '<tbody>' + _.map(stylintOptions, (item, name) =>
+	return '<tbody>' + _.chain([stylintOptions, stylintOptionMap]).map(_.keys).flatten().uniq().sortBy().value().map(name =>
 		'<tr>' +
 		'<td><mark class="alt">' + createBreakableWords(name) + '</mark></td>' +
 		'<td>' + (_.some(stylintOptionMap[name])

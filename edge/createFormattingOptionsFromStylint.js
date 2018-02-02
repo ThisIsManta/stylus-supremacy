@@ -9,6 +9,7 @@ const stylintOptionMap = {
 	commaSpace: ['insertSpaceAfterComma', createAdapterForAlwaysNeverFalse],
 	commentSpace: ['insertSpaceAfterComment', createAdapterForAlwaysNeverFalse],
 	efficient: ['reduceMarginAndPaddingValues', createAdapterForAlwaysNeverFalse],
+	exclude: ['ignoreFiles', value => value],
 	extendPref: ['alwaysUseExtends', value => value === '@extends'],
 	indentPref: ['tabStopChar', value => value > 0 ? _.repeat(' ', value) : undefined],
 	leadingZero: ['insertLeadingZeroBeforeFraction', createAdapterForAlwaysNeverFalse],
