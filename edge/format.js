@@ -1019,15 +1019,20 @@ function format(content, options = {}) {
 			const spaceAfterComment = (options.insertSpaceAfterComment ? ' ' : '')
 
 			// Split into an array of lines
-			let commentLines = inputNode.str.split(/\r?\n/).map(line => line.trim())
+			let commentLines = inputNode.str.split(/\r?\n/)
+
+			const documenting = commentLines[0].startsWith('/*') && commentLines.slice(1).every(line => line.trim().startsWith('*'))
 
 			if (commentLines.length === 1) { // In case of one line only
 				// Add a white-space between /* and */
 				commentLines[0] = '/*' + spaceAfterComment + commentLines[0].substring(2, commentLines[0].length - 2).trim() + spaceAfterComment + '*/'
 
-			} else { // In case of multiple lines
-				const documenting = commentLines[0].startsWith('/*') && commentLines.slice(1).every(line => line.trim().startsWith('*'))
+				// Add indentation
+				if (!insideExpression) {
+					commentLines[0] = indent + commentLines[0]
+				}
 
+			} else { // In case of multiple lines
 				// Add a white-space after /*
 				if (commentLines[0] !== '/**') {
 					commentLines[0] = ('/*' + spaceAfterComment + commentLines[0].substring(2).trim()).trim()
@@ -1037,37 +1042,53 @@ function format(content, options = {}) {
 				let zeroBasedLineIndex = 0
 				while (++zeroBasedLineIndex <= commentLines.length - 2) {
 					if (documenting) {
-						if (commentLines[zeroBasedLineIndex].startsWith('*')) {
-							if (commentLines[zeroBasedLineIndex].substring(1).charAt(0) === ' ') {
-								commentLines[zeroBasedLineIndex] = ' *' + commentLines[zeroBasedLineIndex].substring(1)
+						const trimmedCurrentLine = commentLines[zeroBasedLineIndex].trim()
+						if (trimmedCurrentLine.startsWith('*')) {
+							if (trimmedCurrentLine.substring(1).charAt(0) === ' ') {
+								commentLines[zeroBasedLineIndex] = ' *' + trimmedCurrentLine.substring(1)
 							} else {
-								commentLines[zeroBasedLineIndex] = ' *' + spaceAfterComment + commentLines[zeroBasedLineIndex].substring(1)
+								commentLines[zeroBasedLineIndex] = ' *' + spaceAfterComment + trimmedCurrentLine.substring(1)
 							}
 						} else {
 							commentLines[zeroBasedLineIndex] = ' *' + spaceAfterComment + commentLines[zeroBasedLineIndex]
 						}
-					} else {
-						commentLines[zeroBasedLineIndex] = '  ' + spaceAfterComment + commentLines[zeroBasedLineIndex]
 					}
 				}
 
 				// Add a white-space before */
-				if (_.last(commentLines) === '*/') {
+				if (_.last(commentLines).trim() === '*/') {
 					if (documenting) {
-						commentLines[commentLines.length - 1] = ' ' + _.last(commentLines)
+						commentLines[commentLines.length - 1] = ' ' + _.last(commentLines).trim()
 					}
 				} else {
-					commentLines[commentLines.length - 1] = '   ' + _.trimEnd(_.last(commentLines).substring(0, _.last(commentLines).length - 2)) + spaceAfterComment + '*/'
+					commentLines[commentLines.length - 1] = _.trimEnd(_.last(commentLines).substring(0, _.last(commentLines).length - 2)) + spaceAfterComment + '*/'
+				}
+
+				// Add indentation
+				if (documenting) {
+					commentLines = commentLines.map(line => indent + line)
+				} else {
+					const originalIndentLong = _.chain(commentLines)
+						.slice(1)
+						.map(line => line.match(/^(\s|\t)*/g)[0].length)
+						.min()
+						.value() || 0
+
+					commentLines = commentLines.map((line, rank) => {
+						if (rank === 0) {
+							return indent + line
+						} else {
+							return indent + line.substring(originalIndentLong)
+						}
+						indent + line
+					})
 				}
 			}
 
-			if (insideExpression) {
-				// For example,
-				// margin: 8px /* standard */ 0;
-				outputBuffer.append(commentLines.join(options.newLineChar))
+			outputBuffer.append(commentLines.join(options.newLineChar))
 
-			} else {
-				outputBuffer.append(commentLines.map(line => indent + line).join(options.newLineChar)).append(options.newLineChar)
+			if (!insideExpression) {
+				outputBuffer.append(options.newLineChar)
 			}
 
 		} else {
