@@ -670,7 +670,7 @@ function format(content, options = {}) {
 				outputBuffer.append(inputNode.val)
 			}
 
-			if (!options.alwaysUseZeroWithoutUnit || inputNode.val !== 0) {
+			if (!options.alwaysUseZeroWithoutUnit || inputNode.val !== 0 || inputNode.type === 's' || inputNode.type === 'ms') {
 				outputBuffer.append(inputNode.type)
 			}
 
