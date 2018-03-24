@@ -567,13 +567,31 @@ function format(content, options = {}) {
 		} else if (inputNode instanceof Stylus.nodes.Arguments) {
 			outputBuffer.append(openParen)
 
-			outputBuffer.append(_.concat(
+			const keyNodePairs = _.concat(
 				// In case of ordinal-arguments
-				inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)),
-
+				inputNode.nodes.map(node => ['', node]),
 				// In case of named-arguments
-				_.toPairs(inputNode.map || {}).map(pair => pair[0] + ': ' + travel(inputNode, pair[1], indentLevel, true)),
-			).join(comma))
+				_.toPairs(inputNode.map).map(pair => [pair[0] + ': ', pair[1]])
+			)
+
+			const lineCount = _.uniq(keyNodePairs.map(pair => pair[1].lineno)).length
+
+			if (lineCount > 1) {
+				outputBuffer.append(options.newLineChar + indent + options.tabStopChar)
+			}
+
+			const separator = lineCount > 1
+				? (',' /* Do not use the variable "comma" as it may end with a white-space */ + options.newLineChar + indent + options.tabStopChar)
+				: comma
+
+			outputBuffer.append(keyNodePairs.map(pair =>
+				pair[0] +
+				travel(inputNode, pair[1], indentLevel, true)
+			).join(separator))
+
+			if (lineCount > 1) {
+				outputBuffer.append(options.newLineChar + indent)
+			}
 
 			outputBuffer.append(closeParen)
 
