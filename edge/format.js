@@ -67,6 +67,11 @@ function format(content, options = {}) {
 	// Store the Stylus parsed tree
 	const rootNode = new Stylus.Parser(modifiedContent).parse()
 
+	// Return the original content if it only has comments
+	if (rootNode.nodes.every(node => node instanceof Stylus.nodes.Comment)) {
+		return content
+	}
+
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
 		if (!(_.isObject(parentNode) || parentNode === null && inputNode instanceof Stylus.nodes.Root)) {

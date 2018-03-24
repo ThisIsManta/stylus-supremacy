@@ -72,7 +72,7 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	const inputContent = fs.readFileSync(inputFilePath, 'utf8')
 	const outputContent = fs.readFileSync(outputFilePath, 'utf8')
 
-	let formattingOptions = null
+	let formattingOptions = undefined
 	if (fs.existsSync(optionFilePath)) {
 		formattingOptions = require('../' + optionFilePath)
 	}
