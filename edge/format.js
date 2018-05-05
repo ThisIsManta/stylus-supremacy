@@ -626,6 +626,7 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
 					inputNode.parent.parent instanceof Stylus.nodes.Return ||
 					inputNode.parent.parent instanceof Stylus.nodes.Arguments ||
+					inputNode.parent.parent instanceof Stylus.nodes.Object ||
 					inputNode.parent.parent instanceof Stylus.nodes.BinOp && inputNode.parent.parent.op === '[]'
 				) === false
 			const currentIsEmpty = (
