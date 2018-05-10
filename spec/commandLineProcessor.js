@@ -4,7 +4,8 @@ const process = require('../edge/commandLineProcessor')
 const createCodeForFormatting = require('../edge/createCodeForFormatting')
 
 const inputTempFile = '__commandLineProcessorInput.styl'
-const optionTempFile = '__formattingOptions.json'
+const optionTempFileJSON = '__formattingOptions.json'
+const optionTempFileYAML = '__formattingOptions.yaml'
 const outputTempFile = '__commandLineProcessorOutput.styl'
 
 describe('commandLineProcessor', () => {
@@ -28,8 +29,12 @@ describe('commandLineProcessor', () => {
 			fs.unlinkSync(inputTempFile)
 		}
 
-		if (fs.existsSync(optionTempFile)) {
-			fs.unlinkSync(optionTempFile)
+		if (fs.existsSync(optionTempFileJSON)) {
+			fs.unlinkSync(optionTempFileJSON)
+		}
+
+		if (fs.existsSync(optionTempFileYAML)) {
+			fs.unlinkSync(optionTempFileYAML)
 		}
 
 		if (fs.existsSync(outputTempFile)) {
@@ -64,14 +69,14 @@ describe('commandLineProcessor', () => {
 	})
 
 	;['--options', '-p'].forEach(param => {
-		it('prints the formatted content given the formatting options', () => {
+		it('prints the formatted content given the formatting options in JSON', () => {
 			const inputContent = createCodeForFormatting(`
 			body
 			  display none
 			`)
 
 			const formattingOptions = `{
-				// Comments are acceptable because parsing JSON is being done by https://www.npmjs.com/package/comment-json
+				// Comments are acceptable because parsing JSON is done by https://www.npmjs.com/package/json5
 				"insertColons": false
 			}`
 
@@ -82,8 +87,32 @@ describe('commandLineProcessor', () => {
 			`)
 
 			fs.writeFileSync(inputTempFile, inputContent)
-			fs.writeFileSync(optionTempFile, formattingOptions)
-			process('format', [inputTempFile, param, optionTempFile], Console)
+			fs.writeFileSync(optionTempFileJSON, formattingOptions)
+			process('format', [inputTempFile, param, optionTempFileJSON], Console)
+			const outputContent = Console._log[0][0]
+
+			expect(outputContent).toBe(expectContent)
+		})
+	})
+
+	;['--options', '-p'].forEach(param => {
+		it('prints the formatted content given the formatting options in YAML', () => {
+			const inputContent = createCodeForFormatting(`
+			body
+			  display none
+			`)
+
+			const formattingOptions = 'insertColons: false'
+
+			const expectContent = createCodeForFormatting(`
+			body {
+				display none;
+			}
+			`)
+
+			fs.writeFileSync(inputTempFile, inputContent)
+			fs.writeFileSync(optionTempFileYAML, formattingOptions)
+			process('format', [inputTempFile, param, optionTempFileYAML], Console)
 			const outputContent = Console._log[0][0]
 
 			expect(outputContent).toBe(expectContent)

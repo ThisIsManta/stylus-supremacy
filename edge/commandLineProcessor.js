@@ -3,7 +3,8 @@ const fp = require('path')
 const ps = require('process')
 const glob = require('glob')
 const _ = require('lodash')
-const JSONWithComments = require('comment-json')
+const JSON5 = require('json5')
+const YAML = require('js-yaml')
 
 const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -37,7 +38,12 @@ function process(command, params = [], Console = console) {
 			}
 
 			try {
-				formattingOptions = JSONWithComments.parse(fs.readFileSync(optionFilePathParams[1], 'utf8'), null, true)
+				const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
+				if (optionFilePathParams[1].endsWith('.yaml') || optionFilePathParams[1].endsWith('.yml')) {
+					formattingOptions = YAML.safeLoad(fileText, { json: true })
+				} else {
+					formattingOptions = JSON5.parse(fileText)
+				}
 			} catch (ex) {
 				throw new Error('The given option file could not be parsed as JSON.')
 			}
