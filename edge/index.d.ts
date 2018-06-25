@@ -6,6 +6,8 @@ declare namespace StylusSupremacy {
 	export function createFormattingOptions(options: any): FormattingOptions
 	export function createFormattingOptionsFromStylint(options: any): FormattingOptions
 	export function checkIfFilePathIsIgnored(filePath: string, rootPath: string, options: any): FormattingOptions
+	export function findParentNode(inputNode: any, condition: (node: any) => boolean): FormattingOptions
+	export function findChildNodes(inputNode: any, condition: (node: any) => boolean): FormattingOptions
 
 	// Do not modify as the following block is auto-generated
 	// See "reviseTypeDefinition.js"
