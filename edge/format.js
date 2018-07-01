@@ -327,11 +327,6 @@ function format(content, options = {}) {
 			const propertyName = travelThroughSegments(inputNode, indentLevel).join('')
 			outputBuffer.append(indent + propertyName)
 
-			if (options.insertColons) {
-				outputBuffer.append(':')
-			}
-			outputBuffer.append(' ')
-
 			// Insert the property value(s)
 			if (inputNode.expr instanceof Stylus.nodes.Expression) {
 				// Extract the last portion of comments
@@ -362,8 +357,30 @@ function format(content, options = {}) {
 
 				// Insert the property value(s) without the last portion of comments
 				if (nodesExcludingCommentsOnTheRight.every(node => node instanceof Stylus.nodes.Expression)) {
-					outputBuffer.append(propertyValues.join(comma))
+					const numberOfLineTaken = _.chain(nodesExcludingCommentsOnTheRight)
+						.map('lineno')
+						.uniq()
+						.value()
+						.length
+					if (numberOfLineTaken > 1 && options.preserveNewLinesBetweenPropertyValues) {
+						outputBuffer.append(':' + options.newLineChar)
+						const innerIndent = indent + options.tabStopChar
+						outputBuffer.append(innerIndent)
+						outputBuffer.append(propertyValues.join(',' + options.newLineChar + innerIndent))
+
+					} else {
+						if (options.insertColons) {
+							outputBuffer.append(':')
+						}
+						outputBuffer.append(' ')
+						outputBuffer.append(propertyValues.join(comma))
+					}
+
 				} else {
+					if (options.insertColons) {
+						outputBuffer.append(':')
+					}
+					outputBuffer.append(' ')
 					outputBuffer.append(propertyValues.join(' '))
 				}
 

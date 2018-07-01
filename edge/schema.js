@@ -64,6 +64,22 @@ module.exports = {
 		default: false,
 		hideInDemo: true
 	},
+	preserveNewLinesBetweenPropertyValues: {
+		description: 'Preserve the new-lines between property values instead of flattening the lines. This also adds/keeps the colon after the property name according to Stylus syntax.',
+		enum: [true, false],
+		default: false,
+		example: {
+			values: [true, false],
+			code: `
+			.class1
+				box-shadow:
+					0px 0px 5px black,
+					0px 5px 1px 1px blue,
+					10px 10px 0px red,
+					0px 0px 0px 1px yellow inset
+			`
+		}
+	},
 	insertSpaceBeforeComment: {
 		description: 'Insert or remove a white-space before a comment.',
 		type: 'boolean',
