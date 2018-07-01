@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const schema = require('./schema')
 
 const createAdapterForAlwaysNeverFalse = value => (value === 'always' || value === 'never') ? value === 'always' : undefined
 
@@ -21,20 +22,39 @@ const stylintOptionMap = {
 	zeroUnits: ['alwaysUseZeroWithoutUnit', value => value === false ? undefined : value === 'never'],
 }
 
+const usedFormattingOptionNames = _.chain(stylintOptionMap)
+	.values()
+	.flatten()
+	.chunk(2)
+	.map('0')
+	.flatten()
+	.value()
+
+const complementaryOptionMap = _.chain(schema)
+	.keys()
+	.difference(usedFormattingOptionNames) // Prevent conflicts by removing the formatting options that can be specified via Stylint above
+	.reduce((hash, name) => {
+		hash['stylusSupremacy.' + name] = [name, _.identity]
+		return hash
+	}, {})
+	.value()
+
+const universalOptionMap = _.assign({}, stylintOptionMap, complementaryOptionMap)
+
 function createFormattingOptionsFromStylint(stylintOptions = {}) {
 	return _.chain(stylintOptions)
-		.omitBy((item, name) => stylintOptionMap[name] === undefined)
-		.reduce((temp, rule, name) => {
+		.omitBy((rule, name) => universalOptionMap[name] === undefined)
+		.reduce((hash, rule, name) => {
 			const value = _.isObject(rule) && rule.expect !== undefined ? rule.expect : rule
 
-			_.chunk(stylintOptionMap[name] || [], 2).forEach(pair => {
+			_.chunk(universalOptionMap[name], 2).forEach(pair => {
 				const result = pair[1](value)
 				if (result !== undefined) {
-					temp[pair[0]] = result
+					hash['stylusSupremacy.' + pair[0]] = result
 				}
 			})
 
-			return temp
+			return hash
 		}, {})
 		.value()
 }

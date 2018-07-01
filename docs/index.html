@@ -365,6 +365,8 @@
  
 				<p>The below is the default example of <mark class="alt">.stylintrc</mark> file. Note that the content of the file must be in JSON even though it does not have any file extension.</p>
 
+				<p>Please visit <a href="https://www.npmjs.com/package/stylint#options" target="_blank">Stylint npm module</a> for full details about its rules.</p>
+
 				<code>
 					{<br>
 						&nbsp;&nbsp;"blocks": false,<br>&nbsp;&nbsp;"brackets": "never",<br>&nbsp;&nbsp;"colons": "always",<br>&nbsp;&nbsp;"colors": "always",<br>&nbsp;&nbsp;"commaSpace": "always",<br>&nbsp;&nbsp;"commentSpace": "always",<br>&nbsp;&nbsp;"cssLiteral": "never",<br>&nbsp;&nbsp;"customProperties": [],<br>&nbsp;&nbsp;"depthLimit": false,<br>&nbsp;&nbsp;"duplicates": true,<br>&nbsp;&nbsp;"efficient": "always",<br>&nbsp;&nbsp;"exclude": [],<br>&nbsp;&nbsp;"extendPref": false,<br>&nbsp;&nbsp;"globalDupe": false,<br>&nbsp;&nbsp;"groupOutputByFile": true,<br>&nbsp;&nbsp;"indentPref": false,<br>&nbsp;&nbsp;"leadingZero": "never",<br>&nbsp;&nbsp;"maxErrors": false,<br>&nbsp;&nbsp;"maxWarnings": false,<br>&nbsp;&nbsp;"mixed": false,<br>&nbsp;&nbsp;"mixins": [],<br>&nbsp;&nbsp;"namingConvention": false,<br>&nbsp;&nbsp;"namingConventionStrict": false,<br>&nbsp;&nbsp;"none": "never",<br>&nbsp;&nbsp;"noImportant": true,<br>&nbsp;&nbsp;"parenSpace": false,<br>&nbsp;&nbsp;"placeholders": "always",<br>&nbsp;&nbsp;"prefixVarsWithDollar": "always",<br>&nbsp;&nbsp;"quotePref": false,<br>&nbsp;&nbsp;"reporterOptions": {<br>&nbsp;&nbsp;"columns": ["lineData", "severity", "description", "rule"],<br>&nbsp;&nbsp;"columnSplitter": "  ",<br>&nbsp;&nbsp;"showHeaders": false,<br>&nbsp;&nbsp;"truncate": true<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"semicolons": "never",<br>&nbsp;&nbsp;"sortOrder": "alphabetical",<br>&nbsp;&nbsp;"stackedProperties": "never",<br>&nbsp;&nbsp;"trailingWhitespace": "never",<br>&nbsp;&nbsp;"universal": false,<br>&nbsp;&nbsp;"valid": true,<br>&nbsp;&nbsp;"zeroUnits": "never",<br>&nbsp;&nbsp;"zIndexNormalize": false<br>
@@ -400,19 +402,25 @@
 					}
 				</samp>
 
-				<p>Please visit <a href="https://www.npmjs.com/package/stylint#options" target="_blank">Stylint npm module</a> for full details about its rules.</p>
-
 				<p>Note that <code>"always"</code> in Stylint is equivalent to <code>true</code>; <code>"never"</code> is equivalent to <code>false</code>, otherwise the <a href="#options">default formatting options</a> will be used.</p>
 
 				<table id="stylint-rules">
 					<thead>
 						<tr>
-							<th>Stylint options</th>
+							<th>Stylint rules</th>
 							<th>Equivalent formatting options</th>
 						</tr>
 					</thead>
 					<!-- stylint option placeholder --><tbody><tr><td><mark class="alt">blocks</mark></td><td><mark>always<wbr>Use<wbr>At<wbr>Block</mark></td></tr><tr><td><mark class="alt">brackets</mark></td><td><mark>insert<wbr>Braces</mark></td></tr><tr><td><mark class="alt">colons</mark></td><td><mark>insert<wbr>Colons</mark></td></tr><tr><td><mark class="alt">colors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">comma<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comma</mark></td></tr><tr><td><mark class="alt">comment<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>After<wbr>Comment</mark></td></tr><tr><td><mark class="alt">css<wbr>Literal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">depth<wbr>Limit</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">duplicates</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">efficient</mark></td><td><mark>reduce<wbr>Margin<wbr>And<wbr>Padding<wbr>Values</mark></td></tr><tr><td><mark class="alt">exclude</mark></td><td><mark>ignore<wbr>Files</mark></td></tr><tr><td><mark class="alt">extend<wbr>Pref</mark></td><td><mark>always<wbr>Use<wbr>Extends</mark></td></tr><tr><td><mark class="alt">global<wbr>Dupe</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">group<wbr>Output<wbr>By<wbr>File</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">indent<wbr>Pref</mark></td><td><mark>tab<wbr>Stop<wbr>Char</mark></td></tr><tr><td><mark class="alt">leading<wbr>Zero</mark></td><td><mark>insert<wbr>Leading<wbr>Zero<wbr>Before<wbr>Fraction</mark></td></tr><tr><td><mark class="alt">max<wbr>Errors</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">max<wbr>Warnings</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">mixed</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">naming<wbr>Convention<wbr>Strict</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">no<wbr>Important</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">none</mark></td><td><mark>always<wbr>Use<wbr>None<wbr>Over<wbr>Zero</mark></td></tr><tr><td><mark class="alt">paren<wbr>Space</mark></td><td><mark>insert<wbr>Space<wbr>Inside<wbr>Parenthesis</mark></td></tr><tr><td><mark class="alt">placeholders</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">prefix<wbr>Vars<wbr>With<wbr>Dollar</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">quote<wbr>Pref</mark></td><td><mark>quote<wbr>Char</mark></td></tr><tr><td><mark class="alt">reporter</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">reporter<wbr>Options</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">semicolons</mark></td><td><mark>insert<wbr>Semicolons</mark></td></tr><tr><td><mark class="alt">sort<wbr>Order</mark></td><td><mark>sort<wbr>Properties</mark>, <mark>insert<wbr>New<wbr>Line<wbr>Around<wbr>Properties</mark></td></tr><tr><td><mark class="alt">stacked<wbr>Properties</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">trailing<wbr>Whitespace</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">universal</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">valid</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">z<wbr>Index<wbr>Normalize</mark></td><td>Not applicable</td></tr><tr><td><mark class="alt">zero<wbr>Units</mark></td><td><mark>always<wbr>Use<wbr>Zero<wbr>Without<wbr>Unit</mark></td></tr></tbody><!-- stylint option placeholder -->
 				</table>
+
+				<p>In addition to the table above, starting from <b>Stylus Supremacy</b> version 2.13, the exclusive formatting options can be passed as Stylint rules. The below illustrates how you can pass <mark>selectorSeparator</mark>, which it does not have an equivalent Stylint rule, as it was one of them. Note that the prefix <code>stylusSupremacy.</code> must be written always.</p>
+
+				<code>
+					{<br>
+						&nbsp;&nbsp;"blocks": false,<br>&nbsp;&nbsp;"brackets": "never",<br>&nbsp;&nbsp;"stylusSupremacy.selectorSeparator": ",\n"<br>
+					}
+				</code>
 			</article>
 			<article id="vscode">
 				<h1>Visual Studio Code extension</h1>
