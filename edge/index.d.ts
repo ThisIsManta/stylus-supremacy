@@ -20,6 +20,7 @@ declare namespace StylusSupremacy {
 		insertNewLineAroundProperties?: boolean
 		insertNewLineAroundOthers?: boolean | string
 		insertNewLineBetweenSelectors?: boolean
+		preserveNewLinesBetweenPropertyValues?: boolean
 		insertSpaceBeforeComment?: boolean
 		insertSpaceAfterComment?: boolean
 		insertSpaceAfterComma?: boolean
