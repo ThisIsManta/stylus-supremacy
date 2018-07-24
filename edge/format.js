@@ -5,7 +5,6 @@ const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
 const createStringBuffer = require('./createStringBuffer')
 const sortedProperties = require('./createSortedProperties')()
-const findParentNode = require('./findParentNode')
 const findChildNodes = require('./findChildNodes')
 
 function format(content, options = {}) {
@@ -275,7 +274,7 @@ function format(content, options = {}) {
 
 			// Insert CSS body and new-lines between them
 			outputBuffer.append(_.chain(groupOfSortedNonCommentNodes)
-				.map((nodes, rank, list) => {
+				.map((nodes) => {
 					const nodeType = getType(nodes[0])
 
 					let newLineOrEmpty = ''
@@ -638,6 +637,7 @@ function format(content, options = {}) {
 				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
 				inputNode.parent.parent &&
 				(
+					inputNode.parent.parent instanceof Stylus.nodes.Feature ||
 					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
 					inputNode.parent.parent instanceof Stylus.nodes.If ||
 					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
