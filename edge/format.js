@@ -1043,6 +1043,9 @@ function format(content, options = {}) {
 			}
 			outputBuffer.append(options.newLineChar)
 
+		} else if (inputNode instanceof Stylus.nodes.Null) {
+			outputBuffer.append('null')
+
 		} else if (inputNode instanceof Stylus.nodes.Comment && inputNode.str.startsWith('//')) { // In case of single-line comments
 			if (inputNode.insertNewLineAbove) {
 				outputBuffer.append(options.newLineChar)
