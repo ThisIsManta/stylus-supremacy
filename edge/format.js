@@ -1405,19 +1405,27 @@ function checkIfTernary(node) {
 
 function checkForParenthesis(node, options) {
 	// Note that `Arguments` type inherits `Expression` type
-	return (
+	if (
 		node instanceof Stylus.nodes.If &&
 		options.insertParenthesisAroundIfCondition &&
 		node.cond instanceof Stylus.nodes.Expression &&
 		node.cond.nodes.length === 1 &&
 		checkForParenthesis(node.cond.nodes[0], options) === false
-	) || (
-			node instanceof Stylus.nodes.Expression &&
-			node instanceof Stylus.nodes.Arguments === false &&
-			node.nodes.length === 1 &&
-			node.nodes[0] instanceof Stylus.nodes.Expression &&
-			node.nodes[0] instanceof Stylus.nodes.Arguments === false
-		)
+	) {
+		return true
+	}
+
+	if (
+		node instanceof Stylus.nodes.Expression &&
+		node instanceof Stylus.nodes.Arguments === false &&
+		node.nodes.length === 1 &&
+		node.nodes[0] instanceof Stylus.nodes.Expression &&
+		node.nodes[0] instanceof Stylus.nodes.Arguments === false
+	) {
+		return true
+	}
+
+	return false
 }
 
 function getIndent(line) {

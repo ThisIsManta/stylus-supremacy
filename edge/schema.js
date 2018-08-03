@@ -142,13 +142,13 @@ module.exports = {
 		}
 	},
 	insertParenthesisAroundIfCondition: {
-		description: 'Insert or remove a pair of parentheses around <code>if</code>-condition.',
+		description: 'Insert a pair of parentheses around <code>if</code>-condition but does not remove the existing pair of parentheses.',
 		type: 'boolean',
 		default: true,
 		example: {
 			values: [true, false],
 			code: `
-			if (a > b)
+			if a > b
 				background red
 			`
 		}
