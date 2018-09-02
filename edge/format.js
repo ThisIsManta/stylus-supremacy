@@ -1096,6 +1096,7 @@ function format(content, options = {}) {
 						} else {
 							commentLines[zeroBasedLineIndex] = ' *' + spaceAfterComment + commentLines[zeroBasedLineIndex]
 						}
+						commentLines[zeroBasedLineIndex] = _.trimEnd(commentLines[zeroBasedLineIndex])
 					}
 				}
 
