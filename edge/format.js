@@ -625,12 +625,11 @@ function format(content, options = {}) {
 					inputNode.parent.op !== '[]' &&
 					inputNode.parent.op !== '[]='
 				)
-			const parentIsStringInterpolation = (
+			const parentIsStringInterpolation =
 				inputNode.parent instanceof Stylus.nodes.BinOp &&
 				inputNode.parent.op === '%' &&
 				inputNode.parent.right === inputNode &&
 				inputNode.nodes.length > 1
-			)
 			const parentIsNestedExpression =
 				inputNode.nodes.length === 1 &&
 				inputNode.parent instanceof Stylus.nodes.Expression &&
@@ -646,16 +645,19 @@ function format(content, options = {}) {
 					inputNode.parent.parent instanceof Stylus.nodes.Object ||
 					inputNode.parent.parent instanceof Stylus.nodes.BinOp && inputNode.parent.parent.op === '[]'
 				) === false
-			const currentIsEmpty = (
+			const currentIsEmpty =
 				inputNode.nodes.length === 0 &&
 				inputNode.parent instanceof Stylus.nodes.Expression &&
 				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
 				inputNode.parent.nodes.length === 1
-			)
 			const currentIsDivision =
 				inputNode.nodes.length === 1 &&
 				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
 				inputNode.nodes[0].op === '/'
+			const currentIsNegation =
+				inputNode.nodes.length === 1 &&
+				inputNode.nodes[0] instanceof Stylus.nodes.UnaryOp &&
+				inputNode.nodes[0].op === '-'
 			const currentHasUnitSuffix =
 				inputNode.nodes.length === 2 &&
 				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
@@ -665,7 +667,8 @@ function format(content, options = {}) {
 				parentIsStringInterpolation ||
 				parentIsNestedExpression ||
 				currentIsEmpty ||
-				currentIsDivision
+				currentIsDivision ||
+				currentIsNegation
 			if (currentHasParenthesis || currentHasUnitSuffix) {
 				outputBuffer.append(openParen)
 			}
