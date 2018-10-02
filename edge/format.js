@@ -138,9 +138,22 @@ function format(content, options = {}) {
 				outputBuffer.append(' {')
 			}
 
-			// Filter multi-line comment(s)
-			const commentNodes = inputNode.nodes.filter(node => node instanceof Stylus.nodes.Comment)
-			const unsortedNonCommentNodes = _.difference(inputNode.nodes, commentNodes)
+			// Filter consecutive multi-line comment(s)
+			const groupOfCommentNodes = [[]]
+			inputNode.nodes.forEach(node => {
+				const lastGroup = _.last(groupOfCommentNodes)
+				if (node instanceof Stylus.nodes.Comment) {
+					lastGroup.push(node)
+
+				} else if (lastGroup.length > 0) {
+					groupOfCommentNodes.push([])
+				}
+			})
+			if (_.last(groupOfCommentNodes).length === 0) {
+				groupOfCommentNodes.pop()
+			}
+
+			const unsortedNonCommentNodes = _.difference(inputNode.nodes, _.flatten(groupOfCommentNodes))
 
 			// Insert a comment on the right of the last selector
 			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock)
@@ -150,10 +163,15 @@ function format(content, options = {}) {
 				}
 				outputBuffer.append(travel(inputNode.parent, sideCommentNode, indentLevel, true))
 
-				// Remove the duplicate multi-line comment, which it is the same as `sideCommentNode` above
-				const duplicateCommentNode = inputNode.nodes.length > 0 && inputNode.nodes[0] instanceof Stylus.nodes.Comment && inputNode.nodes[0].lineno === inputNode.lineno ? inputNode.nodes[0] : null
-				if (duplicateCommentNode && sideCommentNode.str === duplicateCommentNode.str) {
-					commentNodes.splice(0, 1)
+				// Remove the first multi-line comment because it has been processed above
+				const blockCommentNode = inputNode.nodes[0]
+				if (
+					blockCommentNode instanceof Stylus.nodes.Comment &&
+					blockCommentNode.lineno === inputNode.lineno &&
+					blockCommentNode.str === sideCommentNode.str &&
+					blockCommentNode === groupOfCommentNodes[0][0]
+				) {
+					groupOfCommentNodes[0].shift()
 				}
 			}
 
@@ -230,32 +248,31 @@ function format(content, options = {}) {
 				}
 			})
 
-			// Put a sticky multi-line comment to the relevant node
-			_.orderBy(commentNodes, ['lineno', 'column'], ['desc', 'asc']).forEach(comment => {
-				const sideNode = sortedNonCommentNodes.find(node => node.lineno === comment.lineno && node.column < comment.column)
-				if (sideNode) {
-					if (sideNode.commentsOnRight === undefined) {
-						sideNode.commentsOnRight = []
+			groupOfCommentNodes.forEach(commentNodes => {
+				const [rightCommentNodes, lineCommentNodes] = _.partition(commentNodes, commentNode => sortedNonCommentNodes.some(node => node.lineno === commentNode.lineno && node.column < commentNode.column))
+
+				// Put the column-consecutive comment(s) on the right of the inner node
+				rightCommentNodes.forEach(commentNode => {
+					const leftNode = _.findLast(sortedNonCommentNodes, node => node.lineno === commentNode.lineno && node.column < commentNode.column)
+					if (leftNode.commentsOnRight === undefined) {
+						leftNode.commentsOnRight = []
 					}
-					sideNode.commentsOnRight.push(comment)
+					leftNode.commentsOnRight.push(commentNode)
+				})
+
+				const index = inputNode.nodes.indexOf(_.last(lineCommentNodes))
+				if (index === inputNode.nodes.length - 1) {
+					// Put the line-consecutive comment(s) at the bottom-most of the block
+					groupOfSortedNonCommentNodes.push(lineCommentNodes)
 
 				} else {
-					const index = inputNode.nodes.indexOf(comment)
-					if (index === inputNode.nodes.length - 1) {
-						groupOfSortedNonCommentNodes.push([comment])
-
-					} else {
-						let belowNode = inputNode.nodes[index + 1]
-						if (sortedNonCommentNodes.includes(belowNode)) {
-							if (belowNode.commentsOnTop === undefined) {
-								belowNode.commentsOnTop = []
-							}
-							belowNode.commentsOnTop.push(comment)
-
-						} else if (belowNode instanceof Stylus.nodes.Comment) {
-							belowNode = sortedNonCommentNodes.find(node => node.commentsOnTop && node.commentsOnTop.find(node => belowNode === node))
-							belowNode.commentsOnTop.unshift(comment)
+					// Put the line-consecutive comment(s) on the top of the inner node
+					const belowNode = inputNode.nodes[index + 1]
+					if (sortedNonCommentNodes.includes(belowNode)) {
+						if (belowNode.commentsOnTop === undefined) {
+							belowNode.commentsOnTop = []
 						}
+						belowNode.commentsOnTop.push(...lineCommentNodes)
 					}
 				}
 			})
