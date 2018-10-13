@@ -653,6 +653,9 @@ function format(content, options = {}) {
 				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
 				inputNode.parent.parent &&
 				(
+					inputNode.parent.parent instanceof Stylus.nodes.Expression &&
+					!(inputNode.parent.parent instanceof Stylus.nodes.Arguments) &&
+					inputNode.parent.parent.nodes.indexOf(inputNode.parent) >= 1 || // Note that this is a bug from Stylus compiler where it adds extra Expression node
 					inputNode.parent.parent instanceof Stylus.nodes.Feature ||
 					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
 					inputNode.parent.parent instanceof Stylus.nodes.If ||
