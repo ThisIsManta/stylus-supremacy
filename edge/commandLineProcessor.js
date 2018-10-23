@@ -37,15 +37,19 @@ function process(command, params = [], Console = console) {
 				throw new Error('The given option file path did not exist.')
 			}
 
-			try {
-				const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
-				if (optionFilePathParams[1].endsWith('.yaml') || optionFilePathParams[1].endsWith('.yml')) {
+			const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
+			if (optionFilePathParams[1].endsWith('.yaml') || optionFilePathParams[1].endsWith('.yml')) {
+				try {
 					formattingOptions = YAML.safeLoad(fileText, { json: true })
-				} else {
-					formattingOptions = JSON5.parse(fileText)
+				} catch (ex) {
+					throw new Error('The given option file could not be parsed as JSON.')
 				}
-			} catch (ex) {
-				throw new Error('The given option file could not be parsed as JSON.')
+			} else {
+				try {
+					formattingOptions = JSON5.parse(fileText)
+				} catch (ex) {
+					throw new Error('The given option file could not be parsed as YAML.')
+				}
 			}
 
 			if (fp.basename(optionFilePathParams[1]).startsWith('.stylintrc')) {
