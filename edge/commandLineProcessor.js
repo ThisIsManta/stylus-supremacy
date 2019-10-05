@@ -10,6 +10,7 @@ const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const checkIfFilePathIsIgnored = require('./checkIfFilePathIsIgnored')
+const compareContent = require('./compareContent')
 
 function process(command, params = [], Console = console) {
 	if (command === '--version' || command === '-v') {
@@ -19,6 +20,7 @@ function process(command, params = [], Console = console) {
 		const optionFilePathParams = getParam(params, ['--options', '-p'], 1)
 		const outputDirectoryParams = getParam(params, ['--outDir', '-o'], 1)
 		const replaceOriginalParams = getParam(params, ['--replace', '-r'])
+		const compareOriginalParams = getParam(params, ['--compare', '-c'])
 		const dryRunParams = getParam(params, ['--dryRun'])
 		const debuggingParams = getParam(params, ['--debug', '-d'])
 
@@ -88,6 +90,13 @@ function process(command, params = [], Console = console) {
 					} else if (replaceOriginalParams.length > 0) {
 						if (inputContent !== outputContent) {
 							fs.writeFileSync(path, outputContent)
+						}
+
+					} else if (compareOriginalParams.length > 0) {
+						const error = compareContent(inputContent, outputContent)
+						if (error) {
+							Console.log(error)
+							return error
 						}
 
 					} else {

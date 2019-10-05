@@ -18,47 +18,11 @@ const pt = require('path')
 const _ = require('lodash')
 const Stylus = require('stylus')
 const format = require('../edge/format')
+const compareContent = require('../edge/compareContent')
 
 const filesAndDirectories = _.chain(ps.argv.length > 2 ? ps.argv.slice(2) : ['*']).map(para => glob.sync('spec/' + para)).flatten().value()
 const filesOnly = path => pt.extname(path) === '.js'
 const directoriesOnly = path => pt.extname(path) === ''
-const createComparableLines = text => text.replace(/\r/g, '¶').replace(/\t/g, '→').replace(/^\s+/gm, spaces => _.repeat('·', spaces.length)).split('\n')
-const createComparisonTest = (actualContent, expectContent, stack) => {
-	const resultLines = createComparableLines(actualContent)
-	const expectLines = createComparableLines(expectContent)
-
-	let lineIndex = -1
-	const lineLimit = Math.min(resultLines.length, expectLines.length)
-	while (++lineIndex < Math.min(resultLines.length, expectLines.length)) {
-		if (resultLines[lineIndex] !== expectLines[lineIndex]) {
-			let diffs = ''
-			let charIndex = -1
-			const charLimit = Math.max(resultLines[lineIndex].length, expectLines[lineIndex].length)
-			while (++charIndex < charLimit) {
-				if (resultLines[lineIndex][charIndex] !== expectLines[lineIndex][charIndex]) {
-					diffs += '^'
-				} else {
-					diffs += ' '
-				}
-			}
-
-			return fail({
-				message: [
-					'The first mismatched was at line ' + (lineIndex + 1) + '.',
-					'  Actual: ' + resultLines[lineIndex],
-					'  Expect: ' + expectLines[lineIndex],
-					'          ' + diffs
-				].join('\n'),
-				stack
-			})
-		}
-	}
-
-	return fail({
-		message: 'It was not clear to show the difference. Please check out the files below.',
-		stack
-	})
-}
 
 filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	const optionFilePath = pt.join(directory, 'formattingOptions.json')
@@ -91,10 +55,8 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 
 			const actualContent = format(inputContent, formattingOptions)
 
-			if (actualContent === outputContent) {
-				expect(true).toBeTruthy()
-
-			} else {
+			const errorMessage = compareContent(actualContent, outputContent)
+			if (errorMessage) {
 				fs.writeFileSync(inputFormattedFilePath, actualContent)
 
 				const stack = [
@@ -104,7 +66,12 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 					outputFilePath,
 				].map(path => pt.resolve(path)).join('\n')
 
-				createComparisonTest(actualContent, outputContent, stack)
+				fail({
+					message: errorMessage,
+					stack,
+				})
+			} else {
+				expect(true).toBeTruthy()
 			}
 		})
 
@@ -131,19 +98,22 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 				// Do nothing
 			}
 
-			if (actualContent === outputContent) {
-				expect(true).toBeTruthy()
-
-			} else {
+			const errorMessage = compareContent(actualContent, outputContent)
+			if (errorMessage) {
 				fs.writeFileSync(outputFormattedFilePath, actualContent)
 
-				stack = [
+				const stack = [
 					outputFilePath,
 					outputFormattedFilePath,
 					outputDebuggingFilePath,
 				].map(path => pt.resolve(path)).join('\n')
 
-				createComparisonTest(actualContent, outputContent, stack)
+				fail({
+					message: errorMessage,
+					stack,
+				})
+			} else {
+				expect(true).toBeTruthy()
 			}
 		})
 	})

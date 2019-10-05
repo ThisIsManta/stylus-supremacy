@@ -49,7 +49,7 @@ describe('commandLineProcessor', () => {
 		})
 	})
 
-	it('prints the formatted content given no formatting options', () => {
+	it('prints the formatted content, given no formatting options', () => {
 		const inputContent = createCodeForFormatting(`
 		body
 		  display none
@@ -69,7 +69,7 @@ describe('commandLineProcessor', () => {
 	})
 
 	;['--options', '-p'].forEach(param => {
-		it('prints the formatted content given the formatting options in JSON', () => {
+		it('prints the formatted content, given the formatting options in JSON', () => {
 			const inputContent = createCodeForFormatting(`
 			body
 			  display none
@@ -96,7 +96,7 @@ describe('commandLineProcessor', () => {
 	})
 
 	;['--options', '-p'].forEach(param => {
-		it('prints the formatted content given the formatting options in YAML', () => {
+		it('prints the formatted content, given the formatting options in YAML', () => {
 			const inputContent = createCodeForFormatting(`
 			body
 			  display none
@@ -159,6 +159,39 @@ describe('commandLineProcessor', () => {
 			const outputContent = fs.readFileSync(inputTempFile, 'utf-8')
 
 			expect(outputContent).toBe(expectContent)
+		})
+	})
+
+	;['--compare', '-c'].forEach(param => {
+		it('prints no errors, given a well-formatted content', () => {
+			const inputContent = createCodeForFormatting(`
+			body {
+				display: none;
+			}
+			`)
+
+			fs.writeFileSync(inputTempFile, inputContent)
+			const errors = process('format', [inputTempFile, param], Console)
+
+			expect(errors.length).toBe(0)
+		})
+
+		it('prints the difference between the input and the formatted content', () => {
+			const inputContent = createCodeForFormatting(`
+			body {
+				display none
+			}
+			`)
+
+			fs.writeFileSync(inputTempFile, inputContent)
+			const errors = process('format', [inputTempFile, param], Console)
+
+			expect(errors[0]).toEqual([
+				'The first mismatched was at line 2.',
+				'  Actual: →display none',
+				'  Expect: →display: none;',
+				'                  ^^^^^^^',
+			].join('\n'))
 		})
 	})
 

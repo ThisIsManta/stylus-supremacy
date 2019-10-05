@@ -110,7 +110,17 @@
 				<p>Alternatively, you may overwrite the original files by specifying <mark>--replace</mark> or <mark>-r</mark> parameter.</p>
 				<code>stylus-supremacy format ./path/to/your/file.styl --replace</code>
 
-				<p>Note that <mark>--outDir</mark> and <mark>--replace</mark> do not work together. You have to choose just one.</p>
+				<p>In case you want to check whether your file is being formatted correctly, you may specify <mark>--compare</mark> or <mark>-c</mark>. If the input file does not comply with the given formatting options, the command will print out the difference and exit with a code of 1. This is useful when running in a CI environment.</p>
+				<code>
+					stylus-supremacy format ./path/to/your/file.styl --compare<br>
+					The first mismatched was at line 2.<br>
+					&nbsp;&nbsp;Actual: →display none<br>
+					&nbsp;&nbsp;Expect: →display: none;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^^^^^^^<br>
+				  	Done with 1 error.
+				</code>
+
+				<p>Note that <mark>--outDir</mark>, <mark>--replace</mark>, and <mark>--compare</mark> do not work together. You have to choose just one.</p>
 			</article>
 			<article id="programming">
 				<h1>Programming usage</h1>
