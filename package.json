@@ -26,7 +26,7 @@
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
     "docs": "browserify --transform [ babelify --presets [ @babel/preset-env ] ] --require lodash --require ./edge/format.js:format --require ./edge/createCodeForHTML.js:createCodeForHTML > docs/format.js && node edge/reviseDocumentation.js",
-    "preversion": "git push --dry-run origin master:master && npm test && npm run docs && node ./edge/reviseTypeDefinition.js && git commit --allow-empty --message=\"Updated the static site\" -- docs/*.* edge/index.d.ts",
+    "preversion": "git push --dry-run origin master:master && npm test && npm run docs && node ./edge/reviseTypeDefinition.js && git commit --allow-empty --message=\"Updated the static site\" -- docs/*.* edge/index.d.ts package-lock.json",
     "version": "npm publish",
     "postversion": "git push --tags --quiet origin master:master"
   },
