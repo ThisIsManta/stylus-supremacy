@@ -25,7 +25,7 @@
   "scripts": {
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
-    "docs": "browserify --transform [ babelify --presets [ @babel/preset-env ] ] --require lodash --require ./edge/format.js:format --require ./edge/createCodeForHTML.js:createCodeForHTML | uglifyjs > docs/format.js && node edge/reviseDocumentation.js",
+    "docs": "browserify --transform [ babelify --presets [ @babel/preset-env ] ] --require lodash --require ./edge/format.js:format --require ./edge/createCodeForHTML.js:createCodeForHTML > docs/format.js && node edge/reviseDocumentation.js",
     "preversion": "git push --dry-run origin master:master && npm test && npm run docs && node ./edge/reviseTypeDefinition.js && git commit --allow-empty --message=\"Updated the static site\" -- docs/*.* edge/index.d.ts",
     "version": "npm publish",
     "postversion": "git push --tags --quiet origin master:master"
@@ -36,8 +36,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
     "jasmine": "^3.5.0",
-    "nodemon": "^1.19.3",
-    "uglify-js": "^3.6.0"
+    "nodemon": "^1.19.3"
   },
   "dependencies": {
     "glob": "^7.1.4",
