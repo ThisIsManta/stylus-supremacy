@@ -420,7 +420,7 @@ function format(content, options = {}) {
 			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Literal) {
-			if (inputNode.parent instanceof Stylus.nodes.Property && inputNode.parent.expr.nodes.length === 1) { // In case of @css property
+			if (inputNode.parent instanceof Stylus.nodes.Property && inputNode.parent.expr.nodes.length === 1 && inputNode.parent.expr.nodes[0] === inputNode) { // In case of @css property
 				// Note that it must be wrapped inside a pair of braces
 				outputBuffer.append('@css {')
 				if (inputNode.val.trim().length > 0) {

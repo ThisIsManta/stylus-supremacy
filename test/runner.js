@@ -34,17 +34,25 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	const outputDebuggingFilePath = pt.join(directory, 'output-debugging.json')
 
 	const inputContent = fs.readFileSync(inputFilePath, 'utf8')
-	const outputContent = fs.readFileSync(outputFilePath, 'utf8')
 
 	let formattingOptions = undefined
 	if (fs.existsSync(optionFilePath)) {
 		formattingOptions = require('../' + optionFilePath)
 	}
 
+	if (fs.existsSync(outputFilePath) === false) {
+		const actualContent = format(inputContent, formattingOptions)
+		fs.writeFileSync(outputFilePath, actualContent)
+	}
+
+	const outputContent = fs.readFileSync(outputFilePath, 'utf8')
+
 	const testSpecName = pt.basename(directory)
 	describe(testSpecName, () => {
 		it('can be formatted', () => {
-			if (fs.existsSync(inputFormattedFilePath)) fs.unlinkSync(inputFormattedFilePath)
+			if (fs.existsSync(inputFormattedFilePath)) {
+				fs.unlinkSync(inputFormattedFilePath)
+			}
 
 			try {
 				const tree = new Stylus.Parser(inputContent).parse()
