@@ -637,89 +637,96 @@ function format(content, options = {}) {
 				outputBuffer.append(indent)
 			}
 
-			const parentIsArithmeticOperator =
-				inputNode.parent instanceof Stylus.nodes.UnaryOp ||
-				(
+			(function () {
+				// Handle the special case for a unit suffix
+				if (
+					inputNode.nodes.length === 2 &&
+					inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
+					inputNode.nodes[1] instanceof Stylus.nodes.Ident
+				) {
+					outputBuffer.append(openParen)
+					outputBuffer.append(travel(inputNode, inputNode.nodes[0], indentLevel, true))
+					outputBuffer.append(closeParen)
+					outputBuffer.append(travel(inputNode, inputNode.nodes[1], indentLevel, true))
+					return
+				}
+
+				const parentIsArithmeticOperator =
+					inputNode.parent instanceof Stylus.nodes.UnaryOp ||
+					(
+						inputNode.nodes.length === 1 &&
+						inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
+						inputNode.parent instanceof Stylus.nodes.BinOp &&
+						inputNode.parent.op !== '[]' &&
+						inputNode.parent.op !== '[]='
+					)
+				const parentIsStringInterpolation =
+					inputNode.parent instanceof Stylus.nodes.BinOp &&
+					inputNode.parent.op === '%' &&
+					inputNode.parent.right === inputNode &&
+					inputNode.nodes.length > 1
+				const parentIsNestedExpression =
+					inputNode.nodes.length === 1 &&
+					inputNode.parent instanceof Stylus.nodes.Expression &&
+					!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
+					inputNode.parent.parent &&
+					(
+						inputNode.parent.parent instanceof Stylus.nodes.Expression &&
+						!(inputNode.parent.parent instanceof Stylus.nodes.Arguments) &&
+						inputNode.parent.parent.nodes.indexOf(inputNode.parent) >= 1 || // Note that this is a bug from Stylus compiler where it adds extra Expression node
+						inputNode.parent.parent instanceof Stylus.nodes.Feature ||
+						inputNode.parent.parent instanceof Stylus.nodes.Ident ||
+						inputNode.parent.parent instanceof Stylus.nodes.If ||
+						inputNode.parent.parent instanceof Stylus.nodes.Selector ||
+						inputNode.parent.parent instanceof Stylus.nodes.Return ||
+						inputNode.parent.parent instanceof Stylus.nodes.Arguments ||
+						inputNode.parent.parent instanceof Stylus.nodes.Object ||
+						inputNode.parent.parent instanceof Stylus.nodes.BinOp && inputNode.parent.parent.op === '[]'
+					) === false
+				const currentIsEmpty =
+					inputNode.nodes.length === 0 &&
+					inputNode.parent instanceof Stylus.nodes.Expression &&
+					!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
+					inputNode.parent.nodes.length === 1
+				const currentIsDivision =
 					inputNode.nodes.length === 1 &&
 					inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
-					inputNode.parent instanceof Stylus.nodes.BinOp &&
-					inputNode.parent.op !== '[]' &&
-					inputNode.parent.op !== '[]='
-				)
-			const parentIsStringInterpolation =
-				inputNode.parent instanceof Stylus.nodes.BinOp &&
-				inputNode.parent.op === '%' &&
-				inputNode.parent.right === inputNode &&
-				inputNode.nodes.length > 1
-			const parentIsNestedExpression =
-				inputNode.nodes.length === 1 &&
-				inputNode.parent instanceof Stylus.nodes.Expression &&
-				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
-				inputNode.parent.parent &&
-				(
-					inputNode.parent.parent instanceof Stylus.nodes.Expression &&
-					!(inputNode.parent.parent instanceof Stylus.nodes.Arguments) &&
-					inputNode.parent.parent.nodes.indexOf(inputNode.parent) >= 1 || // Note that this is a bug from Stylus compiler where it adds extra Expression node
-					inputNode.parent.parent instanceof Stylus.nodes.Feature ||
-					inputNode.parent.parent instanceof Stylus.nodes.Ident ||
-					inputNode.parent.parent instanceof Stylus.nodes.If ||
-					inputNode.parent.parent instanceof Stylus.nodes.Selector ||
-					inputNode.parent.parent instanceof Stylus.nodes.Return ||
-					inputNode.parent.parent instanceof Stylus.nodes.Arguments ||
-					inputNode.parent.parent instanceof Stylus.nodes.Object ||
-					inputNode.parent.parent instanceof Stylus.nodes.BinOp && inputNode.parent.parent.op === '[]'
-				) === false
-			const currentIsEmpty =
-				inputNode.nodes.length === 0 &&
-				inputNode.parent instanceof Stylus.nodes.Expression &&
-				!(inputNode.parent instanceof Stylus.nodes.Arguments) && // Note that `Arguments` type inherits `Expression` type
-				inputNode.parent.nodes.length === 1
-			const currentIsDivision =
-				inputNode.nodes.length === 1 &&
-				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
-				inputNode.nodes[0].op === '/'
-			const currentIsNegation =
-				inputNode.nodes.length === 1 &&
-				inputNode.nodes[0] instanceof Stylus.nodes.UnaryOp &&
-				inputNode.nodes[0].op === '-'
-			const currentHasUnitSuffix =
-				inputNode.nodes.length === 2 &&
-				inputNode.nodes[0] instanceof Stylus.nodes.BinOp &&
-				inputNode.nodes[1] instanceof Stylus.nodes.Ident
-			const currentHasParenthesis =
-				parentIsArithmeticOperator ||
-				parentIsStringInterpolation ||
-				parentIsNestedExpression ||
-				currentIsEmpty ||
-				currentIsDivision ||
-				currentIsNegation
-			if (currentHasParenthesis || currentHasUnitSuffix) {
-				outputBuffer.append(openParen)
-			}
-
-			outputBuffer.append(inputNode.nodes.map((node, rank, list) => {
-				// Use either a white-space or a comma as a separator
-				let separator = ' '
-				if (rank === 0) {
-					separator = ''
-				} else if (inputNode.isList) {
-					separator = comma
+					inputNode.nodes[0].op === '/'
+				const currentIsNegation =
+					inputNode.nodes.length === 1 &&
+					inputNode.nodes[0] instanceof Stylus.nodes.UnaryOp &&
+					inputNode.nodes[0].op === '-'
+				const currentHasParenthesis =
+					parentIsArithmeticOperator ||
+					parentIsStringInterpolation ||
+					parentIsNestedExpression ||
+					currentIsEmpty ||
+					currentIsDivision ||
+					currentIsNegation
+				if (currentHasParenthesis) {
+					outputBuffer.append(openParen)
 				}
 
-				if (currentHasUnitSuffix && node === _.last(list)) {
-					return closeParen + travel(inputNode, node, indentLevel, true)
+				outputBuffer.append(inputNode.nodes.map((node, rank, list) => {
+					// Use either a white-space or a comma as a separator
+					let separator = ' '
+					if (rank === 0) {
+						separator = ''
+					} else if (inputNode.isList) {
+						separator = comma
+					}
 
-				} else if (node instanceof Stylus.nodes.Ident && insideExpression === false) {
-					return separator + '{' + travel(inputNode, node, indentLevel, true) + '}'
+					if (node instanceof Stylus.nodes.Ident && insideExpression === false) {
+						return separator + '{' + travel(inputNode, node, indentLevel, true) + '}'
+					}
 
-				} else {
 					return separator + travel(inputNode, node, indentLevel, true)
-				}
-			}).join(''))
+				}).join(''))
 
-			if (currentHasParenthesis) {
-				outputBuffer.append(closeParen)
-			}
+				if (currentHasParenthesis) {
+					outputBuffer.append(closeParen)
+				}
+			})()
 
 			if (insideExpression === false) {
 				if (options.insertSemicolons) {
