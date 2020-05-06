@@ -20,9 +20,16 @@ const Stylus = require('stylus')
 const format = require('../edge/format')
 const compareContent = require('../edge/compareContent')
 
-const filesAndDirectories = _.chain(ps.argv.length > 2 ? ps.argv.slice(2) : ['*']).map(para => glob.sync('spec/' + para)).flatten().value()
+const filesAndDirectories = _.chain(ps.argv.length > 2 ? ps.argv.slice(2) : ['*'])
+	.reject(para => para.startsWith('-'))
+	.map(para => glob.sync('spec/' + para))
+	.flatten()
+	.filter(directory => fs.lstatSync(directory).isDirectory() && fs.readdirSync(directory).length > 0)
+	.value()
 const filesOnly = path => pt.extname(path) === '.js'
 const directoriesOnly = path => pt.extname(path) === ''
+
+const outputOverwritten = ps.argv.includes('-u')
 
 filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 	const optionFilePath = pt.join(directory, 'formattingOptions.json')
@@ -40,7 +47,7 @@ filesAndDirectories.filter(directoriesOnly).forEach(directory => {
 		formattingOptions = require('../' + optionFilePath)
 	}
 
-	if (fs.existsSync(outputFilePath) === false) {
+	if (fs.existsSync(outputFilePath) === false || outputOverwritten) {
 		const actualContent = format(inputContent, formattingOptions)
 		fs.writeFileSync(outputFilePath, actualContent)
 	}
