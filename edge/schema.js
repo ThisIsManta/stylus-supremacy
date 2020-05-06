@@ -313,7 +313,7 @@ module.exports = {
 		}
 	},
 	alwaysUseZeroWithoutUnit: {
-		description: 'Replace <code>0</code> (regardless of its unit) with <code>0</code> (without units), or do nothing.',
+		description: 'Replace <code>0</code> (regardless of its unit) with <code>0</code> (without units), or do nothing.\nThere is an exception for <code>flex-basis</code>, which <code>0</code> will always have the unit of <code>%</code>, because of <a href="https://github.com/philipwalton/flexbugs#flexbug-4" target="_blank">the problem with Internet Explorer</a>.',
 		type: 'boolean',
 		default: false,
 		example: {
@@ -321,6 +321,7 @@ module.exports = {
 			code: `
 			.class1
 				margin 0px
+				flex-basis 0px
 			`
 		}
 	},

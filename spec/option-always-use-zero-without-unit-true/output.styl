@@ -1,4 +1,7 @@
 body {
 	margin: 0 0 0 0;
 	transition: all 0ms ease-in-out 0s;
+	// See https://github.com/philipwalton/flexbugs#flexbug-4
+	flex: 1 1 0%;
+	flex-basis: 0%;
 }

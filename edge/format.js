@@ -268,7 +268,7 @@ function format(content, options = {}) {
 				} else {
 					// Put the line-consecutive comment(s) on the top of the inner node
 					const belowNode = inputNode.nodes[index + 1]
-					if (sortedNonCommentNodes.includes(belowNode)) {
+					if (_.includes(sortedNonCommentNodes, belowNode)) {
 						if (belowNode.commentsOnTop === undefined) {
 							belowNode.commentsOnTop = []
 						}
@@ -479,7 +479,7 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.String) {
-			if (inputNode.val.includes(options.quoteChar)) {
+			if (_.includes(inputNode.val, options.quoteChar)) {
 				if (inputNode.val.startsWith('data:image/svg+xml;utf8,')) { // In case of SVG data-URL
 					const counterQuoteChar = schema.quoteChar.enum.find(item => item !== options.quoteChar)
 
@@ -745,7 +745,11 @@ function format(content, options = {}) {
 				outputBuffer.append(inputNode.val)
 			}
 
-			if (!options.alwaysUseZeroWithoutUnit || inputNode.val !== 0 || inputNode.type === 's' || inputNode.type === 'ms') {
+			if (checkIfFlexBasis(inputNode)) {
+				// See https://github.com/philipwalton/flexbugs#flexbug-4
+				outputBuffer.append('%')
+
+			} else if (!options.alwaysUseZeroWithoutUnit || inputNode.val !== 0 || inputNode.type === 's' || inputNode.type === 'ms') {
 				outputBuffer.append(inputNode.type)
 			}
 
@@ -1439,6 +1443,25 @@ function checkIfTernary(node) {
 		node.cond.op === 'is defined' &&
 		node.cond.left instanceof Stylus.nodes.Ident &&
 		node.cond.left.val instanceof Stylus.nodes.Expression
+	)
+}
+
+function checkIfFlexBasis(node) {
+	return (
+		node instanceof Stylus.nodes.Unit &&
+		node.parent instanceof Stylus.nodes.Property &&
+		node.parent.segments.length === 1 &&
+		node.parent.segments[0] instanceof Stylus.nodes.Ident &&
+		(
+			(
+				node.parent.segments[0].name === 'flex' &&
+				node.parent.expr.nodes[2] === node
+			) ||
+			(
+				node.parent.segments[0].name === 'flex-basis' &&
+				node.parent.expr.nodes[0] === node
+			)
+		)
 	)
 }
 
