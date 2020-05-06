@@ -1036,7 +1036,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Atrule) {
 			outputBuffer.append(indent + '@' + inputNode.type)
-			if (_.some(inputNode.segments)) {
+			if (inputNode.segments.length > 0) {
 				outputBuffer.append(' ')
 				outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
 				outputBuffer.remove(' ')
@@ -1045,6 +1045,7 @@ function format(content, options = {}) {
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 			} else if (options.insertSemicolons) {
 				outputBuffer.append(';')
+				outputBuffer.append(options.newLineChar)
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Atblock) {
