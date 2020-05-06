@@ -348,7 +348,7 @@ function format(content, options = {}) {
 				// Extract the last portion of comments
 				// For example,
 				// margin: 8px 0; /* right-comment */
-				const commentsOnTheRight = _.chain(inputNode.expr.nodes).clone().reverse().takeWhile(node => node instanceof Stylus.nodes.Comment).reverse().value()
+				const commentsOnTheRight = _.takeRightWhile(inputNode.expr.nodes, node => node instanceof Stylus.nodes.Comment)
 				const nodesExcludingCommentsOnTheRight = inputNode.expr.nodes.slice(0, inputNode.expr.nodes.length - commentsOnTheRight.length)
 
 				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode, node, indentLevel, true))
@@ -360,12 +360,16 @@ function format(content, options = {}) {
 				if (options.reduceMarginAndPaddingValues && (propertyName === 'margin' || propertyName === 'padding') && nodesExcludingCommentsOnTheRight.some(node => node instanceof Stylus.nodes.Comment) === false) {
 					if (propertyValues.length > 1 && propertyValues.every(text => text === propertyValues[0])) {
 						propertyValues = [propertyValues[0]]
+
 					} else if (propertyValues.length >= 3 && propertyValues[0] === propertyValues[2] && (propertyValues[1] === propertyValues[3] || propertyValues[3] === undefined)) {
 						propertyValues = [propertyValues[0], propertyValues[1]]
+
 					} else if (propertyValues.length === 4 && propertyValues[0] !== propertyValues[2] && propertyValues[1] === propertyValues[3]) {
 						propertyValues = [propertyValues[0], propertyValues[1], propertyValues[2]]
 					}
-				} else if (propertyName === 'border' || propertyName === 'outline') {
+				}
+
+				if (propertyName === 'border' || propertyName === 'outline') {
 					if (options.alwaysUseNoneOverZero && propertyValues.length === 1 && /^0(\.0*)?(\w+|\%)?/.test(propertyValues[0])) {
 						propertyValues = ['none']
 					}
@@ -382,14 +386,14 @@ function format(content, options = {}) {
 						outputBuffer.append(':' + options.newLineChar)
 						const innerIndent = indent + options.tabStopChar
 						outputBuffer.append(innerIndent)
-						outputBuffer.append(propertyValues.join(',' + options.newLineChar + innerIndent))
+						outputBuffer.append(propertyValues.join((inputNode.expr.isList ? ',' : '') + options.newLineChar + innerIndent))
 
 					} else {
 						if (options.insertColons) {
 							outputBuffer.append(':')
 						}
 						outputBuffer.append(' ')
-						outputBuffer.append(propertyValues.join(comma))
+						outputBuffer.append(propertyValues.join(inputNode.expr.isList ? comma : ' '))
 					}
 
 				} else {
