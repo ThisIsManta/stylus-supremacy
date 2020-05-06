@@ -677,6 +677,7 @@ function format(content, options = {}) {
 						inputNode.parent.parent instanceof Stylus.nodes.Feature ||
 						inputNode.parent.parent instanceof Stylus.nodes.Ident ||
 						inputNode.parent.parent instanceof Stylus.nodes.If ||
+						inputNode.parent.parent instanceof Stylus.nodes.Each ||
 						inputNode.parent.parent instanceof Stylus.nodes.Selector ||
 						inputNode.parent.parent instanceof Stylus.nodes.Return ||
 						inputNode.parent.parent instanceof Stylus.nodes.Arguments ||
