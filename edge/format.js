@@ -976,7 +976,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Keyframes) {
 			outputBuffer.append(indent + '@keyframes ')
-			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).filter(text => text.trim().length > 0).join(comma))
+			outputBuffer.append(travelThroughSegments(inputNode, indentLevel).filter(text => text.trim().length > 0).join(''))
 			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel))
 
 		} else if (inputNode instanceof Stylus.nodes.QueryList) {
