@@ -20,10 +20,10 @@ const Stylus = require('stylus')
 const format = require('../edge/format')
 const compareContent = require('../edge/compareContent')
 
-const filesAndDirectories = _.chain(ps.argv.length > 2 ? ps.argv.slice(2) : ['*'])
+const filesAndDirectories = _.chain(ps.argv.slice(2))
 	.reject(para => para.startsWith('-'))
-	.map(para => glob.sync('spec/' + para))
-	.flatten()
+	.thru(list => list.length > 0 ? list : ['*'])
+	.flatMap(para => glob.sync('spec/' + para))
 	.filter(directory => fs.lstatSync(directory).isDirectory() && fs.readdirSync(directory).length > 0)
 	.value()
 const filesOnly = path => pt.extname(path) === '.js'
