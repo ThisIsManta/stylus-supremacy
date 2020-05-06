@@ -1000,7 +1000,10 @@ function format(content, options = {}) {
 			if (inputNode.expr) {
 				outputBuffer.append(openParen)
 				outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
-				outputBuffer.append(': ')
+				if (options.insertColons) {
+					outputBuffer.append(':')
+				}
+				outputBuffer.append(' ')
 				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 				outputBuffer.append(closeParen)
 
