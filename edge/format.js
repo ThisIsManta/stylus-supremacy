@@ -746,7 +746,7 @@ function format(content, options = {}) {
 				outputBuffer.append(inputNode.val)
 			}
 
-			if (checkIfFlexBasis(inputNode)) {
+			if (checkIfFlexBasis(inputNode) && inputNode.val === 0) {
 				// See https://github.com/philipwalton/flexbugs#flexbug-4
 				outputBuffer.append('%')
 
