@@ -27245,30 +27245,36 @@ utils.intFromLE = intFromLE;
 arguments[4][20][0].apply(exports,arguments)
 },{"buffer":28,"dup":20}],131:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.5.2",
+  "_args": [
+    [
+      "elliptic@6.5.2",
+      "C:\\Users\\Manta\\Documents\\GitHub\\stylus-supremacy"
+    ]
+  ],
+  "_development": true,
+  "_from": "elliptic@6.5.2",
   "_id": "elliptic@6.5.2",
   "_inBundle": false,
   "_integrity": "sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==",
   "_location": "/elliptic",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "elliptic@^6.5.2",
+    "raw": "elliptic@6.5.2",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.5.2",
+    "rawSpec": "6.5.2",
     "saveSpec": null,
-    "fetchSpec": "^6.5.2"
+    "fetchSpec": "6.5.2"
   },
   "_requiredBy": [
     "/browserify-sign",
     "/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.2.tgz",
-  "_shasum": "05c5678d7173c049d8ca433552224a495d0e3762",
-  "_spec": "elliptic@^6.5.2",
-  "_where": "C:\\Users\\Manta\\Documents\\GitHub\\stylus-supremacy\\node_modules\\browserify-sign",
+  "_spec": "6.5.2",
+  "_where": "C:\\Users\\Manta\\Documents\\GitHub\\stylus-supremacy",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -27276,7 +27282,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -27286,7 +27291,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -65305,7 +65309,7 @@ function format(content) {
         outputBuffer.append(inputNode.val);
       }
 
-      if (checkIfFlexBasis(inputNode)) {
+      if (checkIfFlexBasis(inputNode) && inputNode.val === 0) {
         // See https://github.com/philipwalton/flexbugs#flexbug-4
         outputBuffer.append('%');
       } else if (!options.alwaysUseZeroWithoutUnit || inputNode.val !== 0 || inputNode.type === 's' || inputNode.type === 'ms') {
