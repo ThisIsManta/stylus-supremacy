@@ -339,9 +339,13 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.Property) {
+			if (insideExpression === false) {
+				outputBuffer.append(indent)
+			}
+
 			// Insert the property name
 			const propertyName = travelThroughSegments(inputNode, indentLevel).join('')
-			outputBuffer.append(indent + propertyName)
+			outputBuffer.append(propertyName)
 
 			// Insert the property value(s)
 			if (inputNode.expr instanceof Stylus.nodes.Expression) {
@@ -418,10 +422,12 @@ function format(content, options = {}) {
 				throw error
 			}
 
-			if (options.insertSemicolons) {
-				outputBuffer.append(';')
+			if (insideExpression === false) {
+				if (options.insertSemicolons) {
+					outputBuffer.append(';')
+				}
+				outputBuffer.append(options.newLineChar)
 			}
-			outputBuffer.append(options.newLineChar)
 
 		} else if (inputNode instanceof Stylus.nodes.Literal) {
 			if (inputNode.parent instanceof Stylus.nodes.Property && inputNode.parent.expr.nodes.length === 1 && inputNode.parent.expr.nodes[0] === inputNode) { // In case of @css property
@@ -1358,13 +1364,19 @@ function format(content, options = {}) {
 	}
 
 	function getType(inputNode) {
-		if (inputNode instanceof Stylus.nodes.Property) {
+		if (
+			inputNode instanceof Stylus.nodes.Property ||
+			inputNode instanceof Stylus.nodes.If && inputNode.postfix && inputNode.block instanceof Stylus.nodes.Property
+		) {
 			return 'Property'
 
 		} else if (inputNode instanceof Stylus.nodes.Import) {
 			return 'Import'
 
-		} else if (inputNode.block !== undefined || (inputNode instanceof Stylus.nodes.Ident && inputNode.val.block !== undefined)) {
+		} else if (
+			inputNode.block !== undefined ||
+			(inputNode instanceof Stylus.nodes.Ident && inputNode.val.block !== undefined)
+		) {
 			return 'Block'
 
 		} else {
