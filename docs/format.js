@@ -64932,9 +64932,13 @@ function format(content) {
         outputBuffer.append(' !optional');
       }
     } else if (inputNode instanceof Stylus.nodes.Property) {
-      // Insert the property name
+      if (insideExpression === false) {
+        outputBuffer.append(indent);
+      } // Insert the property name
+
+
       var propertyName = travelThroughSegments(inputNode, indentLevel).join('');
-      outputBuffer.append(indent + propertyName); // Insert the property value(s)
+      outputBuffer.append(propertyName); // Insert the property value(s)
 
       if (inputNode.expr instanceof Stylus.nodes.Expression) {
         // Extract the last portion of comments
@@ -65014,11 +65018,13 @@ function format(content) {
         throw error;
       }
 
-      if (options.insertSemicolons) {
-        outputBuffer.append(';');
-      }
+      if (insideExpression === false) {
+        if (options.insertSemicolons) {
+          outputBuffer.append(';');
+        }
 
-      outputBuffer.append(options.newLineChar);
+        outputBuffer.append(options.newLineChar);
+      }
     } else if (inputNode instanceof Stylus.nodes.Literal) {
       if (inputNode.parent instanceof Stylus.nodes.Property && inputNode.parent.expr.nodes.length === 1 && inputNode.parent.expr.nodes[0] === inputNode) {
         // In case of @css property
@@ -65948,7 +65954,7 @@ function format(content) {
   }
 
   function getType(inputNode) {
-    if (inputNode instanceof Stylus.nodes.Property) {
+    if (inputNode instanceof Stylus.nodes.Property || inputNode instanceof Stylus.nodes.If && inputNode.postfix && inputNode.block instanceof Stylus.nodes.Property) {
       return 'Property';
     } else if (inputNode instanceof Stylus.nodes.Import) {
       return 'Import';
