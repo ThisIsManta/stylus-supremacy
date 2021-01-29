@@ -23,11 +23,11 @@ describe('createFormattingOptionsFromStylint', () => {
 	})
 
 	it('returns the correct value for for "always", "never" and false', () => {
-		expect(createFormattingOptions({ colons: 'always' }))
-			.toEqual(jasmine.objectContaining({ 'stylusSupremacy.insertColons': true }))
-		expect(createFormattingOptions({ colons: 'never' }))
-			.toEqual(jasmine.objectContaining({ 'stylusSupremacy.insertColons': false }))
-		expect(createFormattingOptions({ colons: false })['stylusSupremacy.insertColons'])
+		expect(createFormattingOptions({ semicolons: 'always' }))
+			.toEqual(jasmine.objectContaining({ 'stylusSupremacy.insertSemicolons': true }))
+		expect(createFormattingOptions({ semicolons: 'never' }))
+			.toEqual(jasmine.objectContaining({ 'stylusSupremacy.insertSemicolons': false }))
+		expect(createFormattingOptions({ semicolons: false })['stylusSupremacy.insertSemicolons'])
 			.toBeUndefined()
 	})
 
