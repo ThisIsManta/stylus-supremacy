@@ -394,7 +394,13 @@ function format(content, options = {}) {
 
 					} else {
 						if (options.insertColons) {
-							outputBuffer.append(':')
+							if (options.insertColons === 'preserve') {
+								if (/:/.test(modifiedLines[inputNode.lineno - 1])) {
+									outputBuffer.append(':')
+								}
+							}	else {
+								outputBuffer.append(':')
+							}
 						}
 						outputBuffer.append(' ')
 						outputBuffer.append(propertyValues.join(inputNode.expr.isList ? comma : ' '))
@@ -402,7 +408,13 @@ function format(content, options = {}) {
 
 				} else {
 					if (options.insertColons) {
-						outputBuffer.append(':')
+						if (options.insertColons === 'preserve') {
+							if (/:/.test(modifiedLines[inputNode.lineno - 1])) {
+								outputBuffer.append(':')
+							}
+						}	else {
+							outputBuffer.append(':')
+						}
 					}
 					outputBuffer.append(' ')
 					outputBuffer.append(propertyValues.join(' '))
@@ -1023,7 +1035,13 @@ function format(content, options = {}) {
 				outputBuffer.append(openParen)
 				outputBuffer.append(travelThroughSegments(inputNode, indentLevel).join(''))
 				if (options.insertColons) {
-					outputBuffer.append(':')
+					if (options.insertColons === 'preserve') {
+						if (/:/.test(modifiedLines[inputNode.lineno - 1])) {
+							outputBuffer.append(':')
+						}
+					}	else {
+						outputBuffer.append(':')
+					}
 				}
 				outputBuffer.append(' ')
 				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))

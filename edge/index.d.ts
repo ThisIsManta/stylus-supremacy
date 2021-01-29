@@ -12,7 +12,7 @@ declare namespace StylusSupremacy {
 	// Do not modify as the following block is auto-generated
 	// See "reviseTypeDefinition.js"
 	export interface FormattingOptions {
-		insertColons?: boolean
+		insertColons?: boolean | string
 		insertSemicolons?: boolean
 		insertBraces?: boolean
 		insertNewLineAroundImports?: boolean | string

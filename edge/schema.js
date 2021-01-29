@@ -2,8 +2,8 @@ const sortedProperties = require('./createSortedProperties')()
 
 module.exports = {
 	insertColons: {
-		description: 'Insert or remove a colon between a property name and its value.',
-		type: 'boolean',
+		description: 'Insert, remove or preserve a colon between a property name and its value.',
+		enum: [true, false, 'preserve'],
 		default: true,
 		example: {
 			values: [true, false],
