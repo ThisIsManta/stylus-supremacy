@@ -1385,9 +1385,8 @@ function format(content, options = {}) {
 	}
 
 	function getProperVariableName(name) {
-		if (/^\d/.test(name) || /\s/.test(name)) {
+		if (/^-/.test(name) || /^\d/.test(name) || /\s/.test(name)) {
 			return options.quoteChar + name + options.quoteChar
-
 		} else {
 			return name
 		}
