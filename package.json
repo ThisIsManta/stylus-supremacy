@@ -31,19 +31,19 @@
     "postversion": "git push --tags --quiet origin master:master"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@types/stylus": "^0.48.32",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@types/stylus": "^0.48.33",
     "babelify": "^10.0.0",
-    "browserify": "^16.5.1",
-    "jasmine": "^3.5.0",
+    "browserify": "^16.5.2",
+    "jasmine": "^3.6.4",
     "nodemon": "^1.19.4"
   },
   "dependencies": {
     "glob": "^7.1.6",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.14.1",
     "json5": "^2.1.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "minimatch": "^3.0.4",
     "stylint": "^2.0.0",
     "stylus": "^0.54.7"
