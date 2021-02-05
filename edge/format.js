@@ -6,6 +6,7 @@ const createFormattingOptions = require('./createFormattingOptions')
 const createStringBuffer = require('./createStringBuffer')
 const sortedProperties = require('./createSortedProperties')()
 const findChildNodes = require('./findChildNodes')
+const hasMember = require('./hasMember');
 
 function format(content, options = {}) {
 	// Stop processing if the input content is empty
@@ -379,8 +380,10 @@ function format(content, options = {}) {
 					}
 				}
 
+				// Preserve colons if the node have any instance of Sylus.node.Member
 				// See https://github.com/ThisIsManta/stylus-supremacy/issues/79
-				const preserveColons = nodesExcludingCommentsOnTheRight.length === 1 && nodesExcludingCommentsOnTheRight[0] instanceof Stylus.nodes.Expression
+				// and https://github.com/ThisIsManta/stylus-supremacy/issues/85
+				const preserveColons = nodesExcludingCommentsOnTheRight.some(hasMember);
 
 				// Insert the property value(s) without the last portion of comments
 				if (nodesExcludingCommentsOnTheRight.every(node => node instanceof Stylus.nodes.Expression)) {
