@@ -7,6 +7,9 @@ body {
 }
 
 .foo {
-	color: $colors.red $colors.blue 3;
+	color: $colors.red $colors.blue 3 #f00;
+	background-color: linear-gradient(90deg, red 0%, $colors.green, 50%);
+	border: 1px solid $colors.purple;
+	caret-color: darken(hue(lighten($colors.yellow, 20%), 90deg), 50%);
 	display block;
 }
