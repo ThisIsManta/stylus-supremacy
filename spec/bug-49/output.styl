@@ -1,0 +1,56 @@
+/*!
+ * Some licence
+ */
+@require "./file.styl"
+
+/**
+multi-line comment
+*/
+another_namespace = {
+    toto: 2
+    //pouet
+    titi: 3
+}
+namespace = {
+  one: 1,
+  two: 2
+}
+
+mixin()
+  // Comment A
+  // Comment B
+  some style
+// Comment C
+// Comment D
+
+selector
+  // Comment E
+  // Comment F
+  some style
+// Comment G
+// Comment H
+
+.class1
+.class2
+  padding 1px // comment
+  margin 0 5px 0 5px
+  color alpha(red, .5)
+
+@media screen and (min-width 100px) // media comment
+  if (!condition) // if comment
+    @extend .class3
+  else // else comment
+    background blue
+
+.class // hello there
+div
+  width calc(100% / 3)
+
+.someClass
+
+  // todo implement this later
+
+.anotherClass
+  border 0
+
+// end of file comment
