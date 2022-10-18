@@ -1,4 +1,5 @@
 const fs = require('fs')
+const YAML = require('js-yaml')
 const isEmpty = require('lodash/isEmpty')
 const isObject = require('lodash/isObject')
 const omitBy = require('lodash/omitBy')
@@ -23,6 +24,7 @@ let document = fs.readFileSync('docs/index.html', 'utf-8')
 document = updateDocument(document, '<!-- formatting toggler placeholder -->', createFormattingTogglersForDemo)
 document = updateDocument(document, '<!-- formatting option placeholder -->', createFormattingDescription)
 document = updateDocument(document, '<!-- stylint option placeholder -->', createStylintConversionTable)
+document = updateDocument(document, '<!-- pre-commit-config -->', createPreCommitConfigSample)
 
 fs.writeFileSync('docs/index.html', document)
 
@@ -221,4 +223,23 @@ function createResponsiveTable(head, body) {
 		).join('') +
 		'</div>'
 	)
+}
+
+function createPreCommitConfigSample() {
+	const packageJSON = require('../package.json')
+	const [{ id }] = YAML.load(fs.readFileSync('.pre-commit-hooks.yaml', 'utf-8'), { json: true })
+
+	return '<code>' + escape(
+		`
+repos:
+	- repo:
+			${packageJSON.repository.url.replace(/\.git$/, '')}
+		rev: v${packageJSON.version}
+		hooks:
+			- id: ${id}
+				args: # Optional
+					- '--options'
+					- './path/to/your/options.json'
+		`
+	).trim().replace(/\t/g, '&nbsp;&nbsp;').replace(/\n/g, '<br>\n') + '</code>'
 }

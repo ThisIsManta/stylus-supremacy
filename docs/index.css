@@ -215,9 +215,7 @@ section > *:last-child {
 #availability > a {
 	display: inline-block;
 	margin: 10px;
-	color: #212121;
 	text-align: center;
-	text-decoration: none;
 }
 
 #availability > a:hover {

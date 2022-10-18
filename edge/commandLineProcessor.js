@@ -38,7 +38,7 @@ function process(command, params = [], Console = console) {
 			}
 
 			const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
-			if (optionFilePathParams[1].endsWith('.yaml') || optionFilePathParams[1].endsWith('.yml')) {
+			if (/\.ya?ml$/.test(optionFilePathParams[1])) {
 				try {
 					formattingOptions = YAML.load(fileText, { json: true })
 				} catch (ex) {
