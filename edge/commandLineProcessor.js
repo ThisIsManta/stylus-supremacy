@@ -42,7 +42,7 @@ function process(command, params = [], Console = console) {
 			const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
 			if (optionFilePathParams[1].endsWith('.yaml') || optionFilePathParams[1].endsWith('.yml')) {
 				try {
-					formattingOptions = YAML.safeLoad(fileText, { json: true })
+					formattingOptions = YAML.load(fileText, { json: true })
 				} catch (ex) {
 					throw new Error('The given option file could not be parsed as JSON.')
 				}

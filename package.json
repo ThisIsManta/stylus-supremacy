@@ -22,6 +22,9 @@
   "bin": "./edge/commandLineInterface.js",
   "main": "./edge/index.js",
   "types": "./edge/index.d.ts",
+  "engines": {
+    "node": ">=12"
+  },
   "scripts": {
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
@@ -33,19 +36,18 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
-    "@types/stylus": "^0.48.33",
+    "@types/stylus": "^0.48.38",
     "babelify": "^10.0.0",
     "browserify": "^16.5.2",
     "jasmine": "^3.6.4",
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "glob": "^7.1.6",
-    "js-yaml": "^3.14.1",
-    "json5": "^2.1.3",
-    "lodash": "^4.17.20",
-    "minimatch": "^3.0.4",
+    "glob": "^8.0.3",
+    "js-yaml": "^4.1.0",
+    "json5": "^2.2.1",
+    "lodash": "^4.17.21",
     "stylint": "^2.0.0",
-    "stylus": "^0.54.7"
+    "stylus": "^0.59.0"
   }
 }
