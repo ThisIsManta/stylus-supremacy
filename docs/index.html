@@ -35,7 +35,6 @@
 			<a href="#options">Formatting options</a>
 			<a href="#stylint">Stylint compatibility</a>
 			<a href="#vscode">Visual Studio Code extension</a>
-			<a href="#atom">Atom package</a>
 			<a id="history" href="https://github.com/ThisIsManta/stylus-supremacy/releases">Releases</a>
 			<a id="issues" href="https://github.com/ThisIsManta/stylus-supremacy/issues">Issues</a>
 			<a id="repository" class="nofx" href="https://github.com/ThisIsManta/stylus-supremacy" title="View source code on GitHub"><img src="octocat.png"></a>
@@ -68,10 +67,6 @@
 					<a href="#vscode">
 						<img src="vscode-logo.png">
 						<figcaption>Visual Studio Code extension</figcaption>
-					</a>
-					<a href="#atom">
-						<img src="atom-logo.png">
-						<figcaption>Atom package</figcaption>
 					</a>
 				</div>
 
@@ -446,17 +441,6 @@
 				<p>This extension also incorporates the built-in settings: <code>editor.formatOnType</code> and <code>editor.formatOnSave</code> as long as <code>files.autoSave</code> is off.</p>
 
 				<p>In case you are using <a href="https://marketplace.visualstudio.com/items?itemName=vtfn.stylint" target="_blank">Stylint</a> as a Stylus linter, the extension automatically searches for <mark class="alt">.stylintrc</mark> file starting from the current active file directory up to the root working directory, and merges it with the Visual Studio Code settings. The settings in Visual Studio Code will be used as a base, and overridden by <mark class="alt">.stylintrc</mark> file. Please see <a href="#stylint-rules">Stylint compatibility</a> section for the rule conversion.</p>
-			</article>
-			<article id="atom">
-				<h1>Atom package</h1>
-
-				<p>Thanks to Jessada Trirongkit (<a href="https://github.com/dekdekbaloo" target="_blank">@dekdekbaloo</a>), <b>Stylus Supremacy</b> is now available as an Atom package. To install the package, follow the instructions below.</p>
-
-				<img src="atom.gif">
-
-				<p>Once you have this package installed on your Atom, you can simply open a Stylus file, right click on the document editing space, then choose <mark class="nobr">Format Stylus</mark> command, or press Control+Shift+P on your keyboard and run "Format Stylus" command.</p>
-
-				<p>This package only supports reading formatting options from <mark class="alt">.stylintrc</mark> file and in-package <mark>Format on Save</mark> setting. Please find an example of <mark class="alt">.stylintrc</mark> file in <a href="#stylint">Stylint compatibility</a> section.</p>			
 			</article>
 		</main>
 		<div id="go-to-menu" style="display: none;" onclick="$(window).scrollTop(0); location.hash = ''">
