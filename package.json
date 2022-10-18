@@ -37,7 +37,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.5.2",
     "jasmine": "^3.6.4",
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.20"
   },
   "dependencies": {
     "glob": "^7.1.6",
