@@ -1,22 +1,22 @@
-const _ = require('lodash')
+const clone = require('lodash/clone')
+const uniq = require('lodash/uniq')
 const ordering = require('stylint/src/data/ordering.json')
 
 module.exports = function () {
-    const list = _.clone(ordering.grouped)
+    const list = clone(ordering.grouped)
 
-    function insert(/* props */) {
-        const args = _.toArray(arguments)
+    function insert(...items) {
         return {
             before: function (prop) {
-                Array.prototype.splice.apply(list, [list.indexOf(prop), 0].concat(args))
+                list.splice(list.indexOf(prop), 0, ...items)
             },
             after: function (prop) {
-                Array.prototype.splice.apply(list, [list.indexOf(prop) + 1, 0].concat(args))
+                list.splice(list.indexOf(prop) + 1, 0, ...items)
             }
         }
     }
 
-    // https://github.com/tj/nib/blob/master/docs/README.md
+    // See https://github.com/tj/nib/blob/master/docs/README.md
     insert('fixed', 'absolute', 'relative').before('position')
     insert('clearfix').before('clear')
     insert('image').before('background')
@@ -27,5 +27,5 @@ module.exports = function () {
     insert('backface-visibility').before('opacity')
     insert('user-select').after('user-zoom')
 
-    return _.uniq(list)
+    return uniq(list)
 }

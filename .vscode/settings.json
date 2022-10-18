@@ -6,5 +6,8 @@
 	"search.exclude": {
 		"**/node_modules": true,
 		"docs/*.js": true
-	}
+	},
+	"cSpell.words": [
+		"stylint"
+	]
 }

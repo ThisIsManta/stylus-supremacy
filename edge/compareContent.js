@@ -1,9 +1,7 @@
-const _ = require('lodash')
-
 const createComparableLines = text => text
 	.replace(/\r/g, '¶')
 	.replace(/\t/g, '→')
-	.replace(/^\s+/gm, spaces => _.repeat('·', spaces.length))
+	.replace(/^\s+/gm, spaces => '·'.repeat(spaces.length))
 	.split('\n')
 
 function compareContent(actualContent, expectContent) {

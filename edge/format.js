@@ -1,5 +1,24 @@
 const Stylus = require('stylus')
-const _ = require('lodash')
+const get = require('lodash/get')
+const first = require('lodash/first')
+const last = require('lodash/last')
+const findLast = require('lodash/findLast')
+const compact = require('lodash/compact')
+const difference = require('lodash/difference')
+const sortBy = require('lodash/sortBy')
+const uniq = require('lodash/uniq')
+const partition = require('lodash/partition')
+const takeRightWhile = require('lodash/takeRightWhile')
+const min = require('lodash/min')
+const maxBy = require('lodash/maxBy')
+const escapeRegExp = require('lodash/escapeRegExp')
+const trimStart = require('lodash/trimStart')
+const trimEnd = require('lodash/trimEnd')
+const isObject = require('lodash/isObject')
+const isPlainObject = require('lodash/isPlainObject')
+const isString = require('lodash/isString')
+const isInteger = require('lodash/isInteger')
+const isBoolean = require('lodash/isBoolean')
 
 const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -14,7 +33,7 @@ function format(content, options = {}) {
 	}
 
 	// Consolidate the formatting options
-	options = _.assign({ wrapMode: !!options.wrapMode }, createFormattingOptions(options))
+	options = Object.assign({ wrapMode: !!options.wrapMode }, createFormattingOptions(options))
 
 	// Prepare the artifacts
 	const comma = options.insertSpaceAfterComma ? ', ' : ','
@@ -32,17 +51,18 @@ function format(content, options = {}) {
 		// This is designed for https://github.com/ThisIsManta/vscode-stylus-supremacy
 		if (originalLines.length === 1) {
 			modifiedContent = 'wrap\n\t' + content.trim()
-			originalBaseIndent = _.get(content.match(/^(\s|\t)*/g), '0', null)
+			originalBaseIndent = get(content.match(/^(\s|\t)*/g), '0', null)
 
 		} else {
 			// Determine an original tab stop character
-			const twoShortestIndent = _.chain(originalLines)
-				.filter(line => line.trim().length > 0)
-				.map(line => _.get(line.match(/^(\s|\t)*/g), '0', ''))
-				.uniq()
-				.sortBy(text => text.length)
-				.take(2)
-				.value()
+			const twoShortestIndent = sortBy(
+				uniq(
+					originalLines
+						.filter(line => line.trim().length > 0)
+						.map(line => get(line.match(/^(\s|\t)*/g), '0', ''))
+				),
+				text => text.length
+			).slice(0, 2)
 			if (twoShortestIndent.length === 2) {
 				originalTabStopChar = twoShortestIndent[1].substring(twoShortestIndent[0].length)
 			}
@@ -73,15 +93,15 @@ function format(content, options = {}) {
 
 	function travel(parentNode, inputNode, indentLevel, insideExpression = false, data = {}) {
 		// Check argument type
-		if (!(_.isObject(parentNode) || parentNode === null && inputNode instanceof Stylus.nodes.Root)) {
+		if (!(isObject(parentNode) || parentNode === null && inputNode instanceof Stylus.nodes.Root)) {
 			throw new Error(`Found a parent node of ${JSON.stringify(parentNode)}`)
-		} else if (!(_.isObject(inputNode))) {
+		} else if (!(isObject(inputNode))) {
 			throw new Error(`Found an input node of ${JSON.stringify(inputNode)}` + (parentNode ? `, which had a parent node of ${JSON.stringify(parentNode)}` : ''))
-		} else if (!(_.isInteger(indentLevel) && indentLevel >= 0)) {
+		} else if (!(isInteger(indentLevel) && indentLevel >= 0)) {
 			throw new Error(`Found an indent level of ${JSON.stringify(indentLevel)}`)
-		} else if (!(_.isBoolean(insideExpression))) {
+		} else if (!(isBoolean(insideExpression))) {
 			throw new Error(`Found an expression flag of ${JSON.stringify(insideExpression)}`)
-		} else if (!(_.isPlainObject(data))) {
+		} else if (!(isPlainObject(data))) {
 			throw new Error(`Found an additional data object of ${JSON.stringify(data)}`)
 		}
 
@@ -89,7 +109,7 @@ function format(content, options = {}) {
 		inputNode.parent = parentNode
 
 		// Prepare the indentation from the current indent level
-		const indent = _.repeat(options.tabStopChar, indentLevel)
+		const indent = options.tabStopChar.repeat(indentLevel)
 
 		// Store an output string for the current node
 		const outputBuffer = createStringBuffer()
@@ -115,7 +135,7 @@ function format(content, options = {}) {
 
 		} else if (inputNode instanceof Stylus.nodes.Group) {
 			// Insert single-line comment(s)
-			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(_.first(inputNode.nodes))
+			const topCommentNodes = tryGetSingleLineCommentNodesOnTheTopOf(first(inputNode.nodes))
 			if (topCommentNodes.length > 0) {
 				outputBuffer.append(topCommentNodes.map(node => travel(inputNode.parent, node, indentLevel)).join(''))
 			}
@@ -129,7 +149,7 @@ function format(content, options = {}) {
 
 			outputBuffer.append(indent + inputNode.nodes.map(node => travel(inputNode, node, indentLevel, true)).join(separator).trim())
 
-			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: _.last(inputNode.nodes) }))
+			outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false, { potentialCommentNodeInsideTheBlock: last(inputNode.nodes) }))
 
 		} else if (inputNode instanceof Stylus.nodes.Root || inputNode instanceof Stylus.nodes.Block) {
 			const childIndentLevel = inputNode instanceof Stylus.nodes.Root ? 0 : (indentLevel + 1)
@@ -141,7 +161,7 @@ function format(content, options = {}) {
 			// Filter consecutive multi-line comment(s)
 			const groupOfCommentNodes = [[]]
 			inputNode.nodes.forEach(node => {
-				const lastGroup = _.last(groupOfCommentNodes)
+				const lastGroup = last(groupOfCommentNodes)
 				if (node instanceof Stylus.nodes.Comment) {
 					lastGroup.push(node)
 
@@ -149,11 +169,14 @@ function format(content, options = {}) {
 					groupOfCommentNodes.push([])
 				}
 			})
-			if (_.last(groupOfCommentNodes).length === 0) {
+			if (last(groupOfCommentNodes).length === 0) {
 				groupOfCommentNodes.pop()
 			}
 
-			const unsortedNonCommentNodes = _.difference(inputNode.nodes, _.flatten(groupOfCommentNodes))
+			const unsortedNonCommentNodes = difference(
+				inputNode.nodes,
+				groupOfCommentNodes.flat()
+			)
 
 			// Insert a comment on the right of the last selector
 			const sideCommentNode = tryGetMultiLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock) || tryGetSingleLineCommentNodeOnTheRightOf(data.potentialCommentNodeInsideTheBlock)
@@ -188,7 +211,7 @@ function format(content, options = {}) {
 				if (rank === 0 || getType(node) !== getType(list[rank - 1]) || getType(node) === 'Block') {
 					groupOfUnsortedNonCommentNodes.push([node])
 				} else {
-					_.last(groupOfUnsortedNonCommentNodes).push(node)
+					last(groupOfUnsortedNonCommentNodes).push(node)
 				}
 			})
 
@@ -196,7 +219,7 @@ function format(content, options = {}) {
 				if (nodes[0] instanceof Stylus.nodes.Property) {
 					// Sort CSS properties
 					if (options.sortProperties === 'alphabetical') {
-						return _.sortBy(nodes, node => {
+						return sortBy(nodes, node => {
 							const propertyName = node.segments.map(segment => segment.name).join('')
 							if (propertyName.startsWith('-')) {
 								return '~' + propertyName.substring(1)
@@ -206,7 +229,7 @@ function format(content, options = {}) {
 						})
 
 					} else if (options.sortProperties === 'grouped') {
-						return _.sortBy(nodes, node => {
+						return sortBy(nodes, node => {
 							const propertyName = node.segments.map(segment => segment.name).join('')
 							const propertyRank = sortedProperties.indexOf(propertyName)
 							if (propertyRank >= 0) {
@@ -216,8 +239,8 @@ function format(content, options = {}) {
 							}
 						})
 
-					} else if (_.isArray(options.sortProperties) && _.some(options.sortProperties)) {
-						return _.sortBy(nodes, node => {
+					} else if (Array.isArray(options.sortProperties) && options.sortProperties.length > 0) {
+						return sortBy(nodes, node => {
 							const propertyName = node.segments.map(segment => segment.name).join('')
 							const propertyRank = options.sortProperties.indexOf(propertyName)
 							if (propertyRank >= 0) {
@@ -233,7 +256,7 @@ function format(content, options = {}) {
 			})
 
 			// Note that do not mutate this
-			const sortedNonCommentNodes = _.flatten(groupOfSortedNonCommentNodes)
+			const sortedNonCommentNodes = groupOfSortedNonCommentNodes.flat()
 
 			// Put single-line comment(s) to the relevant node
 			sortedNonCommentNodes.forEach(node => {
@@ -249,18 +272,18 @@ function format(content, options = {}) {
 			})
 
 			groupOfCommentNodes.forEach(commentNodes => {
-				const [rightCommentNodes, lineCommentNodes] = _.partition(commentNodes, commentNode => sortedNonCommentNodes.some(node => node.lineno === commentNode.lineno && node.column < commentNode.column))
+				const [rightCommentNodes, lineCommentNodes] = partition(commentNodes, commentNode => sortedNonCommentNodes.some(node => node.lineno === commentNode.lineno && node.column < commentNode.column))
 
 				// Put the column-consecutive comment(s) on the right of the inner node
 				rightCommentNodes.forEach(commentNode => {
-					const leftNode = _.findLast(sortedNonCommentNodes, node => node.lineno === commentNode.lineno && node.column < commentNode.column)
+					const leftNode = findLast(sortedNonCommentNodes, node => node.lineno === commentNode.lineno && node.column < commentNode.column)
 					if (leftNode.commentsOnRight === undefined) {
 						leftNode.commentsOnRight = []
 					}
 					leftNode.commentsOnRight.push(commentNode)
 				})
 
-				const index = inputNode.nodes.indexOf(_.last(lineCommentNodes))
+				const index = inputNode.nodes.indexOf(last(lineCommentNodes))
 				if (index === inputNode.nodes.length - 1) {
 					// Put the line-consecutive comment(s) at the bottom-most of the block
 					groupOfSortedNonCommentNodes.push(lineCommentNodes)
@@ -268,7 +291,7 @@ function format(content, options = {}) {
 				} else {
 					// Put the line-consecutive comment(s) on the top of the inner node
 					const belowNode = inputNode.nodes[index + 1]
-					if (_.includes(sortedNonCommentNodes, belowNode)) {
+					if (sortedNonCommentNodes.includes(belowNode)) {
 						if (belowNode.commentsOnTop === undefined) {
 							belowNode.commentsOnTop = []
 						}
@@ -282,7 +305,7 @@ function format(content, options = {}) {
 					return true
 
 				} else if (options.wrapMode) {
-					return _.some(originalBaseIndent) ? value === 'nested' : value === 'root'
+					return originalBaseIndent && originalBaseIndent.length > 0 ? value === 'nested' : value === 'root'
 
 				} else {
 					return inputNode instanceof Stylus.nodes.Root ? value === 'root' : value === 'nested'
@@ -290,8 +313,8 @@ function format(content, options = {}) {
 			}
 
 			// Insert CSS body and new-lines between them
-			outputBuffer.append(_.chain(groupOfSortedNonCommentNodes)
-				.map((nodes) => {
+			outputBuffer.append(groupOfSortedNonCommentNodes
+				.flatMap((nodes) => {
 					const nodeType = getType(nodes[0])
 
 					let newLineOrEmpty = ''
@@ -304,24 +327,22 @@ function format(content, options = {}) {
 						newLineOrEmpty = options.newLineChar
 					}
 
-					return _.compact([
+					return compact([
 						newLineOrEmpty,
 						nodes.map(node => travel(inputNode, node, childIndentLevel)).join(''),
 						newLineOrEmpty,
 					])
 				})
-				.flatten()
-				.reject((text, rank, list) => text === options.newLineChar && (
+				.filter((text, rank, list) => text !== options.newLineChar || !(
 					rank === 0 ||
 					rank > 1 && list[rank - 1] === options.newLineChar ||
 					rank === list.length - 1
 				))
 				.join('')
-				.value()
 			)
 
 			// Insert the bottom comment(s)
-			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(_.last(unsortedNonCommentNodes))
+			const bottomCommentNodes = tryGetSingleLineCommentNodesOnTheBottomOf(last(unsortedNonCommentNodes))
 			if (bottomCommentNodes) {
 				outputBuffer.append(bottomCommentNodes.map(node => travel(inputNode.parent, node, childIndentLevel)).join(''))
 			}
@@ -352,7 +373,7 @@ function format(content, options = {}) {
 				// Extract the last portion of comments
 				// For example,
 				// margin: 8px 0; /* right-comment */
-				const commentsOnTheRight = _.takeRightWhile(inputNode.expr.nodes, node => node instanceof Stylus.nodes.Comment)
+				const commentsOnTheRight = takeRightWhile(inputNode.expr.nodes, node => node instanceof Stylus.nodes.Comment)
 				const nodesExcludingCommentsOnTheRight = inputNode.expr.nodes.slice(0, inputNode.expr.nodes.length - commentsOnTheRight.length)
 
 				let propertyValues = nodesExcludingCommentsOnTheRight.map(node => travel(inputNode, node, indentLevel, true))
@@ -384,11 +405,8 @@ function format(content, options = {}) {
 
 				// Insert the property value(s) without the last portion of comments
 				if (nodesExcludingCommentsOnTheRight.every(node => node instanceof Stylus.nodes.Expression)) {
-					const numberOfLineTaken = _.chain(nodesExcludingCommentsOnTheRight)
-						.map('lineno')
-						.uniq()
-						.value()
-						.length
+					const numberOfLineTaken = uniq(nodesExcludingCommentsOnTheRight.map(({ lineno }) => lineno)
+					).length
 					if (numberOfLineTaken > 1 && options.preserveNewLinesBetweenPropertyValues) {
 						outputBuffer.append(':' + options.newLineChar)
 						const innerIndent = indent + options.tabStopChar
@@ -459,13 +477,13 @@ function format(content, options = {}) {
 						if (firstLineIndent) {
 							const indentPattern = new RegExp(firstLineIndent[0], 'g')
 							innerLines = innerLines.map(line => {
-								const text = _.trimStart(line)
+								const text = trimStart(line)
 								const innerIndent = line.substring(0, line.length - text.length)
 								return innerIndent.replace(indentPattern, options.tabStopChar) + text
 							})
 						}
 					}
-					if (_.last(innerLines).trim().length === 0) {
+					if (last(innerLines).trim().length === 0) {
 						innerLines = innerLines.slice(0, innerLines.length - 1)
 					}
 				}
@@ -476,11 +494,11 @@ function format(content, options = {}) {
 				outputBuffer.append('}' + options.newLineChar)
 
 			} else {
-				if (_.get(modifiedLines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
+				if (get(modifiedLines, (inputNode.lineno - 1) + '.' + (inputNode.column - 1)) === '\\') {
 					outputBuffer.append('\\')
 				}
 
-				if (_.isString(inputNode.val)) {
+				if (isString(inputNode.val)) {
 					outputBuffer.append(inputNode.val)
 				} else {
 					outputBuffer.append(travel(inputNode, inputNode.val, indentLevel, true))
@@ -488,7 +506,7 @@ function format(content, options = {}) {
 			}
 
 		} else if (inputNode instanceof Stylus.nodes.String) {
-			if (_.includes(inputNode.val, options.quoteChar)) {
+			if (inputNode.val.includes(options.quoteChar)) {
 				if (inputNode.val.startsWith('data:image/svg+xml;utf8,')) { // In case of SVG data-URL
 					const counterQuoteChar = schema.quoteChar.enum.find(item => item !== options.quoteChar)
 
@@ -563,7 +581,7 @@ function format(content, options = {}) {
 			if (checkIfMixin(inputNode.parent)) {
 				potentialCommentNodeInsideTheBlock = inputNode.block
 			} else {
-				potentialCommentNodeInsideTheBlock = _.last(inputNode.params.nodes)
+				potentialCommentNodeInsideTheBlock = last(inputNode.params.nodes)
 			}
 
 			// Insert the function body
@@ -613,14 +631,15 @@ function format(content, options = {}) {
 		} else if (inputNode instanceof Stylus.nodes.Arguments) {
 			outputBuffer.append(openParen)
 
-			const keyNodePairs = _.concat(
-				// In case of ordinal-arguments
+			const keyNodePairs = [
+				// In case of ordinal arguments
 				inputNode.nodes.map(node => ['', node]),
-				// In case of named-arguments
-				_.toPairs(inputNode.map).map(pair => [pair[0] + ': ', pair[1]])
-			)
+				// In case of named arguments
+				Object.entries(inputNode.map)
+					.map(pair => [pair[0] + ': ', pair[1]])
+			].flat()
 
-			const lineCount = _.uniq(keyNodePairs.map(pair => pair[1].lineno)).length
+			const lineCount = uniq(keyNodePairs.map(pair => pair[1].lineno)).length
 
 			if (lineCount > 1) {
 				outputBuffer.append(options.newLineChar + indent + options.tabStopChar)
@@ -856,7 +875,7 @@ function format(content, options = {}) {
 			outputBuffer.append(inputNode.raw.trim())
 
 		} else if (inputNode instanceof Stylus.nodes.Object) {
-			const keyValuePairs = _.toPairs(inputNode.vals)
+			const keyValuePairs = Object.entries(inputNode.vals)
 			if (keyValuePairs.length === 0) { // In case of an empty object
 				outputBuffer.append('{}')
 
@@ -970,12 +989,12 @@ function format(content, options = {}) {
 				outputBuffer.append(indent)
 			}
 
-			const currentHasOnlyOneChild = _.size(inputNode.block.nodes) === 1
+			const currentHasOnlyOneChild = (inputNode.block.nodes || []).length === 1
 			const currentIsOnTheSameLineAsBody = inputNode.lineno === inputNode.block.nodes[0].lineno && inputNode.block.nodes[0].column < inputNode.column
 			if (currentHasOnlyOneChild && currentIsOnTheSameLineAsBody) { // In case of postfix
 				outputBuffer.append(travel(inputNode, inputNode.block.nodes[0], indentLevel, true))
 				outputBuffer.append(' for ')
-				outputBuffer.append(_.compact([inputNode.val, inputNode.key]).join(comma))
+				outputBuffer.append(compact([inputNode.val, inputNode.key]).join(comma))
 				outputBuffer.append(' in ')
 				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 
@@ -988,7 +1007,7 @@ function format(content, options = {}) {
 
 			} else {
 				outputBuffer.append('for ')
-				outputBuffer.append(_.compact([inputNode.val, inputNode.key]).join(comma))
+				outputBuffer.append(compact([inputNode.val, inputNode.key]).join(comma))
 				outputBuffer.append(' in ')
 				outputBuffer.append(travel(inputNode, inputNode.expr, indentLevel, true))
 				outputBuffer.append(travel(inputNode, inputNode.block, indentLevel, false))
@@ -1148,28 +1167,28 @@ function format(content, options = {}) {
 						} else {
 							commentLines[zeroBasedLineIndex] = ' *' + spaceAfterComment + commentLines[zeroBasedLineIndex]
 						}
-						commentLines[zeroBasedLineIndex] = _.trimEnd(commentLines[zeroBasedLineIndex])
+						commentLines[zeroBasedLineIndex] = trimEnd(commentLines[zeroBasedLineIndex])
 					}
 				}
 
 				// Add a white-space before */
-				if (_.last(commentLines).trim() === '*/') {
+				if (last(commentLines).trim() === '*/') {
 					if (documenting) {
-						commentLines[commentLines.length - 1] = ' ' + _.last(commentLines).trim()
+						commentLines[commentLines.length - 1] = ' ' + last(commentLines).trim()
 					}
 				} else {
-					commentLines[commentLines.length - 1] = _.trimEnd(_.last(commentLines).substring(0, _.last(commentLines).length - 2)) + spaceAfterComment + '*/'
+					commentLines[commentLines.length - 1] = trimEnd(last(commentLines).substring(0, last(commentLines).length - 2)) + spaceAfterComment + '*/'
 				}
 
 				// Add indentation
 				if (documenting) {
 					commentLines = commentLines.map(line => indent + line)
 				} else {
-					const originalIndentLong = _.chain(commentLines)
-						.slice(1)
-						.map(line => line.match(/^(\s|\t)*/g)[0].length)
-						.min()
-						.value() || 0
+					const originalIndentLong = min(
+						commentLines
+							.slice(1)
+							.map(line => line.match(/^(\s|\t)*/g)[0].length)
+					) || 0
 
 					commentLines = commentLines.map((line, rank) => {
 						if (rank === 0) {
@@ -1177,7 +1196,6 @@ function format(content, options = {}) {
 						} else {
 							return indent + line.substring(originalIndentLong)
 						}
-						indent + line
 					})
 				}
 			}
@@ -1227,16 +1245,16 @@ function format(content, options = {}) {
 	function tryGetSingleLineCommentNodesOnTheTopOf(inputNode) {
 		// Re-assign `inputNode` because of wrong mixin declaration `lineno`
 		if (checkIfMixin(inputNode)) {
-			const params = _.get(inputNode, 'val.params.nodes', [])
+			const params = get(inputNode, 'val.params.nodes', [])
 			if (params.length > 0) {
-				inputNode = _.first(params)
+				inputNode = first(params)
 			} else {
 				inputNode = inputNode.val
 			}
 		}
 
 		let zeroBasedLineIndex
-		if (inputNode instanceof Stylus.nodes.Group && _.some(inputNode.nodes)) {
+		if (inputNode instanceof Stylus.nodes.Group && Array.isArray(inputNode.nodes) && inputNode.nodes.length > 0) {
 			zeroBasedLineIndex = inputNode.nodes[0].lineno - 1
 		} else if (checkIfTernary(inputNode) && inputNode.cond.left.val.lineno < inputNode.lineno) {
 			zeroBasedLineIndex = inputNode.cond.left.val.lineno - 1
@@ -1326,10 +1344,11 @@ function format(content, options = {}) {
 
 		// Skip operation if the only "//" is in the string
 		let zeroBasedLineIndex = inputNode.column
-		const leftmostStringThatHasDoubleSlashes = _.chain(findChildNodes(inputNode, node => node instanceof Stylus.nodes.String))
-			.filter(node => node.lineno === inputNode.lineno && node.val.includes('//'))
-			.maxBy('column')
-			.value()
+		const leftmostStringThatHasDoubleSlashes = maxBy(
+			findChildNodes(inputNode, node => node instanceof Stylus.nodes.String)
+				.filter(node => node.lineno === inputNode.lineno && node.val.includes('//')),
+			node => node.column
+		)
 		if (leftmostStringThatHasDoubleSlashes) {
 			zeroBasedLineIndex = leftmostStringThatHasDoubleSlashes.column + leftmostStringThatHasDoubleSlashes.val.length + 1
 		}
@@ -1396,15 +1415,15 @@ function format(content, options = {}) {
 	}
 
 	const outputText = travel(null, rootNode, 0)
-	let outputLines = outputText.split(new RegExp(_.escapeRegExp(options.newLineChar)))
+	let outputLines = outputText.split(new RegExp(escapeRegExp(options.newLineChar)))
 
 	// Trim a beginning new-line character
-	if (_.first(outputLines).trim().length === 0) {
+	if (first(outputLines).trim().length === 0) {
 		outputLines.shift()
 	}
 
 	// Trim all trailing new-line characters
-	while (outputLines.length > 0 && _.last(outputLines).trim().length === 0) {
+	while (outputLines.length > 0 && last(outputLines).trim().length === 0) {
 		outputLines.pop()
 	}
 
@@ -1413,7 +1432,7 @@ function format(content, options = {}) {
 		if (outputLines[0].startsWith('wrap')) {
 			outputLines.shift()
 		}
-		if (options.insertBraces && _.last(outputLines).trim() === '}') {
+		if (options.insertBraces && last(outputLines).trim() === '}') {
 			outputLines.pop()
 		}
 
@@ -1422,7 +1441,7 @@ function format(content, options = {}) {
 
 		// Add the original base indentation
 		if (originalBaseIndent && originalTabStopChar) {
-			const outputBaseIndent = _.repeat(options.tabStopChar, originalBaseIndent.length / originalTabStopChar.length)
+			const outputBaseIndent = options.tabStopChar.repeat(originalBaseIndent.length / originalTabStopChar.length)
 			outputLines = outputLines.map(line => line.trim().length > 0 ? (outputBaseIndent + line) : '')
 		} else if (originalBaseIndent) {
 			outputLines = outputLines.map(line => line.trim().length > 0 ? (originalBaseIndent + line) : '')
@@ -1506,7 +1525,7 @@ function checkForParenthesis(node, options) {
 }
 
 function getIndent(line) {
-	return line.substring(0, line.length - _.trimStart(line).length)
+	return line.substring(0, line.length - trimStart(line).length)
 }
 
 module.exports = format

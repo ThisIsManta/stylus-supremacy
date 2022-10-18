@@ -1,5 +1,15 @@
 const fs = require('fs')
-const _ = require('lodash')
+const isEmpty = require('lodash/isEmpty')
+const isObject = require('lodash/isObject')
+const omitBy = require('lodash/omitBy')
+const uniq = require('lodash/uniq')
+const chunk = require('lodash/chunk')
+const sortBy = require('lodash/sortBy')
+const intersection = require('lodash/intersection')
+const escape = require('lodash/escape')
+const kebabCase = require('lodash/kebabCase')
+const camelCase = require('lodash/camelCase')
+const upperFirst = require('lodash/upperFirst')
 
 const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -19,13 +29,13 @@ fs.writeFileSync('docs/index.html', document)
 function updateDocument(document, placeholder, worker) {
 	const chunks = document.split(placeholder)
 	const output = worker()
-	return _.first(chunks) + placeholder + output + placeholder + _.last(chunks)
+	return chunks[0] + placeholder + output + placeholder + chunks[chunks.length - 1]
 }
 
 function createFormattingTogglersForDemo() {
-	return _.chain(schema)
-		.omitBy(item => item.hideInDemo === true)
-		.map((item, name) => {
+	return Object.entries(schema)
+		.filter(([name, item]) => !item.hideInDemo)
+		.map(([name, item]) => {
 			if (item.type === 'boolean') {
 				return (
 					`<label for="demo-${name}">` +
@@ -55,7 +65,7 @@ function createFormattingTogglersForDemo() {
 					`<label for="demo-${name}">` +
 					`<span>${name}</span>` +
 					`<select id="demo-${name}" value="${getType(item.default)}">` +
-					_enum(item) +
+					renderOptions(item.enum) +
 					`</select>` +
 					`</label>`
 				)
@@ -66,8 +76,8 @@ function createFormattingTogglersForDemo() {
 					`<span>${name}</span>` +
 					`<select id="demo-${name}" value="${getType(item.default)}">` +
 					item.oneOf.map(stub => stub.enum
-						? _enum(stub)
-						: `<option value="${getType(stub)}" ${_.isObject(stub) ? 'disabled' : ''}>${getType(stub)}</option>`
+						? renderOptions(stub.enum)
+						: `<option value="${getType(stub)}" ${isObject(stub) ? 'disabled' : ''}>${getType(stub)}</option>`
 					) +
 					`</select>` +
 					`</label>`
@@ -75,28 +85,27 @@ function createFormattingTogglersForDemo() {
 			}
 		})
 		.join('')
-		.value()
+}
 
-	function _enum(item) {
-		return item.enum.map(stub => `<option value="${getType(stub)}">${getType(stub)}</option>`).join('')
-	}
+function renderOptions(items) {
+	return items.map(stub => `<option value="${getType(stub)}">${getType(stub)}</option>`).join('')
 }
 
 function createFormattingDescription() {
-	const defaultOptionJSON = createCodeForHTML(JSON.stringify(_.omitBy(createFormattingOptions(), (item, name) => schema[name].deprecated), null, '  '))
+	const defaultOptionJSON = createCodeForHTML(JSON.stringify(omitBy(createFormattingOptions(), (item, name) => schema[name].deprecated), null, '  '))
 
 	const defaultOptionHTML = (
 		'<code>' +
 		defaultOptionJSON
 			.replace(/<br>/g, '\n')
-			.replace(/^&nbsp;&nbsp;&quot;(\w+)&quot;/gm, (full, part) => full.replace(part, `<a href="#option-${_.kebabCase(part)}">stylusSupremacy.${createBreakableWords(part)}</a>`))
+			.replace(/^&nbsp;&nbsp;&quot;(\w+)&quot;/gm, (full, part) => full.replace(part, `<a href="#option-${kebabCase(part)}">stylusSupremacy.${createBreakableWords(part)}</a>`))
 			.replace(/\n/g, '<br>') +
 		'</code>'
 	)
 
-	const formattingOptionDescription = _.chain(schema)
-		.map((item, name) => [
-			`<section id="option-${_.kebabCase(name)}">`,
+	const formattingOptionDescription = Object.entries(schema)
+		.flatMap(([name, item]) => [
+			`<section id="option-${kebabCase(name)}">`,
 			`<h2 class="${item.deprecated ? 'deprecated' : ''}">`,
 			item.deprecated && '<b>DEPRECATED </b>',
 			`<mark>${createBreakableWords(name)}</mark>`,
@@ -107,7 +116,7 @@ function createFormattingDescription() {
 			`</h2>`,
 			item.description && item.description.split('\n').map(line => `<p>${line}</p>`).join(''),
 			item.hideInVSCE ? '<p>This option is not available in the Visual Studio Code extension.</p>' : '',
-			item.example && _.chunk(item.example.values, 2).map(values =>
+			item.example && chunk(item.example.values, 2).map(values =>
 				createResponsiveTable(
 					values.map(value => JSON.stringify(value, null, '\t').replace(/(\[|\{)\n\t+/g, '[').replace(/^\t+/gm, ' ').replace(/\n/g, '')),
 					values.map(value => createCodeForHTML(format(createCodeForFormatting(item.example.code), { [name]: value })))
@@ -115,48 +124,58 @@ function createFormattingDescription() {
 			).join('') +
 			`</section>`
 		])
-		.flatten()
-		.compact()
+		.filter(line => !!line)
 		.join('')
-		.value()
 
 	return defaultOptionHTML + formattingOptionDescription
 }
 
 function createStylintConversionTable() {
-	const validFormattingOptionNames = _.keys(schema)
+	const validFormattingOptionNames = Object.keys(schema)
 
-	const stylintOptionMap = _.toPairs(createFormattingOptionsFromStylint.map)
-		.reduce((temp, pair) => {
-			const stylintOptionName = pair[0]
-			const formattingOptionNames = _.chunk(pair[1], 2)
-				.map(item => item[0])
-				.filter(item => validFormattingOptionNames.includes(item))
+	const stylintOptionMap = Object.entries(createFormattingOptionsFromStylint.map)
+		.reduce((temp, [stylintOptionName, conversionRules]) => {
+			const formattingOptionNames = intersection(
+				chunk(conversionRules, 2)
+					.map(([formattingOptionName]) => formattingOptionName),
+				validFormattingOptionNames
+			)
 
 			temp[stylintOptionName] = formattingOptionNames
 			return temp
 		}, {})
 
-	return '<tbody>' + _.chain([stylintOptions, stylintOptionMap]).map(_.keys).flatten().uniq().sortBy().value().map(name =>
-		'<tr>' +
-		'<td><mark class="alt">' + createBreakableWords(name) + '</mark></td>' +
-		'<td>' + (_.some(stylintOptionMap[name])
-			? (stylintOptionMap[name].map(item => '<mark>' + createBreakableWords(item) + '</mark>').join(', '))
-			: 'Not applicable') +
-		'</td>' +
-		'</tr>'
-	).join('') + '</tbody>'
+	const stylintOptionNames = sortBy(
+		uniq(
+			[stylintOptions, stylintOptionMap]
+				.flatMap((item) => Object.keys(item))
+		)
+	)
+
+	return '<tbody>' +
+		stylintOptionNames.map(name =>
+			'<tr>' +
+			'<td><mark class="alt">' + createBreakableWords(name) + '</mark></td>' +
+			'<td>' + (
+				isEmpty(stylintOptionMap[name])
+					? 'Not applicable'
+					: stylintOptionMap[name].map(item => '<mark>' + createBreakableWords(item) + '</mark>').join(', ')
+			) +
+			'</td>' +
+			'</tr>'
+		).join('') +
+		'</tbody>'
 }
 
 function getType(item) {
-	if (_.isObject(item)) {
+	if (isObject(item)) {
 		if (item.type) {
 			return item.type + (item.items ? ('&lt;' + getType(item.items) + '&gt;') : '')
 		} else {
 			return (item.enum || item.oneOf).map(item => getType(item)).join(' | ')
 		}
 	} else {
-		return _.escape(JSON.stringify(item))
+		return escape(JSON.stringify(item))
 	}
 }
 
@@ -169,11 +188,11 @@ function createNonBreakableForFirstWord(prefix, text) {
 }
 
 function createBreakableWords(text) {
-	const pattern = _.camelCase(text)
+	const pattern = camelCase(text)
 	if (text === pattern) {
-		return _.kebabCase(text)
+		return kebabCase(text)
 			.split('-')
-			.map((word, rank) => rank === 0 ? word : _.upperFirst(word))
+			.map((word, rank) => rank === 0 ? word : upperFirst(word))
 			.join('<wbr>')
 
 	} else {

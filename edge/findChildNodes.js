@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const isObject = require('lodash/isObject')
 
 function findChildNodes(inputNode, condition, results = [] /* Internal */, visited = [] /* Internal */) {
 	if (inputNode && visited.includes(inputNode) === false) {
@@ -11,11 +11,11 @@ function findChildNodes(inputNode, condition, results = [] /* Internal */, visit
 
 		Object.getOwnPropertyNames(inputNode).forEach(name => {
 			const prop = inputNode[name]
-			if (_.isArray(prop)) {
-				_.forEach(prop, node => {
+			if (Array.isArray(prop)) {
+				prop.forEach(node => {
 					findChildNodes(node, condition, results, visited)
 				})
-			} else if (_.isObject(prop)) {
+			} else if (isObject(prop)) {
 				findChildNodes(prop, condition, results, visited)
 			}
 		})

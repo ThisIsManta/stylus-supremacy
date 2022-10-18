@@ -2,9 +2,10 @@ const fs = require('fs')
 const fp = require('path')
 const ps = require('process')
 const glob = require('glob')
-const _ = require('lodash')
 const JSON5 = require('json5')
 const YAML = require('js-yaml')
+const difference = require('lodash/difference')
+const compact = require('lodash/compact')
 
 const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -24,11 +25,8 @@ function process(command, params = [], Console = console) {
 		const dryRunParams = getParam(params, ['--dryRun'])
 		const debuggingParams = getParam(params, ['--debug', '-d'])
 
-		const inputFiles = _.chain(params)
-			.difference(optionFilePathParams, outputDirectoryParams, replaceOriginalParams)
-			.map(path => glob.sync(path))
-			.flatten()
-			.value()
+		const inputFiles = difference(params, optionFilePathParams, outputDirectoryParams, replaceOriginalParams)
+			.flatMap(path => glob.sync(path))
 		if (inputFiles.length === 0) {
 			Console.log('No input files found.')
 		}
@@ -65,51 +63,51 @@ function process(command, params = [], Console = console) {
 			Console.log(JSON.stringify(formattingOptions, null, '  '))
 		}
 
-		return _.chain(inputFiles)
-			.reject(path => checkIfFilePathIsIgnored(path, ps.cwd(), formattingOptions))
-			.map(path => {
-				if (inputFiles.length > 1) {
-					Console.log()
-					Console.log('»', path)
-				}
-
-				try {
-					const inputContent = fs.readFileSync(path, 'utf8')
-					const outputContent = format(inputContent, formattingOptions)
-
-					if (dryRunParams.length > 0) {
-						// Do nothing
-
-					} else if (outputDirectoryParams.length > 0) {
-						if (fs.existsSync(fp.resolve(outputDirectoryParams[1])) === false) {
-							fs.mkdirSync(fp.resolve(outputDirectoryParams[1]))
-						}
-
-						fs.writeFileSync(fp.resolve(outputDirectoryParams[1], fp.basename(path)), outputContent)
-
-					} else if (replaceOriginalParams.length > 0) {
-						if (inputContent !== outputContent) {
-							fs.writeFileSync(path, outputContent)
-						}
-
-					} else if (compareOriginalParams.length > 0) {
-						const error = compareContent(inputContent, outputContent)
-						if (error) {
-							Console.log(error)
-							return error
-						}
-
-					} else {
-						Console.log(outputContent)
+		return compact(
+			inputFiles
+				.filter(path => !checkIfFilePathIsIgnored(path, ps.cwd(), formattingOptions))
+				.map(path => {
+					if (inputFiles.length > 1) {
+						Console.log()
+						Console.log('»', path)
 					}
 
-				} catch (error) {
-					Console.log(error)
-					return error
-				}
-			})
-			.compact()
-			.value()
+					try {
+						const inputContent = fs.readFileSync(path, 'utf8')
+						const outputContent = format(inputContent, formattingOptions)
+
+						if (dryRunParams.length > 0) {
+							// Do nothing
+
+						} else if (outputDirectoryParams.length > 0) {
+							if (fs.existsSync(fp.resolve(outputDirectoryParams[1])) === false) {
+								fs.mkdirSync(fp.resolve(outputDirectoryParams[1]))
+							}
+
+							fs.writeFileSync(fp.resolve(outputDirectoryParams[1], fp.basename(path)), outputContent)
+
+						} else if (replaceOriginalParams.length > 0) {
+							if (inputContent !== outputContent) {
+								fs.writeFileSync(path, outputContent)
+							}
+
+						} else if (compareOriginalParams.length > 0) {
+							const error = compareContent(inputContent, outputContent)
+							if (error) {
+								Console.log(error)
+								return error
+							}
+
+						} else {
+							Console.log(outputContent)
+						}
+
+					} catch (error) {
+						Console.log(error)
+						return error
+					}
+				})
+		)
 
 	} else {
 		throw new Error(`Command "${command}" was not recognized.`)

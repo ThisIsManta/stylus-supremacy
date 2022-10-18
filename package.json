@@ -23,7 +23,7 @@
   "main": "./edge/index.js",
   "types": "./edge/index.d.ts",
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "scripts": {
     "test": "node ./test/runner.js",
@@ -49,5 +49,8 @@
     "lodash": "^4.17.21",
     "stylint": "^2.0.0",
     "stylus": "^0.59.0"
+  },
+  "volta": {
+    "node": "14.20.1"
   }
 }

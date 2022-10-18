@@ -1,29 +1,28 @@
 const fs = require('fs')
-const _ = require('lodash')
+const findIndex = require('lodash/findIndex')
+const uniq = require('lodash/uniq')
 
 const schema = require('./schema')
-const createFormattingOptions = require('./createFormattingOptions')
 
 const filePath = 'edge/index.d.ts'
 let content = fs.readFileSync(filePath, 'utf-8')
 
 const lines = content.split('\n')
-const begin = _.findIndex(lines, line => line === '\texport interface FormattingOptions {')
-const final = _.findIndex(lines, line => line === '\t}', begin + 1)
+const begin = findIndex(lines, line => line === '\texport interface FormattingOptions {')
+const final = findIndex(lines, line => line === '\t}', begin + 1)
 
 if (begin === -1 || final === -1) {
 	throw new Error(`Could not find "FormattingOptions" interface in ${filePath}.`)
 }
 
-const formattingOptionDefinition = _.chain(schema)
-	.map((info, name) => '\t\t' + name + '?: ' + getType(info))
-	.value()
+const formattingOptionDefinition = Object.entries(schema)
+	.map(([name, info]) => '\t\t' + name + '?: ' + getType(info))
 
-content = _.concat(
-	lines.slice(0, begin + 1),
-	formattingOptionDefinition,
-	lines.slice(final)
-).join('\n')
+content = [
+	...lines.slice(0, begin + 1),
+	...formattingOptionDefinition,
+	...lines.slice(final),
+].join('\n')
 
 fs.writeFileSync(filePath, content)
 
@@ -33,21 +32,12 @@ function getType(info) {
 
 	} else if (info.type === 'array') {
 		return info.items.type + '[]'
-		
+
 	} else if (info.enum) {
-		return _.chain(info.enum)
-			.map(item => typeof item)
-			.uniq()
-			.value()
-			.join(' | ')
+		return uniq(info.enum.map(item => typeof item)).join(' | ')
 
 	} else if (info.oneOf) {
-		return _.chain(info.oneOf)
-			.map(item => getType(item))
-			.flatten()
-			.uniq()
-			.value()
-			.join(' | ')
+		return uniq(info.oneOf.flatMap(item => getType(item))).join(' | ')
 
 	} else {
 		return info.type || 'any'

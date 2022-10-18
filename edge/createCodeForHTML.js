@@ -1,9 +1,9 @@
-const _ = require('lodash')
+const escape = require('lodash/escape')
 
 function createCodeForHTML(code) {
 	let temp = code
 		.split(/\r?\n/)
-		.map(_.escape)
+		.map(line => escape(line))
 		// Escape white-spaces
 		.map(line => line
 			.replace(/^\t+/, s => '  '.repeat(s.length))
