@@ -35,6 +35,7 @@
 			<a href="#options">Formatting options</a>
 			<a href="#stylint">Stylint compatibility</a>
 			<a href="#vscode">Visual Studio Code extension</a>
+			<a href="#pre-commit">Pre-commit hook</a>
 			<a id="history" href="https://github.com/ThisIsManta/stylus-supremacy/releases">Releases</a>
 			<a id="issues" href="https://github.com/ThisIsManta/stylus-supremacy/issues">Issues</a>
 			<a id="repository" class="nofx" href="https://github.com/ThisIsManta/stylus-supremacy" title="View source code on GitHub"><img src="octocat.png"></a>
@@ -441,6 +442,24 @@
 				<p>This extension also incorporates the built-in settings: <code>editor.formatOnType</code> and <code>editor.formatOnSave</code> as long as <code>files.autoSave</code> is off.</p>
 
 				<p>In case you are using <a href="https://marketplace.visualstudio.com/items?itemName=vtfn.stylint" target="_blank">Stylint</a> as a Stylus linter, the extension automatically searches for <mark class="alt">.stylintrc</mark> file starting from the current active file directory up to the root working directory, and merges it with the Visual Studio Code settings. The settings in Visual Studio Code will be used as a base, and overridden by <mark class="alt">.stylintrc</mark> file. Please see <a href="#stylint-rules">Stylint compatibility</a> section for the rule conversion.</p>
+			</article>
+			<article id="pre-commit">
+				<h1>Pre-commit hook</h1>
+
+				<p>You can use <b>Stylus Supremacy</b> with the git pre-commit tool. 
+					This can re-format your files that are marked as "staged" via git add before you commit.</p>
+				
+				Copy the following config into your .pre-commit-config.yaml file:
+				
+				<code>
+				repos:<br>
+				&nbsp;&nbsp;- repo: https://github.com/ThisIsManta/stylus-supremacy<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;rev: v2.16.0 # Use the sha or tag you want to point at<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;hooks:<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;- id: stylus-supremacy<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args: ['--options', ".stylus-supremacy.yaml"]<br>
+				</code>
+
 			</article>
 		</main>
 		<div id="go-to-menu" style="display: none;" onclick="$(window).scrollTop(0); location.hash = ''">
