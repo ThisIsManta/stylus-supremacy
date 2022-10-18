@@ -4,8 +4,10 @@ const ps = require('process')
 const glob = require('glob')
 const JSON5 = require('json5')
 const YAML = require('js-yaml')
-const difference = require('lodash/difference')
 const compact = require('lodash/compact')
+const max = require('lodash/max')
+const words = require('lodash/words')
+const capitalize = require('lodash/capitalize')
 
 const format = require('./format')
 const createFormattingOptions = require('./createFormattingOptions')
@@ -18,27 +20,56 @@ function process(command, params = [], Console = console) {
 		Console.log('v' + require('../package.json').version)
 
 	} else if (command === 'format') {
-		const optionFilePathParams = getParam(params, ['--options', '-p'], 1)
-		const outputDirectoryParams = getParam(params, ['--outDir', '-o'], 1)
-		const replaceOriginalParams = getParam(params, ['--replace', '-r'])
-		const compareOriginalParams = getParam(params, ['--compare', '-c'])
-		const dryRunParams = getParam(params, ['--dryRun'])
-		const debuggingParams = getParam(params, ['--debug', '-d'])
+		const paramDefinitions = {
+			optionFilePath: '--options|-p <path>',
+			outputDirectoryPath: '--outDir|--out-dir|-o <path>',
+			replacingOriginalFile: '--replace|-r',
+			comparingOriginalContent: '--compare|-c',
+			dryRun: '--dryRun|--dry-run',
+			debugging: '--debug|-d',
+			help: '--help|-h',
+		}
 
-		const inputFiles = difference(params, optionFilePathParams, outputDirectoryParams, replaceOriginalParams)
+		const {
+			remainingParams,
+			optionFilePath,
+			outputDirectoryPath,
+			replacingOriginalFile,
+			comparingOriginalContent,
+			dryRun,
+			debugging,
+			help,
+		} = getParams(params, paramDefinitions)
+
+		if (help) {
+			const longestPatternLength = max(Object.values(paramDefinitions).map(pattern => pattern.length))
+
+			Object.entries(paramDefinitions).forEach(([identifier, pattern]) => {
+				const description = capitalize(words(identifier).join(' '))
+				Console.log(pattern.padEnd(longestPatternLength), description)
+			})
+
+			return
+		}
+
+		if ([outputDirectoryPath, replacingOriginalFile, comparingOriginalContent].filter(param => !!param).length > 1) {
+			throw new Error('Arguments --outDir, --replace and --compare could not co-exist.')
+		}
+
+		const inputFiles = remainingParams
 			.flatMap(path => glob.sync(path))
 		if (inputFiles.length === 0) {
-			Console.log('No input files found.')
+			Console.log('No input files were found.')
 		}
 
 		let formattingOptions = {}
-		if (optionFilePathParams.length > 0) {
-			if (fs.existsSync(optionFilePathParams[1]) === false) {
+		if (optionFilePath) {
+			if (fs.existsSync(optionFilePath) === false) {
 				throw new Error('The given option file path did not exist.')
 			}
 
-			const fileText = fs.readFileSync(optionFilePathParams[1], 'utf8')
-			if (/\.ya?ml$/.test(optionFilePathParams[1])) {
+			const fileText = fs.readFileSync(optionFilePath, 'utf8')
+			if (/\.ya?ml$/.test(optionFilePath)) {
 				try {
 					formattingOptions = YAML.load(fileText, { json: true })
 				} catch (ex) {
@@ -52,14 +83,14 @@ function process(command, params = [], Console = console) {
 				}
 			}
 
-			if (fp.basename(optionFilePathParams[1]).startsWith('.stylintrc')) {
+			if (fp.basename(optionFilePath).startsWith('.stylintrc')) {
 				formattingOptions = createFormattingOptionsFromStylint(formattingOptions)
 			} else {
 				formattingOptions = createFormattingOptions(formattingOptions)
 			}
 		}
 
-		if (debuggingParams.length > 0) {
+		if (debugging) {
 			Console.log(JSON.stringify(formattingOptions, null, '  '))
 		}
 
@@ -76,22 +107,22 @@ function process(command, params = [], Console = console) {
 						const inputContent = fs.readFileSync(path, 'utf8')
 						const outputContent = format(inputContent, formattingOptions)
 
-						if (dryRunParams.length > 0) {
+						if (dryRun) {
 							// Do nothing
 
-						} else if (outputDirectoryParams.length > 0) {
-							if (fs.existsSync(fp.resolve(outputDirectoryParams[1])) === false) {
-								fs.mkdirSync(fp.resolve(outputDirectoryParams[1]))
+						} else if (outputDirectoryPath) {
+							if (fs.existsSync(fp.resolve(outputDirectoryPath)) === false) {
+								fs.mkdirSync(fp.resolve(outputDirectoryPath))
 							}
 
-							fs.writeFileSync(fp.resolve(outputDirectoryParams[1], fp.basename(path)), outputContent)
+							fs.writeFileSync(fp.resolve(outputDirectoryPath, fp.basename(path)), outputContent)
 
-						} else if (replaceOriginalParams.length > 0) {
+						} else if (replacingOriginalFile) {
 							if (inputContent !== outputContent) {
 								fs.writeFileSync(path, outputContent)
 							}
 
-						} else if (compareOriginalParams.length > 0) {
+						} else if (comparingOriginalContent) {
 							const error = compareContent(inputContent, outputContent)
 							if (error) {
 								Console.log(error)
@@ -110,20 +141,51 @@ function process(command, params = [], Console = console) {
 		)
 
 	} else {
-		throw new Error(`Command "${command}" was not recognized.`)
+		throw new Error(`The command "${command}" was not recognized.`)
 	}
 
 	return []
 }
 
-function getParam(paramArray, names, nextValueCount = 0) {
-	let paramIndex = -1
-	while (++paramIndex < paramArray.length) {
-		if (names.includes(paramArray[paramIndex])) {
-			return [paramArray[paramIndex]].concat(paramArray.slice(paramIndex + 1).slice(0, nextValueCount))
+function getParams(params, paramDefinitions) {
+	const remainingParams = params.slice()
+	const output = {}
+
+	for (const identifier in paramDefinitions) {
+		const pattern = paramDefinitions[identifier]
+		const [option, interpolation] = pattern.split(' ')
+		const matcher = new RegExp(`^(${option})$`)
+
+		while (remainingParams.length > 0) {
+			const index = remainingParams.findIndex(param => matcher.test(param))
+
+			if (index === -1) {
+				break
+			}
+
+			if (interpolation) {
+				const value = params[index + 1]
+				if (typeof value !== 'string' || value.startsWith('-')) {
+					output[identifier] = null
+					remainingParams.splice(index, 1)
+
+				} else {
+					output[identifier] = value
+					remainingParams.splice(index, 2)
+				}
+
+			} else {
+				output[identifier] = true
+				remainingParams.splice(index, 1)
+			}
+		}
+
+		if (output[identifier] === undefined) {
+			output[identifier] = false
 		}
 	}
-	return []
+
+	return { ...output, remainingParams }
 }
 
 module.exports = process

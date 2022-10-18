@@ -1,5 +1,4 @@
 const fs = require('fs')
-const findIndex = require('lodash/findIndex')
 const uniq = require('lodash/uniq')
 
 const schema = require('./schema')
@@ -8,8 +7,8 @@ const filePath = 'edge/index.d.ts'
 let content = fs.readFileSync(filePath, 'utf-8')
 
 const lines = content.split('\n')
-const begin = findIndex(lines, line => line === '\texport interface FormattingOptions {')
-const final = findIndex(lines, line => line === '\t}', begin + 1)
+const begin = lines.findIndex(line => line === '\texport interface FormattingOptions {')
+const final = lines.findIndex(line => line === '\t}', begin + 1)
 
 if (begin === -1 || final === -1) {
 	throw new Error(`Could not find "FormattingOptions" interface in ${filePath}.`)
