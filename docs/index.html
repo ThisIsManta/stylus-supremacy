@@ -87,8 +87,8 @@
 			<article id="command-line">
 				<h1>Command-line usage</h1>
 
-				<p>First thing first, this script must be installed via NPM.</p>
-				<code>npm install stylus-supremacy -g</code>
+				<p>First thing first, this software must be installed via NPM or something similar.</p>
+				<code>npm install --global stylus-supremacy</code>
 
 				<p>Now, you can run <mark>stylus-supremacy</mark> command followed by a path to your Stylus file. Normally, the formatted Stylus content will be printed to the output stream (console/terminal).</p>
 				<code>stylus-supremacy format ./path/to/your/file.styl</code>
@@ -120,7 +120,7 @@
 			<article id="programming">
 				<h1>Programming usage</h1>
 
-				<p>Once you have <b>Stylus Supremacy</b> installed via NPM, you simply include it to your JavaScript file by writing <code>require('stylus-supremacy')</code> and call its <mark>format</mark> function with a string of Stylus content and an object containing <a href="#options">formatting options</a>.</p>
+				<p>Once you have <b>Stylus Supremacy</b> installed, you must import it to your JavaScript file and call its <mark>format</mark> function with a string of Stylus content and an optional object representing <a href="#options">the formatting options</a>.</p>
 				<code>
 					const stylusSupremacy = require('stylus-supremacy')<br>
 					<br>
