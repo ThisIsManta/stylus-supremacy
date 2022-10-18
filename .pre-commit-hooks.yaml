@@ -1,0 +1,6 @@
+- id: stylus-supremacy
+  name: stylus-supremacy
+  'types': ["stylus"]
+  language: node
+  additional_dependencies: ["stylus-supremacy"]
+  entry: stylus-supremacy format --replace
