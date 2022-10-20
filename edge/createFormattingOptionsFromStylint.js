@@ -1,6 +1,5 @@
 const isObject = require('lodash/isObject')
 const difference = require('lodash/difference')
-const omitBy = require('lodash/omitBy')
 const chunk = require('lodash/chunk')
 const identity = require('lodash/identity')
 
@@ -42,8 +41,9 @@ const universalOptionMap = {
 }
 
 function createFormattingOptionsFromStylint(stylintOptions = {}) {
-	return omitBy(stylintOptions, (rule, name) => universalOptionMap[name] === undefined)
-		.reduce((hash, rule, name) => {
+	return Object.entries(stylintOptions)
+		.filter(([name]) => universalOptionMap[name] !== undefined)
+		.reduce((hash, [name, rule]) => {
 			const value = isObject(rule) && rule.expect !== undefined ? rule.expect : rule
 
 			chunk(universalOptionMap[name], 2).forEach(([name, convert]) => {
