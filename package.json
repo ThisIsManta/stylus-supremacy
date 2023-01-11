@@ -28,17 +28,14 @@
   "scripts": {
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
-    "docs": "browserify --transform [ babelify --presets [ @babel/preset-env ] ] --require lodash --require ./edge/format.js:format --require ./edge/createCodeForHTML.js:createCodeForHTML > docs/format.js && node edge/reviseDocumentation.js && node edge/revisePreCommitHook.js",
+    "docs": "node edge/browserDemoBuilder.js && node edge/reviseDocumentation.js && node edge/revisePreCommitHook.js",
     "preversion": "git push --dry-run origin master:master && npm test",
     "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git commit --all --allow-empty --message=\"Built\" && npm publish",
     "postversion": "git push --tags --quiet origin master:master"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
     "@types/stylus": "^0.48.38",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.2",
+    "esbuild": "^0.16.16",
     "jasmine": "^3.6.4",
     "nodemon": "^2.0.20"
   },
