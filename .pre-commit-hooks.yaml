@@ -3,5 +3,5 @@
   description: 'Format Stylus files'
   language: node
   types: [stylus]
-  additional_dependencies: ['stylus-supremacy@2.17.4']
+  additional_dependencies: ['stylus-supremacy@2.17.5']
   entry: 'stylus-supremacy format --replace'
