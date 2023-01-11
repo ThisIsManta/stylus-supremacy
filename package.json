@@ -45,7 +45,7 @@
   "dependencies": {
     "glob": "^8.0.3",
     "js-yaml": "^4.1.0",
-    "json5": "^2.2.1",
+    "json5": "^2.2.3",
     "lodash": "^4.17.21",
     "stylint": "^2.0.0",
     "stylus": "^0.59.0"
