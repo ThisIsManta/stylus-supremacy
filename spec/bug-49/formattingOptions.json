@@ -1,0 +1,13 @@
+{
+    "insertColons": false,
+    "insertSemicolons": false,
+    "insertBraces": false,
+    "insertSpaceBeforeComment": true,
+    "insertSpaceAfterComment": true,
+    "insertParenthesisAroundIfCondition": true,
+    "insertLeadingZeroBeforeFraction": false,
+    "selectorSeparator": "\n",
+    "quoteChar": "\"",
+    "tabStopChar": "  ",
+    "alwaysUseZeroWithoutUnit": true
+}
