@@ -34,7 +34,7 @@
     "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git add --all && npm publish"
   },
   "devDependencies": {
-    "@thisismanta/semantic-version": "^8.0.1",
+    "@thisismanta/semantic-version": "^9.1.0",
     "@types/stylus": "^0.48.42",
     "esbuild": "^0.23.1",
     "jasmine": "^5.2.0",
