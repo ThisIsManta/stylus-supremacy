@@ -14,7 +14,10 @@
     "beautify"
   ],
   "homepage": "https://thisismanta.github.io/stylus-supremacy",
-  "repository": "github:ThisIsManta/stylus-supremacy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThisIsManta/stylus-supremacy.git"
+  },
   "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
   "bin": {
     "stylus-supremacy": "./edge/commandLineInterface.js"

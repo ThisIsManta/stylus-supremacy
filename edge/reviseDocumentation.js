@@ -233,7 +233,7 @@ function createPreCommitConfigSample() {
 		`
 repos:
 	- repo:
-			${packageJSON.repository.url.replace(/\.git$/, '')}
+			${packageJSON.repository.url.replace(/^git\+/, '').replace(/\.git$/, '')}
 		rev: v${packageJSON.version}
 		hooks:
 			- id: ${id}
