@@ -1,7 +1,7 @@
 const fs = require('fs')
 const fp = require('path')
 const ps = require('process')
-const glob = require('glob')
+const { globSync } = require('glob')
 const JSON5 = require('json5')
 const YAML = require('js-yaml')
 const compact = require('lodash/compact')
@@ -57,7 +57,7 @@ function process(command, params = [], Console = console) {
 		}
 
 		const inputFiles = remainingParams
-			.flatMap(path => glob.sync(path))
+			.flatMap(path => globSync(path))
 		if (inputFiles.length === 0) {
 			Console.log('No input files were found.')
 		}

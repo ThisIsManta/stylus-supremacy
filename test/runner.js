@@ -11,7 +11,7 @@ jasmine.configureDefaultReporter({
 	showColors: false
 })
 
-const glob = require('glob')
+const { globSync } = require('glob')
 const ps = require('process')
 const fs = require('fs')
 const pt = require('path')
@@ -23,7 +23,7 @@ const compareContent = require('../edge/compareContent')
 const filesAndDirectories = _.chain(ps.argv.slice(2))
 	.reject(para => para.startsWith('-'))
 	.thru(list => list.length > 0 ? list : ['*'])
-	.flatMap(para => glob.sync('spec/' + para))
+	.flatMap(para => globSync('spec/' + para))
 	.filter(directory => fs.lstatSync(directory).isDirectory() && fs.readdirSync(directory).length > 0)
 	.value()
 const filesOnly = path => pt.extname(path) === '.js'

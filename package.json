@@ -29,22 +29,26 @@
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
     "docs": "node edge/browserDemoBuilder.js && node edge/reviseDocumentation.js && node edge/revisePreCommitHook.js",
-    "preversion": "git push --dry-run origin master:master && npm test",
-    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git commit --all --allow-empty --message=\"Built\" && npm publish",
-    "postversion": "git push --tags --quiet origin master:master"
+    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git commit --all --allow-empty --no-verify --message=\"chore: release\" && npm publish"
   },
   "devDependencies": {
-    "@types/stylus": "^0.48.38",
-    "esbuild": "^0.16.16",
-    "jasmine": "^3.6.4",
-    "nodemon": "^2.0.20"
+    "@thisismanta/semantic-version": "^8.0.1",
+    "@types/stylus": "^0.48.42",
+    "esbuild": "^0.23.1",
+    "jasmine": "^5.2.0",
+    "lefthook": "^1.7.14",
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
-    "glob": "^8.0.3",
+    "glob": "^10.4.0",
     "js-yaml": "^4.1.0",
     "json5": "^2.2.3",
     "lodash": "^4.17.21",
     "stylint": "^2.0.0",
-    "stylus": "^0.59.0"
+    "stylus": "^0.63.0"
+  },
+  "overrides": {
+    "mout": "1.2.4",
+    "yargs-parser": "5.0.1"
   }
 }
