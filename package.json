@@ -1,7 +1,7 @@
 {
   "name": "stylus-supremacy",
   "description": "Make your Stylus files look great again.",
-  "version": "2.17.5",
+  "version": "3.0.0",
   "author": {
     "name": "Anantachai Saothong",
     "email": "thisismanta@gmail.com"
@@ -14,12 +14,11 @@
     "beautify"
   ],
   "homepage": "https://thisismanta.github.io/stylus-supremacy",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ThisIsManta/stylus-supremacy.git"
-  },
+  "repository": "github:ThisIsManta/stylus-supremacy",
   "bugs": "https://github.com/ThisIsManta/stylus-supremacy/issues",
-  "bin": "./edge/commandLineInterface.js",
+  "bin": {
+    "stylus-supremacy": "./edge/commandLineInterface.js"
+  },
   "main": "./edge/index.js",
   "types": "./edge/index.d.ts",
   "engines": {
@@ -29,7 +28,7 @@
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
     "docs": "node edge/browserDemoBuilder.js && node edge/reviseDocumentation.js && node edge/revisePreCommitHook.js",
-    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git commit --all --allow-empty --no-verify --message=\"chore: release\" && npm publish"
+    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git add --all && npm publish"
   },
   "devDependencies": {
     "@thisismanta/semantic-version": "^8.0.1",
