@@ -1,6 +1,6 @@
 const clone = require('lodash/clone')
 const uniq = require('lodash/uniq')
-const ordering = require('stylint/src/data/ordering.json')
+const ordering = require('./stylintOrdering.json')
 
 module.exports = function () {
     const list = clone(ordering.grouped)

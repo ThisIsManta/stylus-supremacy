@@ -46,11 +46,6 @@
     "js-yaml": "^4.1.0",
     "json5": "^2.2.3",
     "lodash": "^4.17.21",
-    "stylint": "^2.0.0",
     "stylus": "^0.63.0"
-  },
-  "overrides": {
-    "mout": "1.2.4",
-    "yargs-parser": "5.0.1"
   }
 }

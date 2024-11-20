@@ -16,7 +16,7 @@ const schema = require('./schema')
 const createFormattingOptions = require('./createFormattingOptions')
 const createFormattingOptionsFromStylint = require('./createFormattingOptionsFromStylint')
 const format = require('./format')
-const stylintOptions = require('stylint/src/core/config')
+const stylintOptions = require('./stylintConfig')
 const createCodeForFormatting = require('./createCodeForFormatting')
 const createCodeForHTML = require('./createCodeForHTML')
 
