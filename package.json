@@ -34,12 +34,12 @@
     "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git add --all && npm publish"
   },
   "devDependencies": {
-    "@thisismanta/semantic-version": "^9.1.0",
-    "@types/stylus": "^0.48.42",
-    "esbuild": "^0.23.1",
-    "jasmine": "^5.2.0",
-    "lefthook": "^1.7.14",
-    "nodemon": "^3.1.4"
+    "@thisismanta/semantic-version": "^9.1.1",
+    "@types/stylus": "^0.48.43",
+    "esbuild": "^0.25.4",
+    "jasmine": "^5.7.1",
+    "lefthook": "^1.11.12",
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "glob": "^10.4.0",
@@ -47,7 +47,7 @@
     "json5": "^2.2.3",
     "lodash": "^4.17.21",
     "stylint": "^2.0.0",
-    "stylus": "^0.63.0"
+    "stylus": "^0.64.0"
   },
   "overrides": {
     "mout": "1.2.4",
