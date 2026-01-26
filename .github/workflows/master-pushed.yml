@@ -5,6 +5,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pages: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -20,4 +24,3 @@ jobs:
       - run: npx auto-npm-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
