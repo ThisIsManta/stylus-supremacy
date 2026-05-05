@@ -31,26 +31,36 @@
     "test": "node ./test/runner.js",
     "test-watch": "nodemon --watch edge --watch spec --ext js,json,styl --ignore \"spec/*/*-debugging.json\" --ignore \"spec/*/*-formatted.styl\" ./test/runner.js",
     "docs": "node edge/browserDemoBuilder.js && node edge/reviseDocumentation.js && node edge/revisePreCommitHook.js",
-    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git add --all && npm publish --provenance --access public"
+    "version": "npm run docs && node ./edge/reviseTypeDefinition.js && git add --all",
+    "postversion": "npm publish --provenance --access public"
   },
   "devDependencies": {
-    "@thisismanta/semantic-version": "^9.1.4",
+    "@thisismanta/semantic-version": "^11.2.1",
     "@types/stylus": "^0.48.43",
-    "esbuild": "^0.27.2",
-    "jasmine": "^5.12.0",
-    "lefthook": "^2.0.15",
-    "nodemon": "^3.1.11"
+    "esbuild": "^0.28.0",
+    "jasmine": "^6.2.0",
+    "lefthook": "^2.1.6",
+    "nodemon": "^3.1.14"
   },
   "dependencies": {
-    "glob": "^13.0.0",
+    "glob": "^13.0.6",
     "js-yaml": "^4.1.1",
     "json5": "^2.2.3",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "stylint": "^2.0.0",
     "stylus": "^0.64.0"
   },
   "overrides": {
+    "brace-expansion@2.0.2": "2.0.3",
+    "glob@7.0.4": {
+      "brace-expansion": "1.1.14",
+      "minimatch": "3.1.5"
+    },
+    "glob@10.5.0": {
+      "minimatch": "9.0.9"
+    },
     "mout": "1.2.4",
+    "picomatch@2.2.2": "2.3.2",
     "yargs-parser": "5.0.1"
   }
 }
