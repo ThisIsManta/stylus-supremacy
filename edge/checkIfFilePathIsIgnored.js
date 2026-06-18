@@ -1,5 +1,6 @@
 const fp = require('path')
-const minimatch = require('minimatch')
+const minimatchModule = require('minimatch')
+const minimatch = typeof minimatchModule === 'function' ? minimatchModule : minimatchModule.minimatch
 
 function checkIfFilePathIsIgnored(filePath, rootPath, formattingOptions) {
 	if (!formattingOptions.ignoreFiles) {
