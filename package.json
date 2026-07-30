@@ -35,25 +35,24 @@
     "postversion": "npm publish --provenance --access public"
   },
   "devDependencies": {
-    "@thisismanta/semantic-version": "^11.2.1",
+    "@thisismanta/semantic-version": "^11.8.1",
     "@types/stylus": "^0.48.43",
-    "esbuild": "^0.28.0",
-    "jasmine": "^6.2.0",
-    "lefthook": "^2.1.6",
+    "esbuild": "^0.28.1",
+    "jasmine": "^6.3.0",
+    "lefthook": "^2.1.10",
     "nodemon": "^3.1.14"
   },
   "dependencies": {
     "glob": "^13.0.6",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^5.2.2",
     "json5": "^2.2.3",
     "lodash": "^4.18.1",
     "stylint": "^2.0.0",
     "stylus": "^0.64.0"
   },
   "overrides": {
-    "brace-expansion@2.0.2": "2.0.3",
     "glob@7.0.4": {
-      "brace-expansion": "1.1.14",
+      "brace-expansion": "1.1.17",
       "minimatch": "3.1.5"
     },
     "glob@10.5.0": {
@@ -61,6 +60,11 @@
     },
     "mout": "1.2.4",
     "picomatch@2.2.2": "2.3.2",
-    "yargs-parser": "5.0.1"
+    "yargs-parser@2.4.1": "5.0.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.2": true,
+    "lefthook@2.1.10": true
   }
 }
